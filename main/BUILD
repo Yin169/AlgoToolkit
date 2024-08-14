@@ -5,6 +5,6 @@ cc_binary(
     srcs = ["demo.cpp"],
     deps = [
         "@fmt//:fmt",
-        # "@boost//:boost",
+        "@boost//:boost",
     ],
 )
