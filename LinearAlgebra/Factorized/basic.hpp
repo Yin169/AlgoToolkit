@@ -16,4 +16,19 @@ namespace PowerMethod {
 	double rayleighQuotient(const MatrixObj<TNum> &A, const VectorObj<TNum> &b){ return b.Tranpose() * A * b / b.Tranpose() * b;}
 }
 
+
+namespace Decomp {
+/*
+ * GramSmith
+ * QR
+ */
+}
+
+
+namespace KrylovSub{
+	/*
+	 * Ardoni
+	 */
+}
+
 #endif
