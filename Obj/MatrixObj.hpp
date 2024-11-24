@@ -1,3 +1,6 @@
+#ifndef MATRIXOBJ_HPP
+#define MATRIXOBJ_HPP
+
 #include <algorithm>
 #include <cstring>
 
@@ -10,11 +13,11 @@ class MatrixObj{
 		MatrixObj(int n, int m) : _n(n), _m(m){
 			arr = new TObj[ _n * _m];
 		}
-
 		~MatrixObj(){ delete[] arr; }
 
 		int get_row(){return _n;}
 		int get_col(){return _m;}
+		void setDim(int n, int m){ _n=n, _m=m;}
 
 		MatrixObj(const MatrixObj &other){
 			_n = other.get_row(), _m = other.get_col();
@@ -71,4 +74,19 @@ class MatrixObj{
 				return temp;
 			}
 		}
+
+		MatrixObj Tranpose(){
+			TObj *t = new TObj[_m * _n];
+			for (int i=0; i<_n; i++){
+				for (int j=0; j<_m; j++){
+					t[ j * _m + i] = arr[ i * _n + j];
+				}
+			}
+			std::swap(_n, _m);
+			MatrixObj temp(t, _n, _m);
+			delete[] t;
+			return temp;
+		}
 };
+
+#endif
