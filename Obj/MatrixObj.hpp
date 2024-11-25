@@ -18,6 +18,11 @@ class MatrixObj{
 		int get_row(){return _n;}
 		int get_col(){return _m;}
 		void setDim(int n, int m){ _n=n, _m=m;}
+		void Slice(TObj* slice, int n , int m) {
+			if (m > n) { 
+				std::copy(arr + n, arr + n + m, slice);
+			}
+		}
 
 		MatrixObj(const MatrixObj &other){
 			_n = other.get_row(), _m = other.get_col();
@@ -31,6 +36,7 @@ class MatrixObj{
 			std::copy(other, other+ n * m, arr);
 		}
 
+		
 		MatrixObj operator[](int n){return arr[n];}
 
 		MatrixObj &operator=(const MatrixObj &other){
@@ -55,6 +61,11 @@ class MatrixObj{
 				return *this;
 			}
 			return nullptr;
+		}
+
+		MatrixObj &operator*(double factor){
+			for (size_t i=0; i<_n*_m; i++) {arr[i]*=factor;}
+			return *this;
 		}
 
 		MatrixObj operator*(const MatrixObj &other){

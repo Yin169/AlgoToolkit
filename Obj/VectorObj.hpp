@@ -6,7 +6,7 @@
 template <typename TObj>
 class VectorObj : private MatrixObj<TObj> {
 	public:
-		VectorObj(const TObj *other, int n) : MatrixObj<TObj>(other, n, 1){}
+		VectorObj(const TObj *other, int n) : MatrixObj<TObj>(other, 1, n){}
 		~VectorObj(){}
 
 		double L2norm(){
@@ -19,7 +19,7 @@ class VectorObj : private MatrixObj<TObj> {
 
 		void normalized(){
 			double l2norm = L2norm();
-			for (int i=0; i<MatrixObj<TObj>::get_row(), MatrixObj<TObj>::get_col(); i++){
+			for (int i=0; i<MatrixObj<TObj>::get_row() * MatrixObj<TObj>::get_col(); i++){
 				MatrixObj<TObj>::arr[i] /= l2norm; 
 			}
 		} 
