@@ -23,6 +23,16 @@ public:
         _m = m;
         std::copy(other, other + n * m, arr);
     }
+    explicit MatrixObj(const VectorObj<TObj>& vector) : _n(vector.get_row()), _m(vector.get_col()), arr(new TObj[_m]()) {
+        std::copy(vector.data(), vector.data() + _m, arr);
+    }
+    explicit MatrixObj(std::vector<VectorObj<TObj>>& vectors) : _n(vectors.empty() ? 0 : vectors[0].get_row()), _m(vectors.size()) {
+        arr = new TObj[_n * _m]();
+        for (int i = 0; i < _m; ++i) {
+            std::copy(vectors[i].arr, vectors[i].arr + _n, arr + i * _n);
+        }
+    }
+
     ~MatrixObj() {
         delete[] arr;
     }
@@ -44,13 +54,17 @@ public:
         }
         std::copy(arr + n, arr + n + m, slice);
     }
-    
-    MatrixObj &operator=(MatrixObj other) {
+
+    void swap(MatrixObj<TObj>& other) {
         std::swap(this->arr, other.arr);
         std::swap(this->_n, other._n);
         std::swap(this->_m, other._m);
+    }
+
+    MatrixObj &operator=(MatrixObj other) {
+        this->swap(other);
         return *this;
-        }
+    }
 
     MatrixObj operator+(const MatrixObj &other) {
         if (_n != other.get_row() || _m != other.get_col()) {
@@ -123,7 +137,7 @@ public:
         return arr[index];
     }
 
-    TObj& operator[](int index) {
+    TObj &operator[](int index) {
         if (index < 0 || index >= _n * _m) {
             throw std::out_of_range("Index out of range for matrix element access.");
         }
@@ -134,14 +148,7 @@ public:
         if (index < 0 || index >= _m) {
             throw std::out_of_range("Index out of range for column access.");
         }
-        return VectorObj<TObj>(&arr[index * _n], _n);
-    }
-
-    explicit MatrixObj(const std::vector<VectorObj<TObj>>& vectors) : _n(vectors.size()), _m(vectors.empty() ? 0 : vectors[0].get_row()) {
-        arr = new TObj[_n * _m]();
-        for (int i = 0; i < _n; ++i) {
-            std::copy(vectors[i].arr, vectors[i].arr + _m, arr + i * _m);
-        }
+        return VectorObj<TObj>(arr + index * _n, _n);
     }
 
     TObj* data() { return arr; }
@@ -153,7 +160,8 @@ template <typename TObj>
 class VectorObj : public MatrixObj<TObj> {
  public:
   VectorObj(){}
-  VectorObj(const TObj *other, int n) : MatrixObj<TObj>(other, 1, n) {
+  VectorObj(int n) : MatrixObj<TObj>(n, 1) {}
+  VectorObj(const TObj *other, int n) : MatrixObj<TObj>(other, n, 1) {
     if (other == nullptr) {
       throw std::invalid_argument("Null pointer provided to VectorObj constructor.");
     }
@@ -162,9 +170,9 @@ class VectorObj : public MatrixObj<TObj> {
   ~VectorObj() {}
 
   double L2norm() {
-    double sum = 0;
+    double sum = 1e-6;
     for (int i = 0; i < MatrixObj<TObj>::get_row() * MatrixObj<TObj>::get_col(); i++) {
-      sum += std::pow(MatrixObj<TObj>::arr[i], 2);
+      sum += std::pow(this->data()[i], 2);
     }
     return std::sqrt(sum);
   }
@@ -175,17 +183,36 @@ class VectorObj : public MatrixObj<TObj> {
       throw std::runtime_error("Cannot normalize a zero vector.");
     }
     for (int i = 0; i < MatrixObj<TObj>::get_row() * MatrixObj<TObj>::get_col(); i++) {
-      MatrixObj<TObj>::arr[i] /= l2norm;
+      this->data()[i] = this->data()[i] / l2norm;
     }
   }
 
-  TObj operator[](int index) const {
-    if (index < 0 || index >= MatrixObj<TObj>::get_row() * MatrixObj<TObj>::get_col()) {
+  VectorObj &operator=(VectorObj other) {
+        this->swap(other);
+        return *this;
+  }
+
+  TObj &operator[](int index) {
+    if (index < 0 || index >= this->get_row() * this->get_col()) {
       throw std::out_of_range("Index out of range for vector element access.");
     }
     return MatrixObj<TObj>::data()[index];
   }
+  
+  TObj operator*(const VectorObj<TObj>& other) const {
+    if (this->get_row() * this->get_col() != other.get_row() * other.get_col()) {
+        throw std::invalid_argument("Vector dimensions do not match for dot product.");
+    }
+    TObj sum = static_cast<TObj>(0);
+    for (size_t i = 0; i < this->get_row() * this->get_col(); ++i) {
+      sum += this->data()[i] * other.data()[i];
+    }
+    return sum;
+  }
 
+  int get_col() const {
+      return MatrixObj<TObj>::get_col();
+  }
   int get_row() const {
       return MatrixObj<TObj>::get_row();
   }
