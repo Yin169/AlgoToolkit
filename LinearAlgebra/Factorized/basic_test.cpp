@@ -1,6 +1,7 @@
 #include "basic.hpp"
 #include "gtest/gtest.h"
 #include <cmath>
+#include <iostream>
 
 namespace {
 
@@ -13,7 +14,7 @@ protected:
 
     void SetUp() override {
         A = MatrixObj<double>(3, 3);
-        for (size_t i = 0; i < 3*3; ++i) {
+        for (int i = 0; i < 3*3; ++i) {
             A.data()[i] = setA[i];
         }
         b = VectorObj<double>(setB, 3);
@@ -22,30 +23,30 @@ protected:
 
 TEST_F(BasicTest, RayleighQuotientTest) {
     double quotient = basic::rayleighQuotient(A, b);
-    EXPECT_NEAR(quotient, 1, 1e-6);
+    ASSERT_NEAR(quotient, 1, 1e-6) << "Rayleigh quotient test failed. Actual: " << quotient;
 }
 
 TEST_F(BasicTest, GramSmithTest) {
-    MatrixObj<double> orthMatrix(A.get_row(), A.get_col());
-    basic::gramSmith(A, orthMatrix);
-    for (size_t i = 0; i < orthMatrix.get_col(); ++i) {
-        VectorObj<double> u = orthMatrix.get_Col(i);
-        for (size_t j = i + 1; j < orthMatrix.get_col(); ++j) {
-            VectorObj<double> v = orthMatrix.get_Col(j);
+    std::cout << "Starting Gram-Schmidt test..." << std::endl;
+    int m = A.get_col();
+    std::vector<VectorObj<double>> orthSet(m);
+    basic::gramSmith(A, orthSet);
 
-            double dot_product = u * v;
-            std::cout << dot_product << " ";
-            EXPECT_NEAR(dot_product, 0, 1e-6);
+    for (int i = 0; i < m; ++i) {
+        std::cout << "Checking orthogonality for vector " << i << "..." << std::endl;
+        for (int j = i + 1; j < m; ++j) {
+            auto dot_product = orthSet[i] * orthSet[j];
+            ASSERT_NEAR(static_cast<double>(dot_product, 0.0, 1e-6) << "Gram-Schmidt test failed at (" << i << ", " << j << "). Actual: " << dot_product;
         }
-        std::cout << std::endl;
     }
+    std::cout << "Gram-Schmidt test completed successfully." << std::endl;
 }
 
 TEST_F(BasicTest, PowerIterTest) {
     VectorObj<double> b_init = b;
     basic::powerIter(A, b, 10);
     for (int i = 0; i < b.get_row(); ++i) { 
-        EXPECT_NEAR(b_init[i], b[i], 1e-6);
+        ASSERT_NEAR(b_init[i], b[i], 1e-6) << "Power iteration test failed at index " << i << ". Actual: " << b[i];
     }
 }
 
