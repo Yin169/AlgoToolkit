@@ -8,24 +8,21 @@
 namespace basic {
 
     template <typename TNum>
-    void powerIter(const MatrixObj<TNum> &A, VectorObj<TNum> &b, int max_iter_num) {
+    void powerIter(MatrixObj<TNum> &A, VectorObj<TNum> &b, int max_iter_num) {
         while(max_iter_num--){
             b.normalized();
-            MatrixObj<TNum> Atemp = A;
-            MatrixObj<TNum> btemp = static_cast<MatrixObj<TNum>>(b);
-            MatrixObj<TNum> Ab = Atemp * btemp;
+            MatrixObj<TNum> btemp(b);
+            MatrixObj<TNum> Ab = A * btemp;
             b = Ab.get_Col(0);
         }
     }
     
     template <typename TNum>
-    double rayleighQuotient(const MatrixObj<TNum> &A, const VectorObj<TNum> &b) {
-        VectorObj<TNum> btemp = b;
-        MatrixObj<TNum> bcast = static_cast<MatrixObj<TNum>>(btemp);
-        MatrixObj<TNum> Atemp = A;
-        MatrixObj<TNum> Ab = Atemp * bcast;
-        TNum dot_product = btemp * Ab.get_Col(0);
-        return dot_product / (btemp * btemp);
+    double rayleighQuotient(MatrixObj<TNum> &A, VectorObj<TNum> &b) {
+        MatrixObj<TNum> btemp(b);
+        MatrixObj<TNum> Ab = A * btemp;
+        TNum dot_product = b * Ab.get_Col(0);
+        return dot_product / (b * b);
     }
 
     template <typename TNum>
@@ -39,7 +36,7 @@ namespace basic {
     }
 
     template <typename TNum>
-    MatrixObj<TNum> gramSmith(const MatrixObj<TNum> &A) {
+    MatrixObj<TNum> gramSmith(MatrixObj<TNum> &A) {
         size_t m = A.get_col();
         std::vector<VectorObj<TNum>> orthSet;
 

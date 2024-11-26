@@ -23,6 +23,9 @@ public:
         _m = m;
         std::copy(other, other + n * m, arr);
     }
+    explicit MatrixObj(const VectorObj<TObj>& vector) : _n(vector.get_row()), _m(vector.get_col()), arr(new TObj[_m]()) {
+        std::copy(vector.data(), vector.data() + _m, arr);
+    }
     ~MatrixObj() {
         delete[] arr;
     }
@@ -44,13 +47,17 @@ public:
         }
         std::copy(arr + n, arr + n + m, slice);
     }
-    
-    MatrixObj &operator=(MatrixObj other) {
+
+    void swap(MatrixObj<TObj>& other) {
         std::swap(this->arr, other.arr);
         std::swap(this->_n, other._n);
         std::swap(this->_m, other._m);
+    }
+
+    MatrixObj &operator=(MatrixObj other) {
+        this->swap(other);
         return *this;
-        }
+    }
 
     MatrixObj operator+(const MatrixObj &other) {
         if (_n != other.get_row() || _m != other.get_col()) {
@@ -153,8 +160,8 @@ template <typename TObj>
 class VectorObj : public MatrixObj<TObj> {
  public:
   VectorObj(){}
-  VectorObj(int n) : MatrixObj<TObj>(1, n) {}
-  VectorObj(const TObj *other, int n) : MatrixObj<TObj>(other, 1, n) {
+  VectorObj(int n) : MatrixObj<TObj>(n, 1) {}
+  VectorObj(const TObj *other, int n) : MatrixObj<TObj>(other, n, 1) {
     if (other == nullptr) {
       throw std::invalid_argument("Null pointer provided to VectorObj constructor.");
     }
@@ -165,7 +172,7 @@ class VectorObj : public MatrixObj<TObj> {
   double L2norm() {
     double sum = 0;
     for (int i = 0; i < MatrixObj<TObj>::get_row() * MatrixObj<TObj>::get_col(); i++) {
-      sum += std::pow((*this)[i], 2);
+      sum += std::pow(this->data()[i], 2);
     }
     return std::sqrt(sum);
   }
@@ -176,8 +183,13 @@ class VectorObj : public MatrixObj<TObj> {
       throw std::runtime_error("Cannot normalize a zero vector.");
     }
     for (int i = 0; i < MatrixObj<TObj>::get_row() * MatrixObj<TObj>::get_col(); i++) {
-      (*this)[i] /= l2norm;
+      this->data()[i] = this->data()[i] / l2norm;
     }
+  }
+
+  VectorObj &operator=(VectorObj other) {
+        this->swap(other);
+        return *this;
   }
 
   TObj &operator[](int index) {
@@ -198,6 +210,9 @@ class VectorObj : public MatrixObj<TObj> {
     return sum;
   }
 
+  int get_col() const {
+      return MatrixObj<TObj>::get_col();
+  }
   int get_row() const {
       return MatrixObj<TObj>::get_row();
   }
