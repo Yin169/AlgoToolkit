@@ -28,32 +28,28 @@ namespace basic {
     template <typename TNum>
     VectorObj<TNum> subtProj(VectorObj<TNum> &u, VectorObj<TNum> &v) {
         double factor = (u * v) / (v * v);
-        VectorObj<TNum> result(u.get_col());
-        for (int i = 0; i < u.get_col(); ++i) {
+        VectorObj<TNum> result(u.get_row());
+        for (int i = 0; i < u.get_row(); ++i) {
             result[i] = u[i] - factor * v[i];
         }
         return result;
     }
 
     template <typename TNum>
-    MatrixObj<TNum> gramSmith(MatrixObj<TNum> &A) {
-        size_t m = A.get_col();
-        std::vector<VectorObj<TNum>> orthSet;
+    void gramSmith(const MatrixObj<TNum> &A, MatrixObj<TNum> &orth_) {
+        int m = A.get_col();
+        std::vector<VectorObj<TNum>> orthSet(m);
 
-        for (size_t i = 0; i < m; i++) {
-            VectorObj<TNum> u = A.get_Col(i);
-            VectorObj<TNum> v(u);
-
-            for (size_t j = 0; j < orthSet.size(); j++) {
-                v = subtProj(v, orthSet[j]);
+        for (int i = 0; i < m; i++) {
+            VectorObj<TNum> v = A.get_Col(i);
+            for (int j = i+1; j < m; j++) {
+                VectorObj<TNum> u = A.get_Col(j);
+                v = subtProj(u, v);
             }
-
-            if (v.L2norm() > 0) { 
-                orthSet.push_back(v);
-            }
+            orthSet[i] = v;
         }
-
-        return MatrixObj<TNum>(orthSet); 
+        MatrixObj<TNum> res(orthSet);
+        orth_ = res;
     }
 }
 #endif

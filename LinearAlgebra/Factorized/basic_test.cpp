@@ -20,30 +20,32 @@ protected:
     }
 };
 
-// TEST_F(BasicTest, PowerIterTest) {
-//     VectorObj<double> b_init = b;
-//     basic::powerIter(A, b, 10);
-//     for (int i = 0; i < b.get_row(); ++i) { 
-//         EXPECT_NEAR(b_init[i], b[i], 1e-6);
-//     }
-// }
-
 TEST_F(BasicTest, RayleighQuotientTest) {
     double quotient = basic::rayleighQuotient(A, b);
     EXPECT_NEAR(quotient, 1, 1e-6);
 }
 
 TEST_F(BasicTest, GramSmithTest) {
-    MatrixObj<double> orthMatrix = basic::gramSmith(A);
-    for (size_t i = 0; i < orthMatrix.get_row(); ++i) {
+    MatrixObj<double> orthMatrix(A.get_row(), A.get_col());
+    basic::gramSmith(A, orthMatrix);
+    for (size_t i = 0; i < orthMatrix.get_col(); ++i) {
+        VectorObj<double> u = orthMatrix.get_Col(i);
         for (size_t j = i + 1; j < orthMatrix.get_col(); ++j) {
-            VectorObj<double> u = orthMatrix.get_Col(i);
             VectorObj<double> v = orthMatrix.get_Col(j);
+
             double dot_product = u * v;
             std::cout << dot_product << " ";
             EXPECT_NEAR(dot_product, 0, 1e-6);
         }
         std::cout << std::endl;
+    }
+}
+
+TEST_F(BasicTest, PowerIterTest) {
+    VectorObj<double> b_init = b;
+    basic::powerIter(A, b, 10);
+    for (int i = 0; i < b.get_row(); ++i) { 
+        EXPECT_NEAR(b_init[i], b[i], 1e-6);
     }
 }
 

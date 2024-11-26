@@ -26,6 +26,13 @@ public:
     explicit MatrixObj(const VectorObj<TObj>& vector) : _n(vector.get_row()), _m(vector.get_col()), arr(new TObj[_m]()) {
         std::copy(vector.data(), vector.data() + _m, arr);
     }
+    explicit MatrixObj(std::vector<VectorObj<TObj>>& vectors) : _n(vectors.empty() ? 0 : vectors[0].get_row()), _m(vectors.size()) {
+        arr = new TObj[_n * _m]();
+        for (int i = 0; i < _m; ++i) {
+            std::copy(vectors[i].arr, vectors[i].arr + _n, arr + i * _n);
+        }
+    }
+
     ~MatrixObj() {
         delete[] arr;
     }
@@ -141,14 +148,7 @@ public:
         if (index < 0 || index >= _m) {
             throw std::out_of_range("Index out of range for column access.");
         }
-        return VectorObj<TObj>(&arr[index * _n], _n);
-    }
-
-    explicit MatrixObj(const std::vector<VectorObj<TObj>>& vectors) : _n(vectors.size()), _m(vectors.empty() ? 0 : vectors[0].get_row()) {
-        arr = new TObj[_n * _m]();
-        for (int i = 0; i < _n; ++i) {
-            std::copy(vectors[i].arr, vectors[i].arr + _m, arr + i * _m);
-        }
+        return VectorObj<TObj>(arr + index * _n, _n);
     }
 
     TObj* data() { return arr; }
@@ -170,7 +170,7 @@ class VectorObj : public MatrixObj<TObj> {
   ~VectorObj() {}
 
   double L2norm() {
-    double sum = 0;
+    double sum = 1e-6;
     for (int i = 0; i < MatrixObj<TObj>::get_row() * MatrixObj<TObj>::get_col(); i++) {
       sum += std::pow(this->data()[i], 2);
     }
