@@ -12,11 +12,10 @@ FAIL: //Obj:matrix_obj_test (see /private/var/tmp/_bazel_yincheangng/7b09d46fca2
 INFO: Found 1 test target...
 Target //Obj:matrix_obj_test up-to-date:
   bazel-bin/Obj/matrix_obj_test
-INFO: Elapsed time: 2.527s, Critical Path: 2.23s
+INFO: Elapsed time: 1.288s, Critical Path: 1.06s
 INFO: 14 processes: 10 internal, 4 darwin-sandbox.
 INFO: Build completed, 1 test FAILED, 14 total actions
-//Obj:matrix_obj_test                                                    FAILED in 1.0s
+//Obj:matrix_obj_test                                                    FAILED in 0.3s
   /private/var/tmp/_bazel_yincheangng/7b09d46fca209c01a4db898f3537b100/execroot/_main/bazel-out/darwin_arm64-fastbuild/testlogs/Obj/matrix_obj_test/test.log
 
 Executed 1 out of 1 test: 1 fails locally.
-INFO: Starting clean (this may take a while). Consider using --async if the clean takes more than several minutes.

@@ -95,7 +95,7 @@ TEST_F(MatrixObjTest, Transpose) {
 
 // Test for exception when multiplying matrices of incompatible dimensions
 TEST_F(MatrixObjTest, IncompatibleDimensionsMultiplication) {
-    EXPECT_THROW(matrix1 * matrix3, std::invalid_argument);
+    EXPECT_THROW(matrix1 * matrix2, std::invalid_argument);
 }
 
 // Test for accessing elements
@@ -108,7 +108,7 @@ TEST_F(MatrixObjTest, ElementAccess) {
 TEST_F(MatrixObjTest, GetColumn) {
     VectorObj<int> col = matrix1.get_Col(1);
     for (int i = 0; i < 2; ++i) {
-        EXPECT_EQ(col[i], matrix1[i * 3 + 1]);
+        EXPECT_EQ(col[i], matrix1[( (1 * 2) + i)]);
     }
 }
 

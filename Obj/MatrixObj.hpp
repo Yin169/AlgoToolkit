@@ -56,10 +56,11 @@ public:
         if (_n != other.get_row() || _m != other.get_col()) {
             throw std::invalid_argument("Matrix dimensions do not match for addition.");
         }
-        MatrixObj result(*this);
+        MatrixObj result(arr, _n, _m);
         for (int i = 0; i < _n * _m; ++i) {
             result.arr[i] += other.arr[i];
         }
+        
         return result;
     }
 
@@ -67,7 +68,7 @@ public:
         if (_n != other.get_row() || _m != other.get_col()) {
             throw std::invalid_argument("Matrix dimensions do not match for subtraction.");
         }
-        MatrixObj result(*this);
+        MatrixObj result(arr, _n, _m);
         for (int i = 0; i < _n * _m; ++i) {
             result.arr[i] -= other.arr[i];
         }
@@ -98,7 +99,7 @@ public:
         for (int i = 0; i < _n; ++i) {
             for (int j = 0; j < other.get_col(); ++j) {
                 for (int k = 0; k < _m; ++k) {
-                    result.arr[i * other.get_col() + j] += arr[i * _m + k] * other.arr[k * other.get_col() + j];
+                    result.arr[i * other.get_col() + j] += arr[i * _n + k] * other.arr[k * other.get_row() + j];
                 }
             }
         }
