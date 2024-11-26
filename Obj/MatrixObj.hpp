@@ -123,7 +123,7 @@ public:
         return arr[index];
     }
 
-    TObj& operator[](int index) {
+    TObj &operator[](int index) {
         if (index < 0 || index >= _n * _m) {
             throw std::out_of_range("Index out of range for matrix element access.");
         }
@@ -153,6 +153,7 @@ template <typename TObj>
 class VectorObj : public MatrixObj<TObj> {
  public:
   VectorObj(){}
+  VectorObj(int n) : MatrixObj<TObj>(1, n) {}
   VectorObj(const TObj *other, int n) : MatrixObj<TObj>(other, 1, n) {
     if (other == nullptr) {
       throw std::invalid_argument("Null pointer provided to VectorObj constructor.");
@@ -164,7 +165,7 @@ class VectorObj : public MatrixObj<TObj> {
   double L2norm() {
     double sum = 0;
     for (int i = 0; i < MatrixObj<TObj>::get_row() * MatrixObj<TObj>::get_col(); i++) {
-      sum += std::pow(MatrixObj<TObj>::arr[i], 2);
+      sum += std::pow((*this)[i], 2);
     }
     return std::sqrt(sum);
   }
@@ -175,15 +176,26 @@ class VectorObj : public MatrixObj<TObj> {
       throw std::runtime_error("Cannot normalize a zero vector.");
     }
     for (int i = 0; i < MatrixObj<TObj>::get_row() * MatrixObj<TObj>::get_col(); i++) {
-      MatrixObj<TObj>::arr[i] /= l2norm;
+      (*this)[i] /= l2norm;
     }
   }
 
-  TObj operator[](int index) const {
-    if (index < 0 || index >= MatrixObj<TObj>::get_row() * MatrixObj<TObj>::get_col()) {
+  TObj &operator[](int index) {
+    if (index < 0 || index >= this->get_row() * this->get_col()) {
       throw std::out_of_range("Index out of range for vector element access.");
     }
     return MatrixObj<TObj>::data()[index];
+  }
+  
+  TObj operator*(const VectorObj<TObj>& other) const {
+    if (this->get_row() * this->get_col() != other.get_row() * other.get_col()) {
+        throw std::invalid_argument("Vector dimensions do not match for dot product.");
+    }
+    TObj sum = static_cast<TObj>(0);
+    for (size_t i = 0; i < this->get_row() * this->get_col(); ++i) {
+      sum += this->data()[i] * other.data()[i];
+    }
+    return sum;
   }
 
   int get_row() const {

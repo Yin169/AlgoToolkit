@@ -1,8 +1,9 @@
 #ifndef BASIC_HPP
 #define BASIC_HPP
 
+#include <iostream>
 #include <vector>
-#include "../../Obj/MatrixObj.hpp" 
+#include "Obj/MatrixObj.hpp" 
 
 namespace basic {
 
@@ -10,22 +11,28 @@ namespace basic {
     void powerIter(const MatrixObj<TNum> &A, VectorObj<TNum> &b, int max_iter_num) {
         while(max_iter_num--){
             b.normalized();
-            VectorObj<TNum> Ab = A * b;
-            b = Ab;
+            MatrixObj<TNum> Atemp = A;
+            MatrixObj<TNum> btemp = static_cast<MatrixObj<TNum>>(b);
+            MatrixObj<TNum> Ab = Atemp * btemp;
+            b = Ab.get_Col(0);
         }
     }
-
+    
     template <typename TNum>
     double rayleighQuotient(const MatrixObj<TNum> &A, const VectorObj<TNum> &b) {
-        VectorObj<TNum> Ab = A * b;
-        return (b.Transpose() * Ab) / (b.Transpose() * b);
+        VectorObj<TNum> btemp = b;
+        MatrixObj<TNum> bcast = static_cast<MatrixObj<TNum>>(btemp);
+        MatrixObj<TNum> Atemp = A;
+        MatrixObj<TNum> Ab = Atemp * bcast;
+        TNum dot_product = btemp * Ab.get_Col(0);
+        return dot_product / (btemp * btemp);
     }
 
     template <typename TNum>
-    VectorObj<TNum> subtProj(const VectorObj<TNum> &u, const VectorObj<TNum> &v) {
-        double factor = (u.Transpose() * v) / (v.Transpose * v);
-        VectorObj<TNum> result(u.get_row(), u.get_col());
-        for (int i = 0; i < u.get_row(); ++i) {
+    VectorObj<TNum> subtProj(VectorObj<TNum> &u, VectorObj<TNum> &v) {
+        double factor = (u * v) / (v * v);
+        VectorObj<TNum> result(u.get_col());
+        for (int i = 0; i < u.get_col(); ++i) {
             result[i] = u[i] - factor * v[i];
         }
         return result;
@@ -33,7 +40,7 @@ namespace basic {
 
     template <typename TNum>
     MatrixObj<TNum> gramSmith(const MatrixObj<TNum> &A) {
-        size_t n = A.get_row(), m = A.get_col();
+        size_t m = A.get_col();
         std::vector<VectorObj<TNum>> orthSet;
 
         for (size_t i = 0; i < m; i++) {
@@ -52,3 +59,4 @@ namespace basic {
         return MatrixObj<TNum>(orthSet); 
     }
 }
+#endif

@@ -4,3 +4,9 @@ conan/boost/BUILD.bazel
 *.json
 *.bzl
 *.sh
+bazel-testlogs
+bazel-out
+bazel-MyAlgorithmicToolkit
+bazel-bin
+.DS_Store
+.DS_Store
