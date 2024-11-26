@@ -15,10 +15,14 @@ private:
     TObj *arr;
 
 public:
-    MatrixObj(int n, int m) : _n(n), _m(m) {
-        arr = new TObj[_n * _m]();
+    MatrixObj(){}
+    MatrixObj(int n, int m) : _n(n), _m(m), arr(new TObj[n * m]()) {}
+    MatrixObj(const TObj *other, int n, int m){
+        arr = new TObj[n * m]();
+        _n = n;
+        _m = m;
+        std::copy(other, other + n * m, arr);
     }
-
     ~MatrixObj() {
         delete[] arr;
     }
@@ -30,6 +34,8 @@ public:
         if (n != _n || m != _m) {
             throw std::invalid_argument("Cannot change the dimensions of a MatrixObj instance.");
         }
+        _n = n;
+        _m = m;
     }
 
     void Slice(TObj* slice, int n, int m) const {
@@ -38,30 +44,23 @@ public:
         }
         std::copy(arr + n, arr + n + m, slice);
     }
-
-    MatrixObj(const MatrixObj &other) : _n(other.get_row()), _m(other.get_col()) {
-        arr = new TObj[_n * _m];
-        std::copy(&other[0], &other[_n * _m], arr);
-    }
-
-    MatrixObj &operator=(const MatrixObj &other) {
-        if (this != &other) {
-            if (_n != other.get_row() || _m != other.get_col()) {
-                throw std::invalid_argument("Matrix dimensions do not match for assignment.");
-            }
-            std::copy(&other[0], &other[_n * _m], arr);
-        }
+    
+    MatrixObj &operator=(MatrixObj other) {
+        std::swap(this->arr, other.arr);
+        std::swap(this->_n, other._n);
+        std::swap(this->_m, other._m);
         return *this;
-    }
+        }
 
     MatrixObj operator+(const MatrixObj &other) {
         if (_n != other.get_row() || _m != other.get_col()) {
             throw std::invalid_argument("Matrix dimensions do not match for addition.");
         }
-        MatrixObj result(*this);
+        MatrixObj result(arr, _n, _m);
         for (int i = 0; i < _n * _m; ++i) {
             result.arr[i] += other.arr[i];
         }
+        
         return result;
     }
 
@@ -69,17 +68,26 @@ public:
         if (_n != other.get_row() || _m != other.get_col()) {
             throw std::invalid_argument("Matrix dimensions do not match for subtraction.");
         }
-        MatrixObj result(*this);
+        MatrixObj result(arr, _n, _m);
         for (int i = 0; i < _n * _m; ++i) {
             result.arr[i] -= other.arr[i];
         }
         return result;
     }
 
-    MatrixObj &operator*(double factor) {
-        for (size_t i = 0; i < _n * _m; ++i) {
-            arr[i] *= factor;
+    inline void scalarMultiple(TObj *arrObj, TObj scalar){
+        for (int i = 0; i < _n * _m; ++i) {
+            arrObj[i] *= scalar;
         }
+    }
+
+    MatrixObj &operator*=(double scalar) {
+        scalarMultiple(&(arr[0]), scalar);
+        return *this;
+    }
+
+    MatrixObj &operator*(double factor) {
+        scalarMultiple(&(arr[0]), factor);
         return *this;
     }
 
@@ -91,7 +99,7 @@ public:
         for (int i = 0; i < _n; ++i) {
             for (int j = 0; j < other.get_col(); ++j) {
                 for (int k = 0; k < _m; ++k) {
-                    result.arr[i * other.get_col() + j] += arr[i * _m + k] * other.arr[k * other.get_col() + j];
+                    result.arr[i * other.get_col() + j] += arr[i * _n + k] * other.arr[k * other.get_row() + j];
                 }
             }
         }
@@ -108,7 +116,14 @@ public:
         return result;
     }
 
-    TObj &operator[](int index) {
+    const TObj &operator[](int index) const {
+        if (index < 0 || index >= _n * _m) {
+            throw std::out_of_range("Index out of range for matrix element access.");
+        }
+        return arr[index];
+    }
+
+    TObj& operator[](int index) {
         if (index < 0 || index >= _n * _m) {
             throw std::out_of_range("Index out of range for matrix element access.");
         }
@@ -119,7 +134,7 @@ public:
         if (index < 0 || index >= _m) {
             throw std::out_of_range("Index out of range for column access.");
         }
-        return VectorObj<TObj>(&arr[index * _n], 1, _n);
+        return VectorObj<TObj>(&arr[index * _n], _n);
     }
 
     explicit MatrixObj(const std::vector<VectorObj<TObj>>& vectors) : _n(vectors.size()), _m(vectors.empty() ? 0 : vectors[0].get_row()) {
@@ -128,11 +143,16 @@ public:
             std::copy(vectors[i].arr, vectors[i].arr + _m, arr + i * _m);
         }
     }
+
+    TObj* data() { return arr; }
+    const TObj* data() const { return arr; }
+
 };
 
 template <typename TObj>
 class VectorObj : public MatrixObj<TObj> {
  public:
+  VectorObj(){}
   VectorObj(const TObj *other, int n) : MatrixObj<TObj>(other, 1, n) {
     if (other == nullptr) {
       throw std::invalid_argument("Null pointer provided to VectorObj constructor.");
@@ -163,7 +183,7 @@ class VectorObj : public MatrixObj<TObj> {
     if (index < 0 || index >= MatrixObj<TObj>::get_row() * MatrixObj<TObj>::get_col()) {
       throw std::out_of_range("Index out of range for vector element access.");
     }
-    return MatrixObj<TObj>::arr[index];
+    return MatrixObj<TObj>::data()[index];
   }
 
   int get_row() const {
