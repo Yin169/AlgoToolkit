@@ -26,7 +26,7 @@ public:
     explicit MatrixObj(const VectorObj<TObj>& vector) : _n(vector.get_row()), _m(vector.get_col()), arr(new TObj[_m]()) {
         std::copy(vector.data(), vector.data() + _m, arr);
     }
-    explicit MatrixObj(std::vector<VectorObj<TObj>>& vectors) : _n(vectors.empty() ? 0 : vectors[0].get_row()), _m(vectors.size()) {
+    explicit MatrixObj(const std::vector<VectorObj<TObj>>& vectors) : _n(vectors.empty() ? 0 : vectors[0].get_row()), _m(vectors.size()) {
         arr = new TObj[_n * _m]();
         for (int i = 0; i < _m; ++i) {
             std::copy(vectors[i].arr, vectors[i].arr + _n, arr + i * _n);
@@ -148,7 +148,7 @@ public:
         if (index < 0 || index >= _m) {
             throw std::out_of_range("Index out of range for column access.");
         }
-        return VectorObj<TObj>(arr + index * _n, _n);
+        return VectorObj<TObj>(arr+index * _n, _n);
     }
 
     TObj* data() { return arr; }
@@ -200,11 +200,11 @@ class VectorObj : public MatrixObj<TObj> {
   }
   
   TObj operator*(const VectorObj<TObj>& other) const {
-    if (this->get_row() * this->get_col() != other.get_row() * other.get_col()) {
+    if (this->get_row() != other.get_row()) {
         throw std::invalid_argument("Vector dimensions do not match for dot product.");
     }
     TObj sum = static_cast<TObj>(0);
-    for (size_t i = 0; i < this->get_row() * this->get_col(); ++i) {
+    for (int i = 0; i < this->get_row(); ++i) {
       sum += this->data()[i] * other.data()[i];
     }
     return sum;

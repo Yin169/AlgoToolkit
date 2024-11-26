@@ -36,9 +36,8 @@ namespace basic {
     }
 
     template <typename TNum>
-    void gramSmith(const MatrixObj<TNum> &A, MatrixObj<TNum> &orth_) {
+    void gramSmith(const MatrixObj<TNum> &A, std::vector<VectorObj<TNum>> &orthSet_) {
         int m = A.get_col();
-        std::vector<VectorObj<TNum>> orthSet(m);
 
         for (int i = 0; i < m; i++) {
             VectorObj<TNum> v = A.get_Col(i);
@@ -46,10 +45,8 @@ namespace basic {
                 VectorObj<TNum> u = A.get_Col(j);
                 v = subtProj(u, v);
             }
-            orthSet[i] = v;
+            orthSet_[i] = v;
         }
-        MatrixObj<TNum> res(orthSet);
-        orth_ = res;
     }
 }
 #endif
