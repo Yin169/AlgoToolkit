@@ -1,9 +1,7 @@
 
 conan/boost/BUILD.bazel
-*.bazel
 *.json
 *.bzl
-*.sh
 bazel-testlogs
 bazel-out
 bazel-MyAlgorithmicToolkit

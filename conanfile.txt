@@ -1,12 +1,15 @@
 [requires]
 fmt/10.1.1
-boost/1.83.0
+boost/1.86.0
 gtest/1.15.0
+
+[options]
+boost/1.86.0:without_locale=True
+boost/1.86.0:with_stacktrace_backtrace=False
 
 [generators]
 BazelDeps
 BazelToolchain
-CMakeToolchain
 
 [layout]
 bazel_layout
