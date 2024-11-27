@@ -12,3 +12,12 @@ cc_test(
     srcs = ["matrix_obj_test.cpp"],
     deps = [":matrix_lib", "@gtest//:gtest"]
 )
+
+cc_test(
+    name = "matrix_benchmark_test",
+    srcs = ["matrix_benchmark_test.cpp"],
+    deps = [
+        ":matrix_lib",
+        "@benchmark//:benchmark",
+    ],
+)

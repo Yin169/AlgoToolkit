@@ -26,6 +26,15 @@ TEST_F(BasicTest, RayleighQuotientTest) {
     ASSERT_NEAR(quotient, 1, 1e-6) << "Rayleigh quotient test failed. Actual: " << quotient;
 }
 
+
+TEST_F(BasicTest, PowerIterTest) {
+    VectorObj<double> b_init = b;
+    basic::powerIter(A, b, 10);
+    for (int i = 0; i < b.get_row(); ++i) { 
+        ASSERT_NEAR(b_init[i], b[i], 1e-6) << "Power iteration test failed at index " << i << ". Actual: " << b[i];
+    }
+}
+
 TEST_F(BasicTest, GramSmithTest) {
     std::cout << "Starting Gram-Schmidt test..." << std::endl;
     int m = A.get_col();
@@ -42,12 +51,5 @@ TEST_F(BasicTest, GramSmithTest) {
     std::cout << "Gram-Schmidt test completed successfully." << std::endl;
 }
 
-TEST_F(BasicTest, PowerIterTest) {
-    VectorObj<double> b_init = b;
-    basic::powerIter(A, b, 10);
-    for (int i = 0; i < b.get_row(); ++i) { 
-        ASSERT_NEAR(b_init[i], b[i], 1e-6) << "Power iteration test failed at index " << i << ". Actual: " << b[i];
-    }
-}
 
 } // namespace

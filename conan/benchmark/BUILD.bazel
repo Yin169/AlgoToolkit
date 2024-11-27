@@ -1,0 +1,73 @@
+# Components precompiled libs
+cc_import(
+    name = "benchmark_precompiled",
+    static_library = "lib/libbenchmark.a",
+)
+
+cc_import(
+    name = "benchmark_main_precompiled",
+    static_library = "lib/libbenchmark_main.a",
+)
+
+# Root package precompiled libs
+
+# Components libraries declaration
+cc_library(
+    name = "benchmark-_benchmark",
+    hdrs = glob([
+        "include/**",
+    ]),
+    includes = [
+        "include",
+    ],
+    defines = [
+        "BENCHMARK_STATIC_DEFINE",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort
+        ":benchmark_precompiled",
+    ],
+)
+
+cc_library(
+    name = "benchmark-benchmark_main",
+    hdrs = glob([
+        "include/**",
+    ]),
+    includes = [
+        "include",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort
+        ":benchmark_main_precompiled",
+        ":benchmark-_benchmark",
+    ],
+)
+
+# Package library declaration
+cc_library(
+    name = "benchmark",
+    hdrs = glob([
+        "include/**",
+    ]),
+    includes = [
+        "include",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        # do not sort
+        ":benchmark-_benchmark",
+        ":benchmark-benchmark_main",
+    ],
+)
+
+# Filegroup library declaration
+filegroup(
+    name = "benchmark_binaries",
+    srcs = glob([
+        "bin/**",
+    ]),
+    visibility = ["//visibility:public"],
+)

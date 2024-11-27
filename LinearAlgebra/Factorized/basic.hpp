@@ -41,11 +41,10 @@ namespace basic {
 
         for (int i = 0; i < m; i++) {
             VectorObj<TNum> v = A.get_Col(i);
-            for (int j = i+1; j < m; j++) {
-                VectorObj<TNum> u = A.get_Col(j);
-                v = subtProj(u, v);
-            }
             orthSet_[i] = v;
+            for (int j = i-1; j > 0; j--) {
+                orthSet_[j] = subtProj(orthSet_[j], v);
+            }
         }
     }
 }

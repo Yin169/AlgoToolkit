@@ -17,12 +17,21 @@ private:
 public:
     MatrixObj(){}
     MatrixObj(int n, int m) : _n(n), _m(m), arr(new TObj[n * m]()) {}
-    MatrixObj(const TObj *other, int n, int m){
+    MatrixObj(const TObj *other, int n, int m) : _n(n), _m(m){
         arr = new TObj[n * m]();
-        _n = n;
-        _m = m;
         std::copy(other, other + n * m, arr);
     }
+    MatrixObj(const MatrixObj &other) : _n(other._n), _m(other._m) {
+        arr = new TObj[_n * _m];
+        std::copy(other.arr, other.arr + _n * _m, arr);
+    }
+
+    MatrixObj(MatrixObj&& other) noexcept : _n(other._n), _m(other._m), arr(other.arr) {
+        other._n = 0;
+        other._m = 0;
+        other.arr = nullptr;
+    }
+
     explicit MatrixObj(const VectorObj<TObj>& vector) : _n(vector.get_row()), _m(vector.get_col()), arr(new TObj[_m]()) {
         std::copy(vector.data(), vector.data() + _m, arr);
     }
@@ -62,21 +71,28 @@ public:
         std::swap(this->_n, other._n);
         std::swap(this->_m, other._m);
     }
-
-    MatrixObj &operator=(MatrixObj other) {
-        this->swap(other);
+    
+    MatrixObj& operator=(MatrixObj&& other) noexcept {
+        if (this != &other) {
+            delete[] arr;
+            _n = other._n;
+            _m = other._m;
+            arr = std::move(other.arr);
+            other._n = 0;
+            other._m = 0;
+            other.arr = nullptr;
+        }
         return *this;
     }
-
+    
     MatrixObj operator+(const MatrixObj &other) {
         if (_n != other.get_row() || _m != other.get_col()) {
             throw std::invalid_argument("Matrix dimensions do not match for addition.");
         }
-        MatrixObj result(arr, _n, _m);
+        MatrixObj result(_n, _m);
         for (int i = 0; i < _n * _m; ++i) {
-            result.arr[i] += other.arr[i];
+            result.arr[i] = arr[i] + other.arr[i];
         }
-        
         return result;
     }
 
@@ -84,9 +100,9 @@ public:
         if (_n != other.get_row() || _m != other.get_col()) {
             throw std::invalid_argument("Matrix dimensions do not match for subtraction.");
         }
-        MatrixObj result(arr, _n, _m);
+        MatrixObj result(_n, _m);
         for (int i = 0; i < _n * _m; ++i) {
-            result.arr[i] -= other.arr[i];
+            result.arr[i] = arr[i] - other.arr[i];
         }
         return result;
     }
@@ -172,7 +188,7 @@ class VectorObj : public MatrixObj<TObj> {
   ~VectorObj() {}
 
   double L2norm() {
-    double sum = 1e-6;
+    double sum = 0;
     for (int i = 0; i < MatrixObj<TObj>::get_row() * MatrixObj<TObj>::get_col(); i++) {
       sum += std::pow(this->data()[i], 2);
     }
