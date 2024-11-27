@@ -36,7 +36,7 @@ TEST_F(BasicTest, GramSmithTest) {
         std::cout << "Checking orthogonality for vector " << i << "..." << std::endl;
         for (int j = i + 1; j < m; ++j) {
             auto dot_product = orthSet[i] * orthSet[j];
-            ASSERT_NEAR(static_cast<double>(dot_product, 0.0, 1e-6) << "Gram-Schmidt test failed at (" << i << ", " << j << "). Actual: " << dot_product;
+            ASSERT_NEAR(dot_product, 0.0, 1e-6) << "Gram-Schmidt test failed at (" << i << ", " << j << "). Actual: " << dot_product;
         }
     }
     std::cout << "Gram-Schmidt test completed successfully." << std::endl;

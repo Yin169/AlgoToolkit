@@ -12,7 +12,7 @@ template<typename TObj>
 class MatrixObj {
 private:
     int _n, _m;
-    TObj *arr;
+    TObj *arr=nullptr;
 
 public:
     MatrixObj(){}
@@ -34,7 +34,9 @@ public:
     }
 
     ~MatrixObj() {
-        delete[] arr;
+        if (arr != nullptr) {
+            delete[] arr;
+        }
     }
 
     int get_row() const { return _n; }
