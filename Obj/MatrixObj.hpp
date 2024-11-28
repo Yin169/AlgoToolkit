@@ -201,7 +201,7 @@ class VectorObj : public MatrixObj<TObj> {
     ~VectorObj() {}
     
     double L2norm() {
-        double sum = 0;
+        double sum = 1e-8;
         for (int i = 0; i < MatrixObj<TObj>::get_row() * MatrixObj<TObj>::get_col(); i++) {
             sum += std::pow(this->data()[i], 2);
         }

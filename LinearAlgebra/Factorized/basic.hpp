@@ -9,6 +9,7 @@ namespace basic {
 
     template <typename TNum>
     void powerIter(MatrixObj<TNum> &A, VectorObj<TNum> &b, int max_iter_num) {
+        if (max_iter_num <= 0) return;
         while(max_iter_num--){
             b.normalized();
             MatrixObj<TNum> btemp(b);
@@ -19,6 +20,7 @@ namespace basic {
     
     template <typename TNum>
     double rayleighQuotient(MatrixObj<TNum> &A, VectorObj<TNum> &b) {
+        if (b.L2norm() == 0) return 0;
         MatrixObj<TNum> btemp(b);
         MatrixObj<TNum> Ab = A * btemp;
         TNum dot_product = b * Ab.get_Col(0);
@@ -27,6 +29,7 @@ namespace basic {
 
     template <typename TNum>
     VectorObj<TNum> subtProj(VectorObj<TNum> &u, VectorObj<TNum> &v) {
+        if (v.L2norm() == 0) return u;
         double factor = (u * v) / (v * v);
         VectorObj<TNum> result(u.get_row());
         for (int i = 0; i < u.get_row(); ++i) {
@@ -42,7 +45,7 @@ namespace basic {
         for (int i = 0; i < m; i++) {
             VectorObj<TNum> v = A.get_Col(i);
             orthSet_[i] = v;
-            for (int j = i-1; j > 0; j--) {
+            for (int j = i-1; j >= 0; j--) {
                 orthSet_[j] = subtProj(orthSet_[j], v);
             }
         }
@@ -50,13 +53,11 @@ namespace basic {
 
     template <typename TNum>
     void genUnitvec(int i, int n, VectorObj<TNum> &e){
-            TNum *unit_v = new TNum[n*1];
-            memset(unit_v, 0, sizeof(TNum));
-            unit_v[i] = static_cast<TNum>(1);
-            e = VectorObj<TNum>(unit_v, n);
-            if(unit_v!=nullptr){
-                delete[] unit_v;
-            }
+        TNum *unit_v = new TNum[n];
+        memset(unit_v, 0, n * sizeof(TNum));
+        unit_v[i] = static_cast<TNum>(1);
+        e = VectorObj<TNum>(unit_v, n);
+        delete[] unit_v;
     }
 
     template <typename TNum>
