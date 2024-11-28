@@ -47,5 +47,47 @@ namespace basic {
             }
         }
     }
+
+    template <typename TNum>
+    void genUnitvec(int i, int n, VectorObj<TNum> &e){
+            TNum *unit_v = new TNum[n*1];
+            memset(unit_v, 0, sizeof(TNum));
+            unit_v[i] = static_cast<TNum>(1);
+            e = VectorObj<TNum>(unit_v, n);
+            if(unit_v!=nullptr){
+                delete[] unit_v;
+            }
+    }
+
+    template <typename TNum>
+    void genUnitMatx(int n, int m, MatrixObj<TNum> &I){
+        std::vector<VectorObj<TNum>> eSet(m);
+        for(int i=0; i<n; i++){
+            genUnitvec(i, n, eSet[i]);
+        }
+        I = MatrixObj<TNum>(eSet);
+    }
+
+    template<typename TNum> 
+    TNum sign(TNum x){
+        return x >= 0 ? static_cast<TNum>(1) : static_cast<TNum>(-1);
+    }
+    
+    template <typename TNum>
+    void houseH(MatrixObj<TNum> &A, MatrixObj<TNum> &H, int index) {
+        int m = A.get_col();
+        int n = A.get_row();
+        MatrixObj<TNum> I;
+        genUnitMatx(n, m, I);
+        
+        VectorObj<TNum> x = A.get_Col(index);
+        VectorObj<TNum> e;
+        genUnitvec(index, n, e);
+        TNum factor = x.L2norm() * sign(x[index]);
+        e *= factor;
+        VectorObj<TNum> vt = x + e;
+        MatrixObj<TNum> v(&(vt.data()[0]), n, 1);
+        H = I - (v * v.Transpose()) * (1/(vt * vt));
+    }
 }
 #endif
