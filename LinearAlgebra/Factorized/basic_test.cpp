@@ -26,7 +26,6 @@ TEST_F(BasicTest, RayleighQuotientTest) {
     ASSERT_NEAR(quotient, 1, 1e-6) << "Rayleigh quotient test failed. Actual: " << quotient;
 }
 
-
 TEST_F(BasicTest, PowerIterTest) {
     VectorObj<double> b_init = b;
     basic::powerIter(A, b, 10);
@@ -51,5 +50,38 @@ TEST_F(BasicTest, GramSmithTest) {
     std::cout << "Gram-Schmidt test completed successfully." << std::endl;
 }
 
+TEST_F(BasicTest, GenUnitvecTest) {
+    VectorObj<double> e;
+    basic::genUnitvec(1, 3, e);
+    ASSERT_NEAR(e[0], 0, 1e-6);
+    ASSERT_NEAR(e[1], 1, 1e-6);
+    ASSERT_NEAR(e[2], 0, 1e-6);
+}
+
+TEST_F(BasicTest, GenUnitMatxTest) {
+    MatrixObj<double> I;
+    basic::genUnitMatx(3, 3, I);
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            if (i == j) {
+                ASSERT_NEAR(I[i * 3 + j], 1, 1e-6);
+            } else {
+                ASSERT_NEAR(I[i * 3 + j], 0, 1e-6);
+            }
+        }
+    }
+}
+
+TEST_F(BasicTest, SignTest) {
+    ASSERT_GT(basic::sign(5.0), 0);
+    ASSERT_LT(basic::sign(-3.0), 0);
+}
+
+TEST_F(BasicTest, HouseHTest) {
+    MatrixObj<double> H;
+    basic::houseH(A, H, 0);
+    // Add assertions to check if H is a valid Householder matrix
+    // This might involve checking orthogonality and other properties
+}
 
 } // namespace

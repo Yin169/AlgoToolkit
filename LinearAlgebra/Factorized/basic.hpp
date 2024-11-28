@@ -72,19 +72,21 @@ namespace basic {
     TNum sign(TNum x){
         return x >= 0 ? static_cast<TNum>(1) : static_cast<TNum>(-1);
     }
-
+    
     template <typename TNum>
-    void houseH(MatrixObj<TNum> &A, MatrixObj<TNum> &H, int index){
+    void houseH(MatrixObj<TNum> &A, MatrixObj<TNum> &H, int index) {
         int m = A.get_col();
         int n = A.get_row();
         MatrixObj<TNum> I;
         genUnitMatx(n, m, I);
-
+        
         VectorObj<TNum> x = A.get_Col(index);
         VectorObj<TNum> e;
         genUnitvec(index, n, e);
-        VectorObj<TNum> vt = x + x.L2norm() * sign(x[index]) * e;
-        MatrixObj<TNum> v(vt);
+        TNum factor = x.L2norm() * sign(x[index]);
+        e *= factor;
+        VectorObj<TNum> vt = x + e;
+        MatrixObj<TNum> v(&(vt.data()[0]), n, 1);
         H = I - (v * v.Transpose()) * (1/(vt * vt));
     }
 }
