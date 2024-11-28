@@ -87,7 +87,7 @@ namespace basic {
         e *= factor;
         VectorObj<TNum> vt = x + e;
         MatrixObj<TNum> v(&(vt.data()[0]), n, 1);
-        H = I - (v * v.Transpose()) * (1/(vt * vt));
+        H = I - (v * v.Transpose()) * (2/(vt * vt));
     }
 }
 #endif
