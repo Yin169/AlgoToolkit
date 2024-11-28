@@ -1,56 +1,57 @@
-# MatrixObj and Basic Linear Algebra Operations Library
+# Linear Algebra Toolkit: LAToolkit
 
-This repository contains a C++ template library for basic linear algebra operations, focusing on matrix and vector manipulation. The library is designed to be efficient, easy to use, and templated for flexibility with different data types.
+Welcome to the LAToolkit, a C++ library designed to provide a robust and efficient set of tools for performing linear algebra operations. This repository contains two core header files: `MatrixObj.hpp` and `basic.hpp`, which together form the foundation of our linear algebra capabilities.
 
 ## Overview
 
-The library consists of two main components:
+### MatrixObj.hpp
+This file defines the `MatrixObj` and `VectorObj` classes, which are templates that allow for the creation and manipulation of matrices and vectors with arbitrary data types. The `MatrixObj` class includes methods for matrix addition, subtraction, scalar multiplication, and matrix multiplication, as well as transpose operations. The `VectorObj` class, which inherits from `MatrixObj`, extends these capabilities to one-dimensional arrays, providing additional methods for vector normalization and dot product calculations.
 
-1. **MatrixObj.hpp**: A template class for matrix operations.
-2. **basic.hpp**: A namespace containing basic linear algebra algorithms and operations.
+### Basic.hpp
+The `basic.hpp` file contains a namespace `basic` that encompasses a variety of linear algebra algorithms and utility functions. These include:
 
-## MatrixObj.hpp
+- **Power Iteration**: An iterative method for finding the dominant eigenvalue and its corresponding eigenvector of a matrix.
+- **Rayleigh Quotient**: A method for estimating an eigenvalue of a matrix given an eigenvector.
+- **Subtractive Projection**: A technique for orthogonalizing vectors.
+- **Gram-Schmidt Process**: An algorithm for orthonormalizing a set of vectors.
+- **Householder Reflections**: A method for constructing orthogonal matrices, used in the QR decomposition.
+- **QR Decomposition**: A factorization of a matrix into an orthogonal matrix Q and an upper triangular matrix R.
 
-This file defines the `MatrixObj` and `VectorObj` classes, which are templated to work with any data type (`TObj`). The `MatrixObj` class provides a robust interface for matrix operations such as addition, subtraction, scalar multiplication, matrix multiplication, and transposition. The `VectorObj` class is derived from `MatrixObj` and is specialized for vector operations, including L2 norm calculation and normalization.
+## Features
 
-### Key Features of MatrixObj
+- **Template-Based**: Works with any data type that supports the necessary operations.
+- **Efficiency**: Optimized for performance with in-place operations where possible.
+- **Extensibility**: Easily add new algorithms and functions to the library.
+- **Portability**: Written in standard C++, compatible with any compliant compiler.
 
-- **Dynamic Memory Management**: Allocates and deallocates memory automatically.
-- **Copy and Move Semantics**: Implements copy and move constructors and assignment operators for efficient memory management.
-- **Element Access**: Provides `operator[]` for accessing matrix elements.
-- **Matrix Operations**: Supports matrix addition, subtraction, scalar multiplication, and matrix multiplication.
-- **Transpose**: Easily transpose a matrix.
-- **Slice**: Extract a slice of the matrix.
+## Getting Started
 
-### Key Features of VectorObj
+To get started with LAToolkit, simply clone this repository and include the `MatrixObj.hpp` and `basic.hpp` files in your project. You can then instantiate `MatrixObj` and `VectorObj` with your desired data type and utilize the functions provided in the `basic` namespace.
 
-- **L2 Norm and Normalization**: Computes the L2 norm and normalizes the vector.
-- **Element Access**: Provides `operator[]` for accessing vector elements.
-- **Dot Product**: Implements the dot product operation between two vectors.
+### Usage Example
 
-## basic.hpp
+```cpp
+#include "MatrixObj.hpp"
+#include "basic.hpp"
 
-This file introduces the `basic` namespace, which contains several template functions for performing fundamental linear algebra operations:
+using namespace basic;
 
-- **powerIter**: Implements the power iteration method for finding the dominant eigenvalue and eigenvector of a matrix.
-- **rayleighQuotient**: Calculates the Rayleigh quotient, which is used in eigenvalue problems.
-- **subtProj**: Performs a vector projection by subtracting the projection of one vector onto another.
-- **gramSmith**: Applies the Gram-Schmidt process to a set of vectors to produce an orthogonal set.
+int main() {
+    MatrixObj<double> A(2, 2); // Create a 2x2 matrix
+    VectorObj<double> b(2);    // Create a 2-dimensional vector
 
-## Usage
+    // Initialize A and b with values...
 
-To use this library, simply include the `MatrixObj.hpp` and `basic.hpp` files in your project and start utilizing the provided classes and functions. Since the library is templated, you can use it with various data types, such as `int`, `float`, `double`, or even custom types.
+    powerIter(A, b, 1000); // Perform power iteration
 
-## Building and Testing
-
-The library does not require any external dependencies other than the C++ Standard Library. To build and test the library, you can use any standard C++ compiler that supports C++11 or later. We recommend using a build system like CMake for ease of compilation and testing.
+    return 0;
+}
+```
 
 ## Contributing
 
-Contributions to the library are welcome! If you find any bugs, have suggestions for improvements, or want to add new features, please open an issue or submit a pull request.
+We welcome contributions to LAToolkit! If you have an algorithm you'd like to add or find a bug, please submit a pull request or open an issue.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
- 
+LAToolkit is released under the [MIT License](LICENSE). Feel free to use, modify, and distribute this software as long as you comply with the license.
