@@ -56,4 +56,46 @@ static void BM_GramSmith(benchmark::State& state) {
 }
 BENCHMARK(BM_GramSmith);
 
+// Benchmark for subtProj
+static void BM_SubtProj(benchmark::State& state) {
+    VectorObj<double> u = GenerateRandomVectorObj<double>(100);
+    VectorObj<double> v = GenerateRandomVectorObj<double>(100);
+
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(basic::subtProj(u, v));
+    }
+}
+BENCHMARK(BM_SubtProj);
+
+// Benchmark for genUnitvec
+static void BM_GenUnitvec(benchmark::State& state) {
+    VectorObj<double> e(100);
+
+    for (auto _ : state) {
+        basic::genUnitvec(50, 100, e); // Assuming index 50
+    }
+}
+BENCHMARK(BM_GenUnitvec);
+
+// Benchmark for genUnitMatx
+static void BM_GenUnitMatx(benchmark::State& state) {
+    MatrixObj<double> I;
+
+    for (auto _ : state) {
+        basic::genUnitMatx(100, 100, I);
+    }
+}
+BENCHMARK(BM_GenUnitMatx);
+
+// Benchmark for houseH
+static void BM_HouseH(benchmark::State& state) {
+    MatrixObj<double> A = GenerateRandomMatrixObj<double>(100, 100);
+    MatrixObj<double> H;
+
+    for (auto _ : state) {
+        basic::houseH(A, H, 50); // Assuming index 50
+    }
+}
+BENCHMARK(BM_HouseH);
+
 BENCHMARK_MAIN();

@@ -80,8 +80,42 @@ TEST_F(BasicTest, SignTest) {
 TEST_F(BasicTest, HouseHTest) {
     MatrixObj<double> H;
     basic::houseH(A, H, 0);
-    // Add assertions to check if H is a valid Householder matrix
-    // This might involve checking orthogonality and other properties
+    MatrixObj<double> Ht = H.Transpose();
+    MatrixObj<double> Res = H*Ht;
+    for(int i=0; i<A.get_row(); i++){
+        for(int j=0; j<A.get_col(); j++){
+            if (i==j) {
+                ASSERT_NEAR(Res[i*H.get_row()+j], 1.0, 1e-6) << "HouseH Diag test failed at (" << i << ", " << j << "). Actual: " << Res[i*H.get_row()+j];
+            } else {
+                ASSERT_NEAR(Res[i*H.get_row()+j], 0.0, 1e-6) << "HouseH offDiag test failed at (" << i << ", " << j << "). Actual: " << Res[i*H.get_row()+j];
+            }
+            ASSERT_NEAR(H[i*H.get_row()+j], Ht[i*Ht.get_row()+j], 1e-6);
+        }
+    }
+}
+
+// New test for QRFact function
+TEST_F(BasicTest, QRFactTest) {
+    MatrixObj<double> Q, R;
+    basic::QRFact(A, Q, R);
+
+    // Check if R is upper triangular
+    for (int i = 1; i < A.get_col(); ++i) {
+        for (int j = 0; j < i; ++j) {
+            ASSERT_NEAR(R[i * A.get_row() + j], 0.0, 1e-6) << "QRFactTest failed: R is not upper triangular at (" << i << ", " << j << ").";
+        }
+    }
+
+    // Check if A = QR
+    MatrixObj<double> A_recons = Q * R;
+    for (int i = 0; i < A.get_col(); ++i) {
+        for (int j = 0; j < A.get_row(); ++j) {
+            // std::cout << A_recons[i * A_recons.get_row() + j] << " ";
+            // std::cout << A[i * A.get_row() + j] << " ";
+            ASSERT_NEAR(A_recons[i * A_recons.get_row() + j], A[i * A.get_row() + j], 1e-6) << "QRFactTest failed: A != QR at (" << i << ", " << j << ").";
+        }
+        std::cout << std::endl;
+    }
 }
 
 } // namespace

@@ -71,7 +71,20 @@ class MatrixObj {
         std::swap(this->_n, other._n);
         std::swap(this->_m, other._m);
     }
-    
+
+    MatrixObj& operator=(const MatrixObj& other) {
+        if (this != &other) {
+            if (_n != other._n || _m != other._m) {
+                delete[] arr;
+                _n = other._n;
+                _m = other._m;
+                arr = new TObj[_n * _m];
+            }
+            std::copy(other.arr, other.arr + _n * _m, arr);
+        }
+        return *this;
+    }
+
     MatrixObj& operator=(MatrixObj&& other) noexcept {
         if (this != &other) {
             delete[] arr;

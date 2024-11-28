@@ -87,7 +87,21 @@ namespace basic {
         e *= factor;
         VectorObj<TNum> vt = x + e;
         MatrixObj<TNum> v(&(vt.data()[0]), n, 1);
-        H = I - (v * v.Transpose()) * (1/(vt * vt));
+        H = I - (v * v.Transpose()) * (2/(vt * vt));
+    }
+
+    template <typename TNum>
+    void QRFact(MatrixObj<TNum> &A, MatrixObj<TNum> &Q, MatrixObj<TNum> &R){
+        int n = A.get_row(), m = A.get_col();
+        R = A;
+        genUnitMatx(n, m, Q);
+        for(int i=0; i<m; i++){
+            MatrixObj<TNum> H, Ht;
+            houseH(A, H, i);
+            Ht = H.Transpose();
+            R = H * R;
+            Q = Q * Ht; 
+        }
     }
 }
 #endif
