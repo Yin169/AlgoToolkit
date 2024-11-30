@@ -2,9 +2,8 @@ load("@rules_cc//cc:defs.bzl", "cc_test")
 
 cc_library(
     name = "solver_lib",
-    srcs = ["basic_test.cpp"],
-    hdrs = ["SolverBAse.hpp", "IterSolver.hpp"],
-    deps = ["//Obj:matrix_lib", "LinearAlgebra/FActorized:basic_lib", "@gtest//:gtest"],
+    hdrs = ["SolverBase.hpp", "IterSolver.hpp"],
+    deps = ["//Obj:matrix_lib", "LinearAlgebra/Factorized:basic_lib", "@gtest//:gtest"],
     visibility = ["//visibility:public"],
 )
 

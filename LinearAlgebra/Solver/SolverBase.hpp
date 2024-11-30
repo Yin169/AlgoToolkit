@@ -1,35 +1,43 @@
 #ifndef SOLVERBASE_HPP
 #define SOLVERBASE_HPP
 
+#include <vector>
 #include "Obj/MatrixObj.hpp"
 #include "LinearAlgebra/Factorized/basic.hpp"
-#include "IterSolver.hpp" 
 
 template <typename TNum>
-class GradientDesent : public IterSolverBase<TNum> {
+class IterSolverBase {
+private:
+    int _n, _m, _max_iter=1000;
+    TNum _x;
+
 public:
-    GradientDesent() {}
+    TNum alp;
+    const MatrixObj<TNum> P;
+    const MatrixObj<TNum> A;
+    const VectorObj<TNum> b;
+    VectorObj<TNum> grad;
 
-    GradientDesent(const MatrixObj<TNum> P, const MatrixObj<TNum> &A, const VectorObj<TNum> &b, VectorObj<TNum> x, int max_iter) :
-        IterSolverBase<TNum>(P, A, b, x, max_iter) {}
+    IterSolverBase() : _n(0), _m(0), _max_iter(0), _x(0), alp(0) {}
 
-    virtual ~GradientDesent() {}
+    IterSolverBase(const MatrixObj<TNum> P, const MatrixObj<TNum> &A, const VectorObj<TNum> &b, VectorObj<TNum> x, int max_iter) :
+        P(P), A(A), b(b), grad(x), _x(x), _n(A.get_row()), _m(A.get_col()), _max_iter(max_iter), alp(0) {
+            if (max_iter < 0) {
+                throw std::invalid_argument("Number of Iteration must GT 0");
+            }
+        }
 
-    void calGrad() override {
-        MatrixObj<TNum> xt(_x);
-		MatrixObj<TNum> gradt;
-        gradt = A * xt - b;
-		grad = static_cast<TNum>(-1) * gradt.get_Col(0)
+    ~IterSolverBase()
 
+    virtual void calGrad() = 0;
+    virtual TNum calAlp(TNum hype) = 0;
+
+    void Update() {
+		grad *= calAlp(alp)
+        _x = _x + grad; 
     }
-
-    TNum calAlp(TNum hype) override { return hype; }
-
-    void Update() override {
-        IterSolverBase<TNum>::Update();
-    }
-
-    TNum getAns() { return IterSolverBase<TNum>::Ans(); }
+    int getIter(){return _max_iter;}
+    TNum Ans() { return _x; }
 };
 
-#endif 
+#endif
