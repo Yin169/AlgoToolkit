@@ -4,6 +4,8 @@ Welcome to the LAToolkit, a C++ library designed to provide a robust and efficie
 
 ## Overview
 
+The library consists of several components:
+
 ### MatrixObj.hpp
 This file defines the `MatrixObj` and `VectorObj` classes, which are templates that allow for the creation and manipulation of matrices and vectors with arbitrary data types. The `MatrixObj` class includes methods for matrix addition, subtraction, scalar multiplication, and matrix multiplication, as well as transpose operations. The `VectorObj` class, which inherits from `MatrixObj`, extends these capabilities to one-dimensional arrays, providing additional methods for vector normalization and dot product calculations.
 
@@ -17,12 +19,18 @@ The `basic.hpp` file contains a namespace `basic` that encompasses a variety of 
 - **Householder Reflections**: A method for constructing orthogonal matrices, used in the QR decomposition.
 - **QR Decomposition**: A factorization of a matrix into an orthogonal matrix Q and an upper triangular matrix R.
 
+### IterSolver.hpp
+Contains template classes for iterative solvers such as Gradient Descent and Jacobi methods, which inherit from the IterSolverBase class.
+### SolverBase.hpp
+A template base class for iterative solvers, defining common properties and a pure virtual function for gradient calculation.
+
 ## Features
 
 - **Template-Based**: Works with any data type that supports the necessary operations.
 - **Efficiency**: Optimized for performance with in-place operations where possible.
 - **Extensibility**: Easily add new algorithms and functions to the library.
-- **Portability**: Written in standard C++, compatible with any compliant compiler.
+- **Iterative Solvers**:: Implements common iterative methods for solving linear systems.
+- **Preconditioning**:: Supports preconditioning in iterative solvers to improve convergence.
 
 ## Getting Started
 
