@@ -29,31 +29,33 @@ public:
 
 template <typename TNum>
 class Jacobi : public IterSolverBase<TNum> {
-private:
-    MatrixObj<TNum> Pinv;
-
-    void computePinv(const MatrixObj<TNum>& P) {
-        basic::genUnitMatx(P.get_row(), P.get_col(), Pinv);
-        for (int i = 0; i < P.get_row(); i++) {
-            TNum diag_elem = P[i * P.get_row() + i];
-            if (diag_elem == 0) {
-                throw std::runtime_error("Diagonal element of P is zero, cannot compute inverse.");
-            }
-            Pinv[i * P.get_row() + i] = 1 / diag_elem;
-        }
-    }
-
 public:
     Jacobi() = default;
     explicit Jacobi(MatrixObj<TNum> P, MatrixObj<TNum> A, VectorObj<TNum> b, int max_iter)
-        : IterSolverBase<TNum>(std::move(P), std::move(A), std::move(b), max_iter) {
-        computePinv(this->P);
-    }
+        : IterSolverBase<TNum>(std::move(P), std::move(A), std::move(b), max_iter) {}
 
     virtual ~Jacobi() = default;
 
+    VectorObj<TNum> Substitution(VectorObj<TNum>& b, MatrixObj<TNum>& L, bool forward) {
+        int n = b.get_row();
+        VectorObj<TNum> x(n);
+
+        for (int i = forward ? 0 : n - 1; forward ? i < n : i >= 0; forward ? i++ : i--) {
+            TNum sum = TNum(0);
+            for (int j = forward ? 0 : n - 1; forward ? j < i : j > i; forward ? j++ : j--) {
+                sum += L[j * L.get_row() + i] * x[j];
+            }
+            if (L[i * L.get_row() + i] == TNum(0)) {
+                throw std::runtime_error(forward ? "Division by zero in forward substitution." : "Division by zero in backward substitution.");
+            }
+            x[i] = (b[i] - sum) / L[i * L.get_row() + i];
+        }
+        return x;
+    }
+
     VectorObj<TNum> calGrad(VectorObj<TNum>& x) override {
-        return Pinv * (this->b - (this->A * x));
+        VectorObj<TNum> rhs = this->b - (this->A * x);
+        return Substitution(rhs, this->P, true);
     }
 
     void callUpdate(VectorObj<TNum>& x) {
@@ -63,8 +65,6 @@ public:
             this->Update(x, grad);
         }
     }
-
-    MatrixObj<TNum> getPinv() {return Pinv;} 
 };
 
 #endif // ITERSOLVER_HPP
