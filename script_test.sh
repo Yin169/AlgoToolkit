@@ -1,9 +1,18 @@
-conan install . --build=missing
-bazel clean
-bazel --bazelrc=./conan/conan_bzl.rc build --config=conan-config //Obj:matrix_obj_test
-bazel test --test_output=all --test_verbose_timeout_warnings //Obj:matrix_obj_test
-bazel test --test_output=all --test_verbose_timeout_warnings //Obj:matrix_benchmark_test
+#!/bin/bash
 
-bazel --bazelrc=./conan/conan_bzl.rc build --config=conan-config //LinearAlgebra/Factorized:basic_test
-bazel test --test_output=all //LinearAlgebra/Factorized:basic_test
-bazel test --test_output=all //LinearAlgebra/Factorized:basic_benchmark_test
+conan install . --build=missing
+cd build
+cmake .. -DCMAKE_TOOLCHAIN_FILE=Release/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release
+cmake --build .
+
+# ./test
+./matrix_obj_test
+./basic_test
+./matrix_benchmark_test
+./basic_benchmark_test
+
+# rm test
+rm matrix_obj_test
+rm basic_test
+rm matrix_benchmark_test
+rm basic_benchmark_test
