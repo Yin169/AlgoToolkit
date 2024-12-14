@@ -1,2 +1,0 @@
-load_conan_dependencies = use_extension("//conan:conan_deps_module_extension.bzl", "conan_extension")
-use_repo(load_conan_dependencies, "benchmark", "boost", "bzip2", "fmt", "gtest", "zlib")

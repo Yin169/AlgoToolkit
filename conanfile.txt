@@ -9,8 +9,8 @@ boost/1.86.0:without_locale=True
 boost/1.86.0:with_stacktrace_backtrace=False
 
 [generators]
-BazelDeps
-BazelToolchain
+CMakeDeps
+CMakeToolchain
 
 [layout]
-bazel_layout
+cmake_layout
