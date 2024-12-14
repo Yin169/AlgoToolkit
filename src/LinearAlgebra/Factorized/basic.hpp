@@ -12,18 +12,16 @@ namespace basic {
         if (max_iter_num <= 0) return;
         while(max_iter_num--){
             b.normalized();
-            MatrixObj<TNum> btemp(b);
-            MatrixObj<TNum> Ab = A * btemp;
-            b = Ab.get_Col(0);
+            VectorObj<TNum> Ab = A * b;
+            b = Ab;
         }
     }
     
     template <typename TNum>
     double rayleighQuotient(MatrixObj<TNum> &A, VectorObj<TNum> &b) {
         if (b.L2norm() == 0) return 0;
-        MatrixObj<TNum> btemp(b);
-        MatrixObj<TNum> Ab = A * btemp;
-        TNum dot_product = b * Ab.get_Col(0);
+        VectorObj<TNum> Ab = A * b;
+        TNum dot_product = b * Ab;
         return dot_product / (b * b);
     }
 

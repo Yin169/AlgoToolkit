@@ -16,6 +16,11 @@ set(CMAKE_MAKEFILE_DEPENDS
   "Release/generators/GTestConfig.cmake"
   "Release/generators/GTestConfigVersion.cmake"
   "Release/generators/GTestTargets.cmake"
+  "Release/generators/OpenBLAS-Target-release.cmake"
+  "Release/generators/OpenBLAS-release-armv8-data.cmake"
+  "Release/generators/OpenBLASConfig.cmake"
+  "Release/generators/OpenBLASConfigVersion.cmake"
+  "Release/generators/OpenBLASTargets.cmake"
   "Release/generators/benchmark-Target-release.cmake"
   "Release/generators/benchmark-config-version.cmake"
   "Release/generators/benchmark-config.cmake"
@@ -74,7 +79,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/demo.dir/DependInfo.cmake"
   "CMakeFiles/matrix_obj_test.dir/DependInfo.cmake"
   "CMakeFiles/basic_test.dir/DependInfo.cmake"
   "CMakeFiles/matrix_benchmark_test.dir/DependInfo.cmake"

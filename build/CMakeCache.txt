@@ -225,6 +225,9 @@ MyCppProject_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 MyCppProject_SOURCE_DIR:STATIC=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit
 
+//The directory containing a CMake configuration file for OpenBLAS.
+OpenBLAS_DIR:PATH=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators
+
 //The directory containing a CMake configuration file for benchmark.
 benchmark_DIR:PATH=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators
 

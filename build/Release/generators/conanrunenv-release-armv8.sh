@@ -1,6 +1,6 @@
 script_folder="/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators"
 echo "echo Restoring environment" > "$script_folder/deactivate_conanrunenv-release-armv8.sh"
-for v in 
+for v in OpenBLAS_HOME
 do
     is_defined="true"
     value=$(printenv $v) || is_defined="" || true
@@ -12,3 +12,5 @@ do
     fi
 done
 
+
+export OpenBLAS_HOME="/Users/yincheangng/.conan2/p/b/openbc779489151058/p"

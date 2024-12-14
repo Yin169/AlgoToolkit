@@ -95,51 +95,6 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
 
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-.PHONY : list_install_components/fast
-
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
-	/opt/homebrew/bin/cmake -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
-	/opt/homebrew/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
-
-# Special rule for the target install/local
-install/local: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
-	/opt/homebrew/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local
-
-# Special rule for the target install/local
-install/local/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
-	/opt/homebrew/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local/fast
-
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
-	/opt/homebrew/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
-
-# Special rule for the target install/strip
-install/strip/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
-	/opt/homebrew/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip/fast
-
 # The main all target
 all: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build//CMakeFiles/progress.marks
@@ -170,19 +125,6 @@ preinstall/fast:
 depend:
 	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
-
-#=============================================================================
-# Target rules for targets named demo
-
-# Build rule for target.
-demo: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 demo
-.PHONY : demo
-
-# fast build rule for target.
-demo/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/build
-.PHONY : demo/fast
 
 #=============================================================================
 # Target rules for targets named matrix_obj_test
@@ -284,30 +226,6 @@ main/basic_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/basic_test.dir/build.make CMakeFiles/basic_test.dir/main/basic_test.cpp.s
 .PHONY : main/basic_test.cpp.s
 
-main/demo.o: main/demo.cpp.o
-.PHONY : main/demo.o
-
-# target to build an object file
-main/demo.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/main/demo.cpp.o
-.PHONY : main/demo.cpp.o
-
-main/demo.i: main/demo.cpp.i
-.PHONY : main/demo.i
-
-# target to preprocess a source file
-main/demo.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/main/demo.cpp.i
-.PHONY : main/demo.cpp.i
-
-main/demo.s: main/demo.cpp.s
-.PHONY : main/demo.s
-
-# target to generate assembly for a file
-main/demo.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/demo.dir/build.make CMakeFiles/demo.dir/main/demo.cpp.s
-.PHONY : main/demo.cpp.s
-
 main/matrix_benchmark_test.o: main/matrix_benchmark_test.cpp.o
 .PHONY : main/matrix_benchmark_test.o
 
@@ -363,15 +281,10 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
-	@echo "... install"
-	@echo "... install/local"
-	@echo "... install/strip"
-	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... basic_benchmark_test"
 	@echo "... basic_test"
-	@echo "... demo"
 	@echo "... matrix_benchmark_test"
 	@echo "... matrix_obj_test"
 	@echo "... main/basic_benchmark_test.o"
@@ -380,9 +293,6 @@ help:
 	@echo "... main/basic_test.o"
 	@echo "... main/basic_test.i"
 	@echo "... main/basic_test.s"
-	@echo "... main/demo.o"
-	@echo "... main/demo.i"
-	@echo "... main/demo.s"
 	@echo "... main/matrix_benchmark_test.o"
 	@echo "... main/matrix_benchmark_test.i"
 	@echo "... main/matrix_benchmark_test.s"

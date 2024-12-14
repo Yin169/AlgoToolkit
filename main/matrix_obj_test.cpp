@@ -4,15 +4,15 @@
 // Test fixture for MatrixObj
 class MatrixObjTest : public ::testing::Test {
 protected:
-    MatrixObj<int> matrix1;
-    MatrixObj<int> matrix2;
-    MatrixObj<int> matrix3;
+    MatrixObj<double> matrix1;
+    MatrixObj<double> matrix2;
+    MatrixObj<double> matrix3;
 
     void SetUp() override {
         // Initialize matrices for testing
-        matrix1 = MatrixObj<int>(2, 3); // 2x3 matrix
-        matrix2 = MatrixObj<int>(2, 3); // another 2x3 matrix
-        matrix3 = MatrixObj<int>(3, 2); // 3x2 matrix, for dimension mismatch test
+        matrix1 = MatrixObj<double>(2, 3); // 2x3 matrix
+        matrix2 = MatrixObj<double>(2, 3); // another 2x3 matrix
+        matrix3 = MatrixObj<double>(3, 2); // 3x2 matrix, for dimension mismatch test
 
         // Populate matrix1 with some values
         for (int i = 0; i < 2 * 3; ++i) {
@@ -31,7 +31,7 @@ protected:
 
 // Test for constructor and default values
 TEST_F(MatrixObjTest, DefaultConstructor) {
-    MatrixObj<int> testMatrix(2, 2);
+    MatrixObj<double> testMatrix(2, 2);
     for (int i = 0; i < 4; ++i) {
         EXPECT_EQ(testMatrix[i], 0);
     }
@@ -50,7 +50,7 @@ TEST_F(MatrixObjTest, SetDimensions) {
 
 // Test for addition operator
 TEST_F(MatrixObjTest, Addition) {
-    MatrixObj<int> result = matrix1 + matrix2;
+    MatrixObj<double> result = matrix1 + matrix2;
     for (int i = 0; i < 2 * 3; ++i) {
         EXPECT_EQ(result[i], matrix1[i] + matrix2[i]);
     }
@@ -58,7 +58,7 @@ TEST_F(MatrixObjTest, Addition) {
 
 // Test for subtraction operator
 TEST_F(MatrixObjTest, Subtraction) {
-    MatrixObj<int> result = matrix1 - matrix2;
+    MatrixObj<double> result = matrix1 - matrix2;
     for (int i = 0; i < 2 * 3; ++i) {
         EXPECT_EQ(result[i], matrix1[i] - matrix2[i]);
     }
@@ -74,11 +74,11 @@ TEST_F(MatrixObjTest, ScalarMultiplication) {
 
 // Test for matrix multiplication
 TEST_F(MatrixObjTest, MatrixMultiplication) {
-    MatrixObj<int> matrix4(3, 2); // Change to 3x2 for multiplication with matrix1
+    MatrixObj<double> matrix4(3, 2); // Change to 3x2 for multiplication with matrix1
     for (int i = 0; i < 3 * 2; ++i) {
         matrix4[i] = i + 1; // Populate matrix4 with some values
     }
-    MatrixObj<int> result = matrix1 * matrix4;
+    MatrixObj<double> result = matrix1 * matrix4;
     EXPECT_EQ(result.get_row(), 2);
     EXPECT_EQ(result.get_col(), 2);
     // Add more specific tests for the values in the result matrix
@@ -87,7 +87,7 @@ TEST_F(MatrixObjTest, MatrixMultiplication) {
 
 // Test for transpose
 TEST_F(MatrixObjTest, Transpose) {
-    MatrixObj<int> transposed = matrix1.Transpose();
+    MatrixObj<double> transposed = matrix1.Transpose();
     EXPECT_EQ(transposed.get_row(), 3);
     EXPECT_EQ(transposed.get_col(), 2);
     // Add more specific tests for the values in the transposed matrix
@@ -106,7 +106,7 @@ TEST_F(MatrixObjTest, ElementAccess) {
 
 // Test for getting a column
 TEST_F(MatrixObjTest, GetColumn) {
-    VectorObj<int> col = matrix1.get_Col(1);
+    VectorObj<double> col = matrix1.get_Col(1);
     for (int i = 0; i < 2; ++i) {
         EXPECT_EQ(col[i], matrix1[( (1 * 2) + i)]);
     }

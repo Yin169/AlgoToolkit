@@ -11,29 +11,26 @@ include_directories(src/LinearAlgebra/Factorized)
 include_directories(src/Obj)
 
 # 找到所有需要的包
+find_package(OpenBLAS REQUIRED)
 find_package(benchmark REQUIRED)
 find_package(GTest REQUIRED)
 find_package(fmt REQUIRED)
 
-# 添加可执行文件：demo
-add_executable(demo main/demo.cpp)
-target_link_libraries(demo PRIVATE fmt::fmt)
-
 # 添加可执行文件：matrix_obj_test
 add_executable(matrix_obj_test main/matrix_obj_test.cpp)
-target_link_libraries(matrix_obj_test PRIVATE GTest::gtest GTest::gmock)
+target_link_libraries(matrix_obj_test PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
 
 # 添加可执行文件：basic_test
 add_executable(basic_test main/basic_test.cpp)
-target_link_libraries(basic_test PRIVATE GTest::gtest GTest::gmock)
+target_link_libraries(basic_test PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
 
 # 添加可执行文件：matrix_benchmark_test
 add_executable(matrix_benchmark_test main/matrix_benchmark_test.cpp)
-target_link_libraries(matrix_benchmark_test PRIVATE benchmark::benchmark)
+target_link_libraries(matrix_benchmark_test PRIVATE benchmark::benchmark OpenBLAS::OpenBLAS)
 
 # 添加可执行文件：basic_benchmark_test
 add_executable(basic_benchmark_test main/basic_benchmark_test.cpp)
-target_link_libraries(basic_benchmark_test PRIVATE benchmark::benchmark)
+target_link_libraries(basic_benchmark_test PRIVATE benchmark::benchmark OpenBLAS::OpenBLAS)
 
 # 添加测试
 enable_testing()
@@ -43,7 +40,3 @@ add_test(NAME basic_test COMMAND basic_test)
 # 添加基准测试
 add_test(NAME matrix_benchmark_test COMMAND matrix_benchmark_test)
 add_test(NAME basic_benchmark_test COMMAND basic_benchmark_test)
-
-# 安装规则（如果需要）
-install(TARGETS demo matrix_obj_test basic_test matrix_benchmark_test basic_benchmark_test
-        RUNTIME DESTINATION bin)

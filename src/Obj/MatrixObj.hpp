@@ -6,6 +6,8 @@
 #include <stdexcept>
 #include <vector>
 
+#include <openblas/cblas.h>
+
 template<typename TObj> class VectorObj;
 
 template<typename TObj>
@@ -48,8 +50,8 @@ class MatrixObj {
         }
     }
 
-    int get_row() const { return _n; }
-    int get_col() const { return _m; }
+    const int get_row() const { return _n; }
+    const int get_col() const { return _m; }
 
     void setDim(int n, int m) {
         if (n != _n || m != _m) {
@@ -135,19 +137,24 @@ class MatrixObj {
         scalarMultiple(&(arr[0]), factor);
         return *this;
     }
+    
+    VectorObj<TObj> operator*(const VectorObj<TObj> &other) {
+        if (_m != other.get_row()) {
+            throw std::invalid_argument("Matrix dimensions do not match for multiplication.");
+        }
+        TObj *C = new TObj[ _n * other.get_col()];
+        cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, _n, other.get_col(), _m, 1.0, arr, _n, other.data(), other.get_row(), 0.0, C, _n);
+        VectorObj<TObj> result(C, _n);
+        return result;
+    }
 
     MatrixObj operator*(const MatrixObj &other) {
         if (_m != other.get_row()) {
             throw std::invalid_argument("Matrix dimensions do not match for multiplication.");
         }
-        MatrixObj result(_n, other.get_col());
-        for (int i = 0; i < _n; ++i) {
-            for (int j = 0; j < other.get_col(); ++j) {
-                for (int k = 0; k < _m; ++k) {
-                    result.arr[i * other.get_col() + j] += arr[i * _n + k] * other.arr[k * other.get_row() + j];
-                }
-            }
-        }
+        TObj *C = new TObj[ _n * other.get_col()];
+        cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, _n, other.get_col(), _m, 1.0, arr, _n, other.data(), other.get_row(), 0.0, C, _n);
+        MatrixObj result(C, _n, other.get_col());
         return result;
     }
 
