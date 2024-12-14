@@ -53,34 +53,15 @@ TEST_F(GradientDesentTest, CalGrad) {
     ASSERT_NEAR(output, 0.0, 1e-8);
 }
 
-template<typename TNum>
-void printscan(VectorObj<TNum> x){
-	for(int i=0; i<x.get_row(); i++){
-		std::cout << x[i] << " ";
-	}
-	std::cout << std::endl;
-}
-
 TEST_F(GradientDesentTest, Update) {
     VectorObj<double> expectedX = CreateIdentityVector<double>(size_, 1.0);
-	x = CreateIdentityVector<double>(size_, 0.0);
-	gradientDesent->callUpdate(x);
+    x = CreateIdentityVector<double>(size_, 0.0);
+    gradientDesent->callUpdate(x);
     VectorObj<double> vec_output = x - expectedX;
     double output = vec_output.L2norm();
     ASSERT_NEAR(output, 0.0, 1e-8);
 }
 
-// Helper function to create a diagonal matrix for Jacobi method.
-template<typename TNum>
-MatrixObj<TNum> CreateDiagonalMatrix(int size, TNum value) {
-    MatrixObj<TNum> diagonal(size, size);
-    for (int i = 0; i < size; ++i) {
-        diagonal[i * size + i] = value;
-    }
-    return diagonal;
-}
-
-// Test fixture for Jacobi method.
 class JacobiTest : public ::testing::Test {
 protected:
     virtual void TearDown() override {
@@ -103,10 +84,12 @@ TEST_F(JacobiTest, Constructor) {
     EXPECT_EQ(jacobi->getIter(), 100);
 }
 
-TEST_F(JacobiTest, CalGrad) {
-    VectorObj<double> expectedGradient = jacobi->getPinv() * (b - (A * x));
-    VectorObj<double> actualGradient = jacobi->calGrad(x);
-    VectorObj<double> vec_output = actualGradient - expectedGradient;
+// Test the Substitution method of Jacobi.
+TEST_F(JacobiTest, Substitution) {
+    MatrixObj<double> L = CreateIdentityMatrix<double>(size_);
+    VectorObj<double> result = jacobi->Substitution(b, L, true);
+    VectorObj<double> expected = b; // Since L is identity, substitution should return b.
+    VectorObj<double> vec_output = result - expected;
     double output = vec_output.L2norm();
     ASSERT_NEAR(output, 0.0, 1e-8);
 }
