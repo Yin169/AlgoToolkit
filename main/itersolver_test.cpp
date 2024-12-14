@@ -70,6 +70,56 @@ TEST_F(GradientDesentTest, Update) {
     ASSERT_NEAR(output, 0.0, 1e-8);
 }
 
+// Helper function to create a diagonal matrix for Jacobi method.
+template<typename TNum>
+MatrixObj<TNum> CreateDiagonalMatrix(int size, TNum value) {
+    MatrixObj<TNum> diagonal(size, size);
+    for (int i = 0; i < size; ++i) {
+        diagonal[i * size + i] = value;
+    }
+    return diagonal;
+}
+
+// Test fixture for Jacobi method.
+class JacobiTest : public ::testing::Test {
+protected:
+    virtual void TearDown() override {
+        // Code here will be called immediately after each test.
+    }
+
+    int size_ = 100;
+    MatrixObj<double> A = CreateIdentityMatrix<double>(size_);
+    VectorObj<double> b = CreateIdentityVector<double>(size_, 1.0);
+    VectorObj<double> x = CreateIdentityVector<double>(size_, 0.0);
+    std::unique_ptr<Jacobi<double>> jacobi;
+
+    virtual void SetUp() override {
+        jacobi = std::make_unique<Jacobi<double>>(A, A, b, 100);
+    }
+};
+
+// Test the constructor of Jacobi.
+TEST_F(JacobiTest, Constructor) {
+    EXPECT_EQ(jacobi->getIter(), 100);
+}
+
+TEST_F(JacobiTest, CalGrad) {
+    VectorObj<double> expectedGradient = jacobi->getPinv() * (b - (A * x));
+    VectorObj<double> actualGradient = jacobi->calGrad(x);
+    VectorObj<double> vec_output = actualGradient - expectedGradient;
+    double output = vec_output.L2norm();
+    ASSERT_NEAR(output, 0.0, 1e-8);
+}
+
+TEST_F(JacobiTest, Update) {
+    VectorObj<double> expectedX = CreateIdentityVector<double>(size_, 1.0);
+    x = CreateIdentityVector<double>(size_, 0.0);
+    jacobi->callUpdate(x);
+    VectorObj<double> vec_output = x - expectedX;
+    double output = vec_output.L2norm();
+    ASSERT_NEAR(output, 0.0, 1e-8);
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
