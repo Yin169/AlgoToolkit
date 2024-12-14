@@ -208,7 +208,7 @@ class VectorObj : public MatrixObj<TObj> {
     ~VectorObj() {}
     
     double L2norm() {
-        double sum = 1e-8;
+        double sum = 0;
         for (int i = 0; i < MatrixObj<TObj>::get_row() * MatrixObj<TObj>::get_col(); i++) {
             sum += std::pow(this->data()[i], 2);
         }
@@ -233,6 +233,18 @@ class VectorObj : public MatrixObj<TObj> {
         VectorObj<TObj> result(n);
         for (int i = 0; i < n * m ; ++i) {
             result.data()[i] = this->data()[i] + other.data()[i];
+        }
+        return result;
+    }
+
+    VectorObj operator-(const VectorObj<TObj> &other) {
+        int n = other.get_row(), m = other.get_col();
+        if (this->get_row() != n || this->get_col() != m) {
+            throw std::invalid_argument("Vector dimensions do not match for subtraction.");
+        }
+        VectorObj<TObj> result(n);
+        for (int i = 0; i < n * m ; ++i) {
+            result.data()[i] = this->data()[i] - other.data()[i];
         }
         return result;
     }

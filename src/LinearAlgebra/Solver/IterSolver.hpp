@@ -2,36 +2,27 @@
 #define ITERSOLVER_HPP
 
 #include "Obj/MatrixObj.hpp"
-#include "LinearAlgebra/Factorized/basic.hpp"
-#include "SolverBase.hpp" 
+#include "SolverBase.hpp"
 
 template <typename TNum>
 class GradientDesent : public IterSolverBase<TNum> {
 public:
     GradientDesent() {}
-
-    GradientDesent(const MatrixObj<TNum> P, const MatrixObj<TNum> &A, const VectorObj<TNum> &b, VectorObj<TNum> x, int max_iter) :
-        IterSolverBase<TNum>(P, A, b, x, max_iter) {}
+    GradientDesent(MatrixObj<TNum> P, MatrixObj<TNum> A, VectorObj<TNum> b, int max_iter) :
+        IterSolverBase<TNum>(P, A, b, max_iter) {}
 
     virtual ~GradientDesent() {}
 
-    void calGrad() override {
-        MatrixObj<TNum> xt(this->_x);
-		MatrixObj<TNum> gradt;
-        gradt = this->b - this->A * this->xt;
+    VectorObj<TNum> calGrad(VectorObj<TNum> &x) override {
+        return this->b - (this->A * x);
     }
 
-    TNum calAlp(TNum hype) override { return hype; }
-
-    void Update() override {
-        int iterNum = this->getIter();
-        while(iterNum--){
-            calGrad();
-            this->Update();
+    void callUpdate(VectorObj<TNum> &x) {
+        for (int i = 0; i < this->getIter(); ++i) {
+            VectorObj<TNum> grad = this->calGrad(x);
+            this->Update(x, grad); // Assign the result of Update to x
         }
     }
-
-    TNum getAns() { return this->Ans(); }
 };
 
-#endif 
+#endif // ITERSOLVER_HPP
