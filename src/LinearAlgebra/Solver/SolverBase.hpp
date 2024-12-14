@@ -3,7 +3,6 @@
 
 #include <vector>
 #include "Obj/MatrixObj.hpp"
-#include "LinearAlgebra/Factorized/basic.hpp"
 
 // Template base class for iterative solvers
 template <typename TNum>

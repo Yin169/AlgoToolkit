@@ -1,7 +1,7 @@
-matrix_obj_test 9 0.000515463
-basic_test 9 0.000556357
-itersolver_test 3 0.00158532
-matrix_benchmark_test 9 0.626209
-basic_benchmark_test 9 0.88436
-itersolver_benchmark_test 1 4.33009
+matrix_obj_test 19 0.000178715
+basic_test 19 0.000157985
+itersolver_test 8 0.000710359
+matrix_benchmark_test 19 0.282008
+basic_benchmark_test 19 0.425844
+itersolver_benchmark_test 10 0.694598
 ---

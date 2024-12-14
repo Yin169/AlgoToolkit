@@ -8,3 +8,4 @@ bazel-MyAlgorithmicToolkit
 bazel-bin
 .DS_Store
 .DS_Store
+/build

@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # 添加头文件搜索路径
 include_directories(src)
-include_directories(src/LinearAlgebra/Factorized)
+include_directories(src/LinearAlgebra)
 include_directories(src/Obj)
 
 # 找到所有需要的包

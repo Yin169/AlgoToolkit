@@ -10,9 +10,9 @@ void CreateRandomMatrixAndVector(MatrixObj<TNum> &A, VectorObj<TNum> &b, VectorO
 
     for (int i = 0; i < size; ++i) {
         for (int j = 0; j < size; ++j) {
-            A[i*size+j] = static_cast<TNum>(std::rand() % 100) / 50.0 - 1.0; // Random value between -1 and 0.99
+            A[i * size + j] = static_cast<TNum>(std::rand() % 100) / 50.0 + 1.0; // Random value between 1 and 2
         }
-        b[i] = static_cast<TNum>(std::rand() % 100) / 50.0 - 1.0; // Random value between -1 and 0.99
+        b[i] = static_cast<TNum>(std::rand() % 100) / 50.0 + 1.0; // Random value between 1 and 2
         x[i] = 0; // Initialize x to zero for the solver
     }
 }
@@ -36,8 +36,28 @@ static void BM_GradientDesent(benchmark::State& state) {
     }
 }
 
-// Register the benchmark.
+// Benchmark for the Jacobi solver.
+template<typename TNum>
+static void BM_Jacobi(benchmark::State& state) {
+    int size = state.range(0);
+    MatrixObj<TNum> A;
+    VectorObj<TNum> b;
+    VectorObj<TNum> x;
+
+    // Create a random matrix and vector before the benchmark runs.
+    CreateRandomMatrixAndVector(A, b, x, size);
+
+    // Create a Jacobi solver instance.
+    Jacobi<TNum> solver(A, A, b, size);
+
+    for (auto _ : state) {
+        solver.callUpdate(x);
+    }
+}
+
+// Register the benchmarks.
 BENCHMARK_TEMPLATE(BM_GradientDesent, double)->Range(8, 8<<6); // You can adjust the range as needed.
+BENCHMARK_TEMPLATE(BM_Jacobi, double)->Range(8, 8<<6); // You can adjust the range as needed.
 
 // Main function to run the benchmarks.
 BENCHMARK_MAIN();
