@@ -1036,7 +1036,8 @@ CMakeFiles/basic_test.dir/main/basic_test.cpp.o: /Users/yincheangng/worksapce/Gi
   /Users/yincheangng/.conan2/p/b/openbc779489151058/p/include/openblas/cblas.h \
   /Users/yincheangng/.conan2/p/b/openbc779489151058/p/include/openblas/openblas_config.h \
   /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/src/LinearAlgebra/Factorized/basic.hpp \
-  /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/src/Obj/MatrixObj.hpp
+  /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/src/Obj/MatrixObj.hpp \
+  /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/src/Obj/VectorObj.hpp
 
 
 /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/src/LinearAlgebra/Factorized/basic.hpp:
@@ -1208,6 +1209,8 @@ CMakeFiles/basic_test.dir/main/basic_test.cpp.o: /Users/yincheangng/worksapce/Gi
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/strings.h:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/string.h:
+
+/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/src/Obj/VectorObj.hpp:
 
 /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/runetype.h:
 

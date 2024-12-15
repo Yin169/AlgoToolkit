@@ -166,6 +166,19 @@ itersolver_test/fast:
 .PHONY : itersolver_test/fast
 
 #=============================================================================
+# Target rules for targets named LU_test
+
+# Build rule for target.
+LU_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 LU_test
+.PHONY : LU_test
+
+# fast build rule for target.
+LU_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LU_test.dir/build.make CMakeFiles/LU_test.dir/build
+.PHONY : LU_test/fast
+
+#=============================================================================
 # Target rules for targets named matrix_benchmark_test
 
 # Build rule for target.
@@ -203,6 +216,30 @@ itersolver_benchmark_test: cmake_check_build_system
 itersolver_benchmark_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/itersolver_benchmark_test.dir/build.make CMakeFiles/itersolver_benchmark_test.dir/build
 .PHONY : itersolver_benchmark_test/fast
+
+main/LU_test.o: main/LU_test.cpp.o
+.PHONY : main/LU_test.o
+
+# target to build an object file
+main/LU_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LU_test.dir/build.make CMakeFiles/LU_test.dir/main/LU_test.cpp.o
+.PHONY : main/LU_test.cpp.o
+
+main/LU_test.i: main/LU_test.cpp.i
+.PHONY : main/LU_test.i
+
+# target to preprocess a source file
+main/LU_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LU_test.dir/build.make CMakeFiles/LU_test.dir/main/LU_test.cpp.i
+.PHONY : main/LU_test.cpp.i
+
+main/LU_test.s: main/LU_test.cpp.s
+.PHONY : main/LU_test.s
+
+# target to generate assembly for a file
+main/LU_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/LU_test.dir/build.make CMakeFiles/LU_test.dir/main/LU_test.cpp.s
+.PHONY : main/LU_test.cpp.s
 
 main/basic_benchmark_test.o: main/basic_benchmark_test.cpp.o
 .PHONY : main/basic_benchmark_test.o
@@ -357,12 +394,16 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
+	@echo "... LU_test"
 	@echo "... basic_benchmark_test"
 	@echo "... basic_test"
 	@echo "... itersolver_benchmark_test"
 	@echo "... itersolver_test"
 	@echo "... matrix_benchmark_test"
 	@echo "... matrix_obj_test"
+	@echo "... main/LU_test.o"
+	@echo "... main/LU_test.i"
+	@echo "... main/LU_test.s"
 	@echo "... main/basic_benchmark_test.o"
 	@echo "... main/basic_benchmark_test.i"
 	@echo "... main/basic_benchmark_test.s"

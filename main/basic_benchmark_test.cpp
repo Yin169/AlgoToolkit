@@ -1,6 +1,7 @@
 #include <benchmark/benchmark.h>
-#include "../src/LinearAlgebra/Factorized/basic.hpp"
-#include "../src/Obj/MatrixObj.hpp"
+#include "basic.hpp"
+#include "MatrixObj.hpp"
+#include "VectorObj.hpp"
 
 // Helper function to generate a random MatrixObj
 template <typename TNum>

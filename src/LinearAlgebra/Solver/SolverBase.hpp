@@ -2,7 +2,8 @@
 #define SOLVERBASE_HPP
 
 #include <vector>
-#include "Obj/MatrixObj.hpp"
+#include "MatrixObj.hpp"
+#include "VectorObj.hpp" 
 
 // Template base class for iterative solvers
 template <typename TNum>

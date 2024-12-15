@@ -1,5 +1,6 @@
 #include <benchmark/benchmark.h>
-#include "../src/Obj/MatrixObj.hpp"
+#include "MatrixObj.hpp"
+#include "VectorObj.hpp"
 
 void BM_MatrixCreation(benchmark::State& state) {
     for (auto _ : state) {

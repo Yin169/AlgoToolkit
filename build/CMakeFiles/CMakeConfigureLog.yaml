@@ -477,3 +477,48 @@ events:
       LTO support using: LLVM version 16.0.0 (static support for 29, runtime is 29)
       TAPI support using: Apple TAPI version 16.0.0 (tapi-1600.0.11.8)
 ...
+
+---
+events:
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckSourceCompiles.cmake:108 (try_compile)"
+      - "/opt/homebrew/share/cmake/Modules/Internal/CheckCompilerFlag.cmake:18 (cmake_check_source_compiles)"
+      - "/opt/homebrew/share/cmake/Modules/CheckCXXCompilerFlag.cmake:55 (cmake_check_compiler_flag)"
+      - "/Users/yincheangng/.conan2/p/pybin0711cb137f6d7/p/lib/cmake/pybind11/pybind11Common.cmake:323 (check_cxx_compiler_flag)"
+      - "/Users/yincheangng/.conan2/p/pybin0711cb137f6d7/p/lib/cmake/pybind11/pybind11Common.cmake:363 (_pybind11_return_if_cxx_and_linker_flags_work)"
+      - "/Users/yincheangng/.conan2/p/pybin0711cb137f6d7/p/lib/cmake/pybind11/pybind11Common.cmake:435 (_pybind11_generate_lto)"
+      - "build/Release/generators/pybind11-config.cmake:38 (include)"
+      - "CMakeLists.txt:17 (find_package)"
+    checks:
+      - "Performing Test HAS_FLTO_THIN"
+    directories:
+      source: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles/CMakeScratch/TryCompile-KgDkg8"
+      binary: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles/CMakeScratch/TryCompile-KgDkg8"
+    cmakeVariables:
+      CMAKE_CXX_FLAGS: "-stdlib=libc++"
+      CMAKE_CXX_FLAGS_DEBUG: "-g"
+      CMAKE_EXE_LINKER_FLAGS: ""
+      CMAKE_MODULE_PATH: "/Users/yincheangng/.conan2/p/pybin0711cb137f6d7/p/lib/cmake/pybind11;/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators;/Users/yincheangng/.conan2/p/pybin0711cb137f6d7/p/lib/cmake/pybind11"
+      CMAKE_OSX_ARCHITECTURES: "arm64"
+      CMAKE_OSX_DEPLOYMENT_TARGET: ""
+      CMAKE_OSX_SYSROOT: "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
+    buildResult:
+      variable: "HAS_FLTO_THIN"
+      cached: true
+      stdout: |
+        Change Dir: '/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles/CMakeScratch/TryCompile-KgDkg8'
+        
+        Run Build Command(s): /opt/homebrew/bin/cmake -E env VERBOSE=1 /opt/homebrew/bin/gmake -f Makefile cmTC_1c995/fast
+        /opt/homebrew/bin/gmake  -f CMakeFiles/cmTC_1c995.dir/build.make CMakeFiles/cmTC_1c995.dir/build
+        gmake[1]: Entering directory '/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles/CMakeScratch/TryCompile-KgDkg8'
+        Building CXX object CMakeFiles/cmTC_1c995.dir/src.cxx.o
+        /Library/Developer/CommandLineTools/usr/bin/c++ -DHAS_FLTO_THIN  -stdlib=libc++  -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk   -flto -MD -MT CMakeFiles/cmTC_1c995.dir/src.cxx.o -MF CMakeFiles/cmTC_1c995.dir/src.cxx.o.d -o CMakeFiles/cmTC_1c995.dir/src.cxx.o -c /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles/CMakeScratch/TryCompile-KgDkg8/src.cxx
+        Linking CXX executable cmTC_1c995
+        /opt/homebrew/bin/cmake -E cmake_link_script CMakeFiles/cmTC_1c995.dir/link.txt --verbose=1
+        /Library/Developer/CommandLineTools/usr/bin/c++ -stdlib=libc++  -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/cmTC_1c995.dir/src.cxx.o -o cmTC_1c995  -flto
+        gmake[1]: Leaving directory '/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles/CMakeScratch/TryCompile-KgDkg8'
+        
+      exitCode: 0
+...

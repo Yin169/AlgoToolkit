@@ -140,15 +140,18 @@ else()
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG ON)
 
 # Definition of CMAKE_MODULE_PATH
+list(PREPEND CMAKE_MODULE_PATH "/Users/yincheangng/.conan2/p/pybin0711cb137f6d7/p/lib/cmake/pybind11")
 # the generators folder (where conan generates files, like this toolchain)
 list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
 
 # Definition of CMAKE_PREFIX_PATH, CMAKE_XXXXX_PATH
+# The explicitly defined "builddirs" of "host" context dependencies must be in PREFIX_PATH
+list(PREPEND CMAKE_PREFIX_PATH "/Users/yincheangng/.conan2/p/pybin0711cb137f6d7/p/lib/cmake/pybind11")
 # The Conan local "generators" folder, where this toolchain is saved.
 list(PREPEND CMAKE_PREFIX_PATH ${CMAKE_CURRENT_LIST_DIR} )
-list(PREPEND CMAKE_LIBRARY_PATH "/Users/yincheangng/.conan2/p/b/openbc779489151058/p/lib" "/Users/yincheangng/.conan2/p/b/fmt7bb47dc1b6774/p/lib" "/Users/yincheangng/.conan2/p/b/boostca7b12e55e64f/p/lib" "/Users/yincheangng/.conan2/p/b/zlibaebeb167d3e75/p/lib" "/Users/yincheangng/.conan2/p/b/bzip29dc34a08498fb/p/lib" "/Users/yincheangng/.conan2/p/b/gtest6c2323c70d527/p/lib" "/Users/yincheangng/.conan2/p/b/bench1f9b77485dd51/p/lib")
-list(PREPEND CMAKE_INCLUDE_PATH "/Users/yincheangng/.conan2/p/b/openbc779489151058/p/include" "/Users/yincheangng/.conan2/p/b/openbc779489151058/p/include/openblas" "/Users/yincheangng/.conan2/p/b/fmt7bb47dc1b6774/p/include" "/Users/yincheangng/.conan2/p/b/boostca7b12e55e64f/p/include" "/Users/yincheangng/.conan2/p/b/zlibaebeb167d3e75/p/include" "/Users/yincheangng/.conan2/p/b/bzip29dc34a08498fb/p/include" "/Users/yincheangng/.conan2/p/b/gtest6c2323c70d527/p/include" "/Users/yincheangng/.conan2/p/b/bench1f9b77485dd51/p/include")
-set(CONAN_RUNTIME_LIB_DIRS "/Users/yincheangng/.conan2/p/b/openbc779489151058/p/lib" "/Users/yincheangng/.conan2/p/b/fmt7bb47dc1b6774/p/lib" "/Users/yincheangng/.conan2/p/b/boostca7b12e55e64f/p/lib" "/Users/yincheangng/.conan2/p/b/zlibaebeb167d3e75/p/lib" "/Users/yincheangng/.conan2/p/b/bzip29dc34a08498fb/p/lib" "/Users/yincheangng/.conan2/p/b/gtest6c2323c70d527/p/lib" "/Users/yincheangng/.conan2/p/b/bench1f9b77485dd51/p/lib" )
+list(PREPEND CMAKE_LIBRARY_PATH "/Users/yincheangng/.conan2/p/b/openbc779489151058/p/lib" "/Users/yincheangng/.conan2/p/b/fmt7bb47dc1b6774/p/lib" "/Users/yincheangng/.conan2/p/b/boostca7b12e55e64f/p/lib" "/Users/yincheangng/.conan2/p/b/zlibaebeb167d3e75/p/lib" "/Users/yincheangng/.conan2/p/b/bzip29dc34a08498fb/p/lib" "/Users/yincheangng/.conan2/p/b/gtest6c2323c70d527/p/lib" "/Users/yincheangng/.conan2/p/b/bench1f9b77485dd51/p/lib" "/Users/yincheangng/.conan2/p/pybin0711cb137f6d7/p/lib")
+list(PREPEND CMAKE_INCLUDE_PATH "/Users/yincheangng/.conan2/p/b/openbc779489151058/p/include" "/Users/yincheangng/.conan2/p/b/openbc779489151058/p/include/openblas" "/Users/yincheangng/.conan2/p/b/fmt7bb47dc1b6774/p/include" "/Users/yincheangng/.conan2/p/b/boostca7b12e55e64f/p/include" "/Users/yincheangng/.conan2/p/b/zlibaebeb167d3e75/p/include" "/Users/yincheangng/.conan2/p/b/bzip29dc34a08498fb/p/include" "/Users/yincheangng/.conan2/p/b/gtest6c2323c70d527/p/include" "/Users/yincheangng/.conan2/p/b/bench1f9b77485dd51/p/include" "/Users/yincheangng/.conan2/p/pybin0711cb137f6d7/p/include")
+set(CONAN_RUNTIME_LIB_DIRS "/Users/yincheangng/.conan2/p/b/openbc779489151058/p/lib" "/Users/yincheangng/.conan2/p/b/fmt7bb47dc1b6774/p/lib" "/Users/yincheangng/.conan2/p/b/boostca7b12e55e64f/p/lib" "/Users/yincheangng/.conan2/p/b/zlibaebeb167d3e75/p/lib" "/Users/yincheangng/.conan2/p/b/bzip29dc34a08498fb/p/lib" "/Users/yincheangng/.conan2/p/b/gtest6c2323c70d527/p/lib" "/Users/yincheangng/.conan2/p/b/bench1f9b77485dd51/p/lib" "/Users/yincheangng/.conan2/p/pybin0711cb137f6d7/p/lib" )
 
 endif()
 
