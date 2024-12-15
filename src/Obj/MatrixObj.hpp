@@ -131,12 +131,12 @@ class MatrixObj {
     }
 
     MatrixObj &operator*=(double scalar) {
-        scalarMultiple(&(arr[0]), scalar);
+        scalarMultiple(&(arr[0]), static_cast<TObj>(scalar));
         return *this;
     }
 
     MatrixObj &operator*(double factor) {
-        scalarMultiple(&(arr[0]), factor);
+        scalarMultiple(&(arr[0]), static_cast<TObj>(factor));
         return *this;
     }
     
@@ -168,6 +168,14 @@ class MatrixObj {
             }
         }
         return result;
+    }
+
+    TObj &operator()(size_t row, size_t col) {
+        return arr[row + col * _n];
+    }
+
+    const TObj &operator()(size_t row, size_t col) const {
+        return arr[row + col * _n];
     }
 
     const TObj &operator[](int index) const {

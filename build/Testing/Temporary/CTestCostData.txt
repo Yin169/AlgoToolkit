@@ -1,10 +1,10 @@
-matrix_obj_test 47 0.000106754
-basic_test 47 9.38511e-05
-itersolver_test 36 0.000123757
-matrix_benchmark_test 47 0.119695
-basic_benchmark_test 47 0.170041
-itersolver_benchmark_test 38 0.175678
-LU_test 8 0.000621495
+matrix_obj_test 65 5.59051e-05
+basic_test 65 4.61974e-05
+itersolver_test 54 8.37508e-05
+matrix_benchmark_test 65 0.0867096
+basic_benchmark_test 65 0.132115
+itersolver_benchmark_test 56 0.123855
+LU_test 26 0.000170896
 KrylovSubspace_test 0 0
 ---
 KrylovSubspace_test
