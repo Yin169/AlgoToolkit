@@ -65,13 +65,20 @@ class VectorObj : public MatrixObj<TObj> {
     }
     
     VectorObj &operator*=(double scalar) {
-        int n = MatrixObj<TObj>::get_col();
-        for(int i=0; i<n; i++){
-            this->data()[i] = static_cast<TObj>(scalar) * this->data()[i]; 
-        }
+        MatrixObj<TObj>::scalarMultiple(&(MatrixObj<TObj>::data()[0]), static_cast<TObj>(scalar));
         return *this;
     }
-    
+
+    VectorObj &operator*(double scalar) {
+        MatrixObj<TObj>::scalarMultiple(&(MatrixObj<TObj>::data()[0]), static_cast<TObj>(scalar));
+        return *this;
+    }
+
+    VectorObj &operator/(double scalar) {
+        MatrixObj<TObj>::scalarMultiple(&(MatrixObj<TObj>::data()[0]), static_cast<TObj>(1/scalar));
+        return *this;
+    }
+
     VectorObj &operator=(VectorObj other) {
         this->swap(other);
         return *this;
@@ -84,6 +91,7 @@ class VectorObj : public MatrixObj<TObj> {
         return MatrixObj<TObj>::data()[index];
     }
     
+
     TObj operator*(const VectorObj<TObj>& other) const {
         if (this->get_row() != other.get_row()) {
             throw std::invalid_argument("Vector dimensions do not match for dot product.");

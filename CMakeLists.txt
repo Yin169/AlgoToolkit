@@ -10,6 +10,7 @@ include_directories(src)
 include_directories(src/LinearAlgebra/Factorized)
 include_directories(src/LinearAlgebra/Preconditioner)
 include_directories(src/LinearAlgebra/Solver)
+include_directories(src/LinearAlgebra/Krylov)
 include_directories(src/Obj)
 
 # 找到所有需要的包
@@ -29,6 +30,9 @@ target_link_libraries(itersolver_test PRIVATE GTest::gtest GTest::gmock OpenBLAS
 #
 add_executable(LU_test main/LU_test.cpp)
 target_link_libraries(LU_test PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
+#
+add_executable(KrylovSubspace_test main/KrylovSubspace_test.cpp)
+target_link_libraries(KrylovSubspace_test PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
 
 
 # 添加可执行文件：matrix_benchmark_test
@@ -47,6 +51,7 @@ add_test(NAME matrix_obj_test COMMAND matrix_obj_test)
 add_test(NAME basic_test COMMAND basic_test)
 add_test(NAME itersolver_test COMMAND itersolver_test)
 add_test(NAME LU_test COMMAND LU_test)
+add_test(NAME KrylovSubspace_test COMMAND KrylovSubspace_test)
 
 # 添加基准测试
 add_test(NAME matrix_benchmark_test COMMAND matrix_benchmark_test)

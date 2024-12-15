@@ -44,11 +44,6 @@ TEST_F(MatrixObjTest, GetDimensions) {
     EXPECT_EQ(matrix1.get_col(), 3);
 }
 
-// Test for setting dimensions (should throw an exception)
-TEST_F(MatrixObjTest, SetDimensions) {
-    EXPECT_THROW(matrix1.setDim(3, 3), std::invalid_argument);
-}
-
 // Test for addition operator
 TEST_F(MatrixObjTest, Addition) {
     MatrixObj<double> result = matrix1 + matrix2;
