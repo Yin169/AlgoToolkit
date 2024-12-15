@@ -3,7 +3,8 @@
 
 #include <iostream>
 #include <vector>
-#include "Obj/MatrixObj.hpp" 
+#include "MatrixObj.hpp" 
+#include "VectorObj.hpp" 
 
 namespace basic {
 

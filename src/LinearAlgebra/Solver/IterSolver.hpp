@@ -1,8 +1,9 @@
 #ifndef ITERSOLVER_HPP
 #define ITERSOLVER_HPP
 
-#include "Obj/MatrixObj.hpp"
-#include "Factorized/basic.hpp"
+#include "MatrixObj.hpp"
+#include "VectorObj.hpp" 
+#include "basic.hpp"
 #include "SolverBase.hpp"
 
 template <typename TNum>

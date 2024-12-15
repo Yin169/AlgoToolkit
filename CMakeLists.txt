@@ -7,14 +7,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # 添加头文件搜索路径
 include_directories(src)
-include_directories(src/LinearAlgebra)
+include_directories(src/LinearAlgebra/Factorized)
 include_directories(src/Obj)
 
 # 找到所有需要的包
 find_package(OpenBLAS REQUIRED)
 find_package(benchmark REQUIRED)
 find_package(GTest REQUIRED)
-find_package(fmt REQUIRED)
 
 # 添加可执行文件：matrix_obj_test
 add_executable(matrix_obj_test main/matrix_obj_test.cpp)

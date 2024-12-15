@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
-#include "../src/Obj/MatrixObj.hpp"
+#include "MatrixObj.hpp"
+#include "VectorObj.hpp"
 
 // Test fixture for MatrixObj
 class MatrixObjTest : public ::testing::Test {
