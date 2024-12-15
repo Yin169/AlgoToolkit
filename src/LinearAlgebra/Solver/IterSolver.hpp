@@ -29,13 +29,13 @@ public:
 };
 
 template <typename TNum>
-class Jacobi : public IterSolverBase<TNum> {
+class StaticIterMethod : public IterSolverBase<TNum> {
 public:
-    Jacobi() = default;
-    explicit Jacobi(MatrixObj<TNum> P, MatrixObj<TNum> A, VectorObj<TNum> b, int max_iter)
+    StaticIterMethod() = default;
+    explicit StaticIterMethod(MatrixObj<TNum> P, MatrixObj<TNum> A, VectorObj<TNum> b, int max_iter)
         : IterSolverBase<TNum>(std::move(P), std::move(A), std::move(b), max_iter) {}
 
-    virtual ~Jacobi() = default;
+    virtual ~StaticIterMethod() = default;
 
     VectorObj<TNum> Substitution(VectorObj<TNum>& b, MatrixObj<TNum>& L, bool forward) {
         int n = b.get_row();

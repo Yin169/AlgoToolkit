@@ -36,9 +36,9 @@ static void BM_GradientDesent(benchmark::State& state) {
     }
 }
 
-// Benchmark for the Jacobi solver.
+// Benchmark for the StaticIterMethod solver.
 template<typename TNum>
-static void BM_Jacobi(benchmark::State& state) {
+static void BM_StaticIterMethod(benchmark::State& state) {
     int size = state.range(0);
     MatrixObj<TNum> A;
     VectorObj<TNum> b;
@@ -47,8 +47,8 @@ static void BM_Jacobi(benchmark::State& state) {
     // Create a random matrix and vector before the benchmark runs.
     CreateRandomMatrixAndVector(A, b, x, size);
 
-    // Create a Jacobi solver instance.
-    Jacobi<TNum> solver(A, A, b, size);
+    // Create a StaticIterMethod solver instance.
+    StaticIterMethod<TNum> solver(A, A, b, size);
 
     for (auto _ : state) {
         solver.callUpdate(x);
@@ -57,7 +57,7 @@ static void BM_Jacobi(benchmark::State& state) {
 
 // Register the benchmarks.
 BENCHMARK_TEMPLATE(BM_GradientDesent, double)->Range(8, 8<<6); // You can adjust the range as needed.
-BENCHMARK_TEMPLATE(BM_Jacobi, double)->Range(8, 8<<6); // You can adjust the range as needed.
+BENCHMARK_TEMPLATE(BM_StaticIterMethod, double)->Range(8, 8<<6); // You can adjust the range as needed.
 
 // Main function to run the benchmarks.
 BENCHMARK_MAIN();

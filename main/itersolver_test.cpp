@@ -62,7 +62,7 @@ TEST_F(GradientDesentTest, Update) {
     ASSERT_NEAR(output, 0.0, 1e-8);
 }
 
-class JacobiTest : public ::testing::Test {
+class StaticIterMethodTest : public ::testing::Test {
 protected:
     virtual void TearDown() override {
         // Code here will be called immediately after each test.
@@ -72,32 +72,32 @@ protected:
     MatrixObj<double> A = CreateIdentityMatrix<double>(size_);
     VectorObj<double> b = CreateIdentityVector<double>(size_, 1.0);
     VectorObj<double> x = CreateIdentityVector<double>(size_, 0.0);
-    std::unique_ptr<Jacobi<double>> jacobi;
+    std::unique_ptr<StaticIterMethod<double>> staticytermethod;
 
     virtual void SetUp() override {
-        jacobi = std::make_unique<Jacobi<double>>(A, A, b, 100);
+        staticytermethod = std::make_unique<StaticIterMethod<double>>(A, A, b, 100);
     }
 };
 
-// Test the constructor of Jacobi.
-TEST_F(JacobiTest, Constructor) {
-    EXPECT_EQ(jacobi->getIter(), 100);
+// Test the constructor of StaticIterMethod.
+TEST_F(StaticIterMethodTest, Constructor) {
+    EXPECT_EQ(staticytermethod->getIter(), 100);
 }
 
-// Test the Substitution method of Jacobi.
-TEST_F(JacobiTest, Substitution) {
+// Test the Substitution method of StaticIterMethod.
+TEST_F(StaticIterMethodTest, Substitution) {
     MatrixObj<double> L = CreateIdentityMatrix<double>(size_);
-    VectorObj<double> result = jacobi->Substitution(b, L, true);
+    VectorObj<double> result = staticytermethod->Substitution(b, L, true);
     VectorObj<double> expected = b; // Since L is identity, substitution should return b.
     VectorObj<double> vec_output = result - expected;
     double output = vec_output.L2norm();
     ASSERT_NEAR(output, 0.0, 1e-8);
 }
 
-TEST_F(JacobiTest, Update) {
+TEST_F(StaticIterMethodTest, Update) {
     VectorObj<double> expectedX = CreateIdentityVector<double>(size_, 1.0);
     x = CreateIdentityVector<double>(size_, 0.0);
-    jacobi->callUpdate(x);
+    staticytermethod->callUpdate(x);
     VectorObj<double> vec_output = x - expectedX;
     double output = vec_output.L2norm();
     ASSERT_NEAR(output, 0.0, 1e-8);
