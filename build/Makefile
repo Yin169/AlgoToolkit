@@ -192,6 +192,19 @@ KrylovSubspace_test/fast:
 .PHONY : KrylovSubspace_test/fast
 
 #=============================================================================
+# Target rules for targets named ConjugateGradient_test
+
+# Build rule for target.
+ConjugateGradient_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ConjugateGradient_test
+.PHONY : ConjugateGradient_test
+
+# fast build rule for target.
+ConjugateGradient_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ConjugateGradient_test.dir/build.make CMakeFiles/ConjugateGradient_test.dir/build
+.PHONY : ConjugateGradient_test/fast
+
+#=============================================================================
 # Target rules for targets named matrix_benchmark_test
 
 # Build rule for target.
@@ -229,6 +242,30 @@ itersolver_benchmark_test: cmake_check_build_system
 itersolver_benchmark_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/itersolver_benchmark_test.dir/build.make CMakeFiles/itersolver_benchmark_test.dir/build
 .PHONY : itersolver_benchmark_test/fast
+
+main/ConjugateGradient_test.o: main/ConjugateGradient_test.cpp.o
+.PHONY : main/ConjugateGradient_test.o
+
+# target to build an object file
+main/ConjugateGradient_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ConjugateGradient_test.dir/build.make CMakeFiles/ConjugateGradient_test.dir/main/ConjugateGradient_test.cpp.o
+.PHONY : main/ConjugateGradient_test.cpp.o
+
+main/ConjugateGradient_test.i: main/ConjugateGradient_test.cpp.i
+.PHONY : main/ConjugateGradient_test.i
+
+# target to preprocess a source file
+main/ConjugateGradient_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ConjugateGradient_test.dir/build.make CMakeFiles/ConjugateGradient_test.dir/main/ConjugateGradient_test.cpp.i
+.PHONY : main/ConjugateGradient_test.cpp.i
+
+main/ConjugateGradient_test.s: main/ConjugateGradient_test.cpp.s
+.PHONY : main/ConjugateGradient_test.s
+
+# target to generate assembly for a file
+main/ConjugateGradient_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ConjugateGradient_test.dir/build.make CMakeFiles/ConjugateGradient_test.dir/main/ConjugateGradient_test.cpp.s
+.PHONY : main/ConjugateGradient_test.cpp.s
 
 main/KrylovSubspace_test.o: main/KrylovSubspace_test.cpp.o
 .PHONY : main/KrylovSubspace_test.o
@@ -431,6 +468,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
+	@echo "... ConjugateGradient_test"
 	@echo "... KrylovSubspace_test"
 	@echo "... LU_test"
 	@echo "... basic_benchmark_test"
@@ -439,6 +477,9 @@ help:
 	@echo "... itersolver_test"
 	@echo "... matrix_benchmark_test"
 	@echo "... matrix_obj_test"
+	@echo "... main/ConjugateGradient_test.o"
+	@echo "... main/ConjugateGradient_test.i"
+	@echo "... main/ConjugateGradient_test.s"
 	@echo "... main/KrylovSubspace_test.o"
 	@echo "... main/KrylovSubspace_test.i"
 	@echo "... main/KrylovSubspace_test.s"

@@ -91,6 +91,12 @@ class VectorObj : public MatrixObj<TObj> {
         return MatrixObj<TObj>::data()[index];
     }
     
+    const TObj &operator[](int index) const {
+        if (index < 0 || index >= this->get_row() * this->get_col()) {
+            throw std::out_of_range("Index out of range for vector element access.");
+        }
+        return MatrixObj<TObj>::data()[index];
+    }
 
     TObj operator*(const VectorObj<TObj>& other) const {
         if (this->get_row() != other.get_row()) {
@@ -103,13 +109,8 @@ class VectorObj : public MatrixObj<TObj> {
         return sum;
     }
     
-    int get_col() const {
-        return MatrixObj<TObj>::get_col();
-    }
-    
-    int get_row() const {
-        return MatrixObj<TObj>::get_row();
-    }
+    int get_row() const {return MatrixObj<TObj>::get_row();}
+    int get_col() const {return MatrixObj<TObj>::get_col();}
 };
 
 #endif
