@@ -3,9 +3,9 @@
 
 #include <iostream>
 #include <vector>
-#include <stdexcept> // For std::out_of_range
+#include <stdexcept>
+#include <unordered_map>
 
-// Forward declaration of VectorObj to avoid circular dependencies
 template<typename TObj>
 class VectorObj;
 
@@ -14,8 +14,8 @@ class SparseMatrixCSC {
 public:
     int _n, _m; // Number of rows and columns
     std::vector<TObj> values;      // Non-zero values
-    std::vector<int> row_indices; // Row indices of non-zeros
-    std::vector<int> col_ptr;     // Column pointers
+    std::vector<int> row_indices;  // Row indices of non-zeros
+    std::vector<int> col_ptr;      // Column pointers
 
     // Constructor
     SparseMatrixCSC(int rows, int cols) : _n(rows), _m(cols) {
@@ -30,13 +30,10 @@ public:
         if (col >= _m || row >= _n) {
             throw std::out_of_range("Row or column index out of range.");
         }
-        if (value == 0) return; // Skip zero values
+        if (value == TObj()) return; // Skip zero values
         values.push_back(value);
         row_indices.push_back(row);
-        // Update the column pointer for the next column
-        if (col_ptr.size() > col + 1) {
-            col_ptr[col + 1]++;
-        }
+        ++col_ptr[col + 1]; // Increment column pointer for the next column
     }
 
     // Get the number of rows
@@ -50,12 +47,11 @@ public:
         if (index < 0 || index >= _m) {
             throw std::out_of_range("Index out of range for column access.");
         }
-        // Assuming VectorObj can be constructed from a pointer and size
-        TObj* arr = new TObj[_n](); // Initialize with zero
+        TObj* arr = new TObj[_n]();
         for (int i = col_ptr[index]; i < col_ptr[index + 1]; i++) {
             arr[row_indices[i]] = values[i];
         }
-        return VectorObj<TObj>(arr, _n); // Assume VectorObj takes ownership of arr
+        return VectorObj<TObj>(arr, _n);
     }
 
     // Access an element
@@ -89,9 +85,6 @@ public:
             throw std::invalid_argument("Matrices must be the same size for addition.");
         }
         SparseMatrixCSC result(_n, _m);
-        for (int col = 0; col <= _m; ++col) {
-            result.col_ptr[col] = 0;
-        }
         for (int i = 0; i < _m; ++i) {
             for (int p = col_ptr[i]; p < col_ptr[i + 1]; ++p) {
                 int row = row_indices[p];
@@ -108,9 +101,6 @@ public:
             throw std::invalid_argument("Matrices must be the same size for subtraction.");
         }
         SparseMatrixCSC result(_n, _m);
-        for (int col = 0; col <= _m; ++col) {
-            result.col_ptr[col] = 0;
-        }
         for (int i = 0; i < _m; ++i) {
             for (int p = col_ptr[i]; p < col_ptr[i + 1]; ++p) {
                 int row = row_indices[p];
@@ -130,13 +120,17 @@ public:
         for (int i = 0; i < _n; ++i) {
             for (int j = 0; j < other._m; ++j) {
                 TObj sum = TObj();
+                // Store column entries in a map for quick access
+                std::unordered_map<int, TObj> other_row_map;
+                for (int k = other.col_ptr[j]; k < other.col_ptr[j + 1]; ++k) {
+                    other_row_map[other.row_indices[k]] = other.values[k];
+                }
                 for (int k = 0; k < _m; ++k) {
                     for (int p = col_ptr[k]; p < col_ptr[k + 1]; ++p) {
                         if (row_indices[p] == i) {
-                            for (int q = other.col_ptr[k]; q < other.col_ptr[k + 1]; ++q) {
-                                if (other.row_indices[q] == j) {
-                                    sum += values[p] * other.values[q];
-                                }
+                            auto it = other_row_map.find(k);
+                            if (it != other_row_map.end()) {
+                                sum += values[p] * it->second;
                             }
                         }
                     }
