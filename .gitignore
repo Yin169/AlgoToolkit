@@ -9,3 +9,8 @@ bazel-bin
 .DS_Store
 .DS_Store
 /build
+/build
+*.make
+*.o
+*.log
+*.txt

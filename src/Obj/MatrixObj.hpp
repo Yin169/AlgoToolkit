@@ -53,12 +53,14 @@ class MatrixObj {
     const int get_row() const { return _n; }
     const int get_col() const { return _m; }
 
-    void setDim(int n, int m) {
-        if (n != _n || m != _m) {
-            throw std::invalid_argument("Cannot change the dimensions of a MatrixObj instance.");
-        }
+    void resize(int n, int m) {
         _n = n;
         _m = m;
+        TObj *tarr = new TObj[ _n * _m];
+        std::swap(this->arr, tarr);
+        if (tarr != nullptr){
+            delete[] tarr;
+        }
     }
 
     void Slice(TObj* slice, int n, int m) const {
@@ -129,12 +131,12 @@ class MatrixObj {
     }
 
     MatrixObj &operator*=(double scalar) {
-        scalarMultiple(&(arr[0]), scalar);
+        scalarMultiple(&(arr[0]), static_cast<TObj>(scalar));
         return *this;
     }
 
     MatrixObj &operator*(double factor) {
-        scalarMultiple(&(arr[0]), factor);
+        scalarMultiple(&(arr[0]), static_cast<TObj>(factor));
         return *this;
     }
     
@@ -166,6 +168,14 @@ class MatrixObj {
             }
         }
         return result;
+    }
+
+    TObj &operator()(size_t row, size_t col) {
+        return arr[row + col * _n];
+    }
+
+    const TObj &operator()(size_t row, size_t col) const {
+        return arr[row + col * _n];
     }
 
     const TObj &operator[](int index) const {

@@ -179,6 +179,19 @@ LU_test/fast:
 .PHONY : LU_test/fast
 
 #=============================================================================
+# Target rules for targets named KrylovSubspace_test
+
+# Build rule for target.
+KrylovSubspace_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 KrylovSubspace_test
+.PHONY : KrylovSubspace_test
+
+# fast build rule for target.
+KrylovSubspace_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/KrylovSubspace_test.dir/build.make CMakeFiles/KrylovSubspace_test.dir/build
+.PHONY : KrylovSubspace_test/fast
+
+#=============================================================================
 # Target rules for targets named matrix_benchmark_test
 
 # Build rule for target.
@@ -216,6 +229,30 @@ itersolver_benchmark_test: cmake_check_build_system
 itersolver_benchmark_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/itersolver_benchmark_test.dir/build.make CMakeFiles/itersolver_benchmark_test.dir/build
 .PHONY : itersolver_benchmark_test/fast
+
+main/KrylovSubspace_test.o: main/KrylovSubspace_test.cpp.o
+.PHONY : main/KrylovSubspace_test.o
+
+# target to build an object file
+main/KrylovSubspace_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/KrylovSubspace_test.dir/build.make CMakeFiles/KrylovSubspace_test.dir/main/KrylovSubspace_test.cpp.o
+.PHONY : main/KrylovSubspace_test.cpp.o
+
+main/KrylovSubspace_test.i: main/KrylovSubspace_test.cpp.i
+.PHONY : main/KrylovSubspace_test.i
+
+# target to preprocess a source file
+main/KrylovSubspace_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/KrylovSubspace_test.dir/build.make CMakeFiles/KrylovSubspace_test.dir/main/KrylovSubspace_test.cpp.i
+.PHONY : main/KrylovSubspace_test.cpp.i
+
+main/KrylovSubspace_test.s: main/KrylovSubspace_test.cpp.s
+.PHONY : main/KrylovSubspace_test.s
+
+# target to generate assembly for a file
+main/KrylovSubspace_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/KrylovSubspace_test.dir/build.make CMakeFiles/KrylovSubspace_test.dir/main/KrylovSubspace_test.cpp.s
+.PHONY : main/KrylovSubspace_test.cpp.s
 
 main/LU_test.o: main/LU_test.cpp.o
 .PHONY : main/LU_test.o
@@ -394,6 +431,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
+	@echo "... KrylovSubspace_test"
 	@echo "... LU_test"
 	@echo "... basic_benchmark_test"
 	@echo "... basic_test"
@@ -401,6 +439,9 @@ help:
 	@echo "... itersolver_test"
 	@echo "... matrix_benchmark_test"
 	@echo "... matrix_obj_test"
+	@echo "... main/KrylovSubspace_test.o"
+	@echo "... main/KrylovSubspace_test.i"
+	@echo "... main/KrylovSubspace_test.s"
 	@echo "... main/LU_test.o"
 	@echo "... main/LU_test.i"
 	@echo "... main/LU_test.s"
