@@ -13,9 +13,9 @@ namespace Krylov {
 	template<typename TNum>
 	void Arnoldi(MatrixObj<TNum>& A, std::vector<VectorObj<TNum>>& Q, MatrixObj<TNum>& H, TNum tol) {
     	size_t m = Q.size();
-    	assert(H.get_row() == m + 1 && H.get_col() == m);
+    	assert(H.get_row() == m && H.get_col() == m - 1);
 
-    	for (size_t i = 1; i <= m; ++i) {
+    	for (size_t i = 1; i < m; ++i) {
         	VectorObj<TNum> Av = A * Q[i - 1];
 
         	// Orthogonalization

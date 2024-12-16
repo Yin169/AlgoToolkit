@@ -1,6 +1,7 @@
 // GTest for Arnoldi Iteration Implementation
 #include <vector>
 #include "KrylovSubspace.hpp" // Include the Arnoldi header file
+#include "basic.hpp"
 #include <gtest/gtest.h>
 
 // Test Fixture for Arnoldi Tests
@@ -23,6 +24,7 @@ protected:
         for (size_t i = 0; i < n; ++i) {
             r[i] = 1.0 / std::sqrt(static_cast<double>(n));
         }
+        r.normalized();
         Q[0] = r;
     }
 
@@ -74,13 +76,28 @@ TEST_F(ArnoldiTest, BreakdownTolerance) {
 TEST_F(ArnoldiTest, KnownExample) {
     // Define a simple diagonal matrix
     for (size_t i = 0; i < n; ++i) {
-        A(i, i) = static_cast<double>(i + 1);
+        A(i, i) = static_cast<double>(i+1);
     }
 
     Krylov::Arnoldi(A, Q, H, tol);
 
-    // Validate the first Hessenberg diagonal entry
-    EXPECT_NEAR(H(0, 0), 1.0, tol) << "H(0,0) does not match the expected value.";
+    MatrixObj<double> HA(n, n);
+    for (size_t i = 0; i < n; ++i) {
+        for (size_t j = 0; j < n; ++j) {
+            HA(i, j) = H(i, j);
+        }
+    }
+
+    Q.pop_back();
+    MatrixObj matQ(Q);
+    MatrixObj<double> checkLeft = A * matQ ;
+    MatrixObj<double> checkRight = matQ * HA;
+
+    for (size_t i = 0; i < n; ++i) {
+        for (size_t j = 0; j < n; ++j) {
+            EXPECT_NEAR(checkLeft(i, j), checkRight(i, j), tol) <<  i << " " << j << " does not match the expected value.";
+        }
+    }
 }
 
 int main(int argc, char **argv) {
