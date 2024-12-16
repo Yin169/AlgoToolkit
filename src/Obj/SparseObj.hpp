@@ -59,7 +59,7 @@ public:
     }
 
     // Access an element
-    TObj operator() const (int row, int col) {
+    TObj operator()(int row, int col) const {
         if (row < 0 || row >= _n || col < 0 || col >= _m) {
             throw std::out_of_range("Index out of range for element access.");
         }
@@ -89,7 +89,16 @@ public:
             throw std::invalid_argument("Matrices must be the same size for addition.");
         }
         SparseMatrixCSC result(_n, _m);
-        // Implement addition logic here
+        for (int col = 0; col <= _m; ++col) {
+            result.col_ptr[col] = 0;
+        }
+        for (int i = 0; i < _m; ++i) {
+            for (int p = col_ptr[i]; p < col_ptr[i + 1]; ++p) {
+                int row = row_indices[p];
+                TObj val = values[p];
+                result.addValue(row, i, val + other(row, i));
+            }
+        }
         return result;
     }
 
@@ -99,7 +108,16 @@ public:
             throw std::invalid_argument("Matrices must be the same size for subtraction.");
         }
         SparseMatrixCSC result(_n, _m);
-        // Implement subtraction logic here
+        for (int col = 0; col <= _m; ++col) {
+            result.col_ptr[col] = 0;
+        }
+        for (int i = 0; i < _m; ++i) {
+            for (int p = col_ptr[i]; p < col_ptr[i + 1]; ++p) {
+                int row = row_indices[p];
+                TObj val = values[p];
+                result.addValue(row, i, val - other(row, i));
+            }
+        }
         return result;
     }
 
@@ -109,20 +127,27 @@ public:
             throw std::invalid_argument("Number of columns in the first matrix must be equal to the number of rows in the second matrix for multiplication.");
         }
         SparseMatrixCSC result(_n, other._m);
-        // Implement multiplication logic here
-        // This is a placeholder for the actual multiplication algorithm
+        for (int i = 0; i < _n; ++i) {
+            for (int j = 0; j < other._m; ++j) {
+                TObj sum = TObj();
+                for (int k = 0; k < _m; ++k) {
+                    for (int p = col_ptr[k]; p < col_ptr[k + 1]; ++p) {
+                        if (row_indices[p] == i) {
+                            for (int q = other.col_ptr[k]; q < other.col_ptr[k + 1]; ++q) {
+                                if (other.row_indices[q] == j) {
+                                    sum += values[p] * other.values[q];
+                                }
+                            }
+                        }
+                    }
+                }
+                if (sum != TObj()) {
+                    result.addValue(i, j, sum);
+                }
+            }
+        }
         return result;
     }
-
-    // Division operator
-    SparseMatrixCSC operator/(const SparseMatrixCSC& other) const {
-        // Division is not defined for matrices in the same way as for scalars
-        // This method would need to be redefined based on the context
-        throw std::invalid_argument("Matrix division is not supported.");
-    }
-
-    // ... (other members and methods)
-
 };
 
 #endif // SPARSEOBJ_HPP
