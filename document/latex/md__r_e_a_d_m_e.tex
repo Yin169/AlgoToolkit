@@ -1,0 +1,53 @@
+\chapter{Linear Algebra Toolkit\+: LAToolkit}
+\hypertarget{md__r_e_a_d_m_e}{}\label{md__r_e_a_d_m_e}\index{Linear Algebra Toolkit: LAToolkit@{Linear Algebra Toolkit: LAToolkit}}
+\label{md__r_e_a_d_m_e_autotoc_md0}%
+\Hypertarget{md__r_e_a_d_m_e_autotoc_md0}%
+
+
+Welcome to the LAToolkit, a C++ library designed to provide a robust and efficient set of tools for performing linear algebra operations. This repository contains two core header files\+: {\ttfamily Matrix\+Obj.\+hpp} and {\ttfamily basic.\+hpp}, which together form the foundation of our linear algebra capabilities.\hypertarget{md__r_e_a_d_m_e_autotoc_md1}{}\doxysection{\texorpdfstring{Overview}{Overview}}\label{md__r_e_a_d_m_e_autotoc_md1}
+The library consists of several components\+:\hypertarget{md__r_e_a_d_m_e_autotoc_md2}{}\doxysubsection{\texorpdfstring{Matrix\+Obj.\+hpp}{Matrix\+Obj.\+hpp}}\label{md__r_e_a_d_m_e_autotoc_md2}
+This file defines the {\ttfamily Matrix\+Obj} and {\ttfamily Vector\+Obj} classes, which are templates that allow for the creation and manipulation of matrices and vectors with arbitrary data types. The {\ttfamily Matrix\+Obj} class includes methods for matrix addition, subtraction, scalar multiplication, and matrix multiplication, as well as transpose operations. The {\ttfamily Vector\+Obj} class, which inherits from {\ttfamily Matrix\+Obj}, extends these capabilities to one-\/dimensional arrays, providing additional methods for vector normalization and dot product calculations.\hypertarget{md__r_e_a_d_m_e_autotoc_md3}{}\doxysubsection{\texorpdfstring{Basic.\+hpp}{Basic.\+hpp}}\label{md__r_e_a_d_m_e_autotoc_md3}
+The {\ttfamily basic.\+hpp} file contains a namespace {\ttfamily basic} that encompasses a variety of linear algebra algorithms and utility functions. These include\+:
+
+
+\begin{DoxyItemize}
+\item {\bfseries{Power Iteration}}\+: An iterative method for finding the dominant eigenvalue and its corresponding eigenvector of a matrix.
+\item {\bfseries{Rayleigh Quotient}}\+: A method for estimating an eigenvalue of a matrix given an eigenvector.
+\item {\bfseries{Subtractive Projection}}\+: A technique for orthogonalizing vectors.
+\item {\bfseries{Gram-\/\+Schmidt Process}}\+: An algorithm for orthonormalizing a set of vectors.
+\item {\bfseries{Householder Reflections}}\+: A method for constructing orthogonal matrices, used in the QR decomposition.
+\item {\bfseries{QR Decomposition}}\+: A factorization of a matrix into an orthogonal matrix Q and an upper triangular matrix R.
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_autotoc_md4}{}\doxysubsection{\texorpdfstring{Iter\+Solver.\+hpp}{Iter\+Solver.\+hpp}}\label{md__r_e_a_d_m_e_autotoc_md4}
+Contains template classes for iterative solvers such as Gradient Descent and Jacobi methods, which inherit from the Iter\+Solver\+Base class. \hypertarget{md__r_e_a_d_m_e_autotoc_md5}{}\doxysubsection{\texorpdfstring{Solver\+Base.\+hpp}{Solver\+Base.\+hpp}}\label{md__r_e_a_d_m_e_autotoc_md5}
+A template base class for iterative solvers, defining common properties and a pure virtual function for gradient calculation.\hypertarget{md__r_e_a_d_m_e_autotoc_md6}{}\doxysection{\texorpdfstring{Features}{Features}}\label{md__r_e_a_d_m_e_autotoc_md6}
+
+\begin{DoxyItemize}
+\item {\bfseries{Template-\/\+Based}}\+: Works with any data type that supports the necessary operations.
+\item {\bfseries{Efficiency}}\+: Optimized for performance with in-\/place operations where possible.
+\item {\bfseries{Extensibility}}\+: Easily add new algorithms and functions to the library.
+\item {\bfseries{Iterative Solvers}}\+:: Implements common iterative methods for solving linear systems.
+\item {\bfseries{Preconditioning}}\+:: Supports preconditioning in iterative solvers to improve convergence.
+\end{DoxyItemize}\hypertarget{md__r_e_a_d_m_e_autotoc_md7}{}\doxysection{\texorpdfstring{Getting Started}{Getting Started}}\label{md__r_e_a_d_m_e_autotoc_md7}
+To get started with LAToolkit, simply clone this repository and include the {\ttfamily Matrix\+Obj.\+hpp} and {\ttfamily basic.\+hpp} files in your project. You can then instantiate {\ttfamily Matrix\+Obj} and {\ttfamily Vector\+Obj} with your desired data type and utilize the functions provided in the {\ttfamily basic} namespace.\hypertarget{md__r_e_a_d_m_e_autotoc_md8}{}\doxysubsection{\texorpdfstring{Usage Example}{Usage Example}}\label{md__r_e_a_d_m_e_autotoc_md8}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ "{}MatrixObj.hpp"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ "{}basic.hpp"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{using\ namespace\ }basic;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{int}\ main()\ \{}
+\DoxyCodeLine{\ \ \ \ MatrixObj<double>\ A(2,\ 2);\ \textcolor{comment}{//\ Create\ a\ 2x2\ matrix}}
+\DoxyCodeLine{\ \ \ \ VectorObj<double>\ b(2);\ \ \ \ \textcolor{comment}{//\ Create\ a\ 2-\/dimensional\ vector}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Initialize\ A\ and\ b\ with\ values...}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ powerIter(A,\ b,\ 1000);\ \textcolor{comment}{//\ Perform\ power\ iteration}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{md__r_e_a_d_m_e_autotoc_md9}{}\doxysection{\texorpdfstring{Contributing}{Contributing}}\label{md__r_e_a_d_m_e_autotoc_md9}
+We welcome contributions to LAToolkit! If you have an algorithm you\textquotesingle{}d like to add or find a bug, please submit a pull request or open an issue.\hypertarget{md__r_e_a_d_m_e_autotoc_md10}{}\doxysection{\texorpdfstring{License}{License}}\label{md__r_e_a_d_m_e_autotoc_md10}
+LAToolkit is released under the \mbox{[}MIT License\mbox{]}(LICENSE). Feel free to use, modify, and distribute this software as long as you comply with the license. 

@@ -1,27 +1,25 @@
-from setuptools import setup, find_packages, Extension
-from pybind11.setup_helpers import Pybind11Extension, build_ext
+from setuptools import setup, Extension
+import pybind11
+import sys
 
+# Define the extension module
 ext_modules = [
-    Pybind11Extension(
-        "matrixobj",
-        ["python/pybind.cpp"],
-        depends=["src/MatrixObj.hpp", "src/VectorObj.hpp", "src/IterSolver.hpp", "src/SolverBase.hpp"]
-    )
+    Extension(
+        'FASTSolver',
+        ['pybind_interface.cpp'],  # Replace with your Pybind11 interface file
+        include_dirs=[pybind11.get_include()],  # Pybind11 headers
+        language='c++',
+        extra_compile_args=['-std=c++17'],  # Use C++11 standard
+    ),
 ]
 
+# Setup configuration
 setup(
-    name="algotools",
-    version="1.0",
-    author="NG YIN CHEANG",
-    author_email="ycheang.ng@gmail.com",
-    description="Python bindings for MatrixObj and related classes",
-    url="https://github.com/Yin169/AlgorithmicToolkit",
-    packages=find_packages(),
-    classifiers=[
-        "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
-    ],
-    cmdclass={"build_ext": build_ext},
+    name='FASTSolver',
+    version='0.1.0',
+    description='Numerical solvers and linear algebra tools using Pybind11',
+    author='NG YIN CHEANG',
+    author_email='yincheang.ng@outlook.com',
     ext_modules=ext_modules,
+    zip_safe=False,
 )
