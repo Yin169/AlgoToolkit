@@ -1,65 +1,118 @@
-# Linear Algebra Toolkit: LAToolkit
+# Numerical Solvers and Linear Algebra Tools
 
-Welcome to the LAToolkit, a C++ library designed to provide a robust and efficient set of tools for performing linear algebra operations. This repository contains two core header files: `MatrixObj.hpp` and `basic.hpp`, which together form the foundation of our linear algebra capabilities.
+Welcome to **numerical_solver**, a high-performance numerical analysis and scientific computation library written in C++ with Python bindings via **Pybind11**. This project is designed to provide fast, accurate, and lightweight tools for solving linear systems, performing decompositions, and other numerical operations.
 
-## Overview
-
-The library consists of several components:
-
-### MatrixObj.hpp
-This file defines the `MatrixObj` and `VectorObj` classes, which are templates that allow for the creation and manipulation of matrices and vectors with arbitrary data types. The `MatrixObj` class includes methods for matrix addition, subtraction, scalar multiplication, and matrix multiplication, as well as transpose operations. The `VectorObj` class, which inherits from `MatrixObj`, extends these capabilities to one-dimensional arrays, providing additional methods for vector normalization and dot product calculations.
-
-### Basic.hpp
-The `basic.hpp` file contains a namespace `basic` that encompasses a variety of linear algebra algorithms and utility functions. These include:
-
-- **Power Iteration**: An iterative method for finding the dominant eigenvalue and its corresponding eigenvector of a matrix.
-- **Rayleigh Quotient**: A method for estimating an eigenvalue of a matrix given an eigenvector.
-- **Subtractive Projection**: A technique for orthogonalizing vectors.
-- **Gram-Schmidt Process**: An algorithm for orthonormalizing a set of vectors.
-- **Householder Reflections**: A method for constructing orthogonal matrices, used in the QR decomposition.
-- **QR Decomposition**: A factorization of a matrix into an orthogonal matrix Q and an upper triangular matrix R.
-
-### IterSolver.hpp
-Contains template classes for iterative solvers such as Gradient Descent and Jacobi methods, which inherit from the IterSolverBase class.
-### SolverBase.hpp
-A template base class for iterative solvers, defining common properties and a pure virtual function for gradient calculation.
+---
 
 ## Features
 
-- **Template-Based**: Works with any data type that supports the necessary operations.
-- **Efficiency**: Optimized for performance with in-place operations where possible.
-- **Extensibility**: Easily add new algorithms and functions to the library.
-- **Iterative Solvers**:: Implements common iterative methods for solving linear systems.
-- **Preconditioning**:: Supports preconditioning in iterative solvers to improve convergence.
+- **LU Decomposition**: Perform LU decomposition with partial pivoting for matrix factorization.
+- **Power Iteration**: Estimate dominant eigenvalues using the power iteration method.
+- **Rayleigh Quotient**: Efficiently compute the Rayleigh quotient for matrix-vector systems.
+- **Krylov Subspace Methods**: Use Arnoldi iteration for orthonormalization in Krylov subspaces.
+- **Conjugate Gradient Solver**: Solve large, sparse linear systems iteratively.
+- **Gradient Descent and Static Iterative Methods**: Iterative solvers for optimization problems and linear systems.
 
-## Getting Started
+---
 
-To get started with LAToolkit, simply clone this repository and include the `MatrixObj.hpp` and `basic.hpp` files in your project. You can then instantiate `MatrixObj` and `VectorObj` with your desired data type and utilize the functions provided in the `basic` namespace.
+## Requirements
 
-### Usage Example
+- **C++11 or higher**
+- **Python 3.6+**
+- **Pybind11**
+- **CMake** (optional for build automation)
 
-```cpp
-#include "MatrixObj.hpp"
-#include "basic.hpp"
+---
 
-using namespace basic;
+## Installation
 
-int main() {
-    MatrixObj<double> A(2, 2); // Create a 2x2 matrix
-    VectorObj<double> b(2);    // Create a 2-dimensional vector
-
-    // Initialize A and b with values...
-
-    powerIter(A, b, 1000); // Perform power iteration
-
-    return 0;
-}
+### 1. Clone the Repository
+```bash
+git clone https://github.com/yourusername/numerical_solver.git
+cd numerical_solver
 ```
+
+### 2. Build the Module
+
+#### With `setup.py`:
+```bash
+pip install pybind11 setuptools
+python setup.py build_ext --inplace
+```
+
+#### With CMake (Optional):
+```bash
+mkdir build && cd build
+cmake ..
+make
+```
+
+---
+
+## Usage
+
+Here is an example of how to use the `numerical_solver` module in Python:
+
+```python
+import numerical_solver as ns
+
+# Example: LU decomposition
+A = [[4, 1], [1, 3]]
+P = [0, 1]
+ns.pivot_lu(A, P)
+print("LU Decomposition Result:", A, "Pivot:", P)
+
+# Example: Solve using Conjugate Gradient
+solver = ns.ConjugateGrad()
+solver.call_update()
+```
+
+---
+
+## Project Structure
+
+```
+/your-project-root
+|-- LU.hpp                  # LU Decomposition implementation
+|-- basic.hpp               # Basic operations (Power Iteration, QR factorization, etc.)
+|-- ConjugateGradient.hpp   # Conjugate Gradient Solver
+|-- KrylovSubspace.hpp      # Krylov Subspace Methods
+|-- IterSolver.hpp          # Iterative Solvers (Gradient Descent, etc.)
+|-- pybind_interface.cpp    # Pybind11 interface for Python bindings
+|-- setup.py                # Python setup script
+|-- README.md               # Project documentation
+```
+
+---
 
 ## Contributing
 
-We welcome contributions to LAToolkit! If you have an algorithm you'd like to add or find a bug, please submit a pull request or open an issue.
+Contributions are welcome! Feel free to fork the repository and submit a pull request.
+
+1. Fork the project
+2. Create a feature branch (`git checkout -b feature-branch`)
+3. Commit your changes (`git commit -am 'Add new feature'`)
+4. Push to the branch (`git push origin feature-branch`)
+5. Open a Pull Request
+
+---
 
 ## License
 
-LAToolkit is released under the [MIT License](LICENSE). Feel free to use, modify, and distribute this software as long as you comply with the license.
+This project is licensed under the MIT License.
+
+---
+
+## Author
+
+**Your Name**  
+[Your Email](yincheang.ng@outlook.com) 
+[GitHub Profile](https://github.com/Yin169)
+
+---
+
+## Acknowledgments
+
+- Pybind11 for seamless C++ and Python integration
+- Community contributions to numerical methods and solvers
+
