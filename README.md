@@ -72,15 +72,48 @@ solver.call_update()
 ## Project Structure
 
 ```
-/your-project-root
-|-- LU.hpp                  # LU Decomposition implementation
-|-- basic.hpp               # Basic operations (Power Iteration, QR factorization, etc.)
-|-- ConjugateGradient.hpp   # Conjugate Gradient Solver
-|-- KrylovSubspace.hpp      # Krylov Subspace Methods
-|-- IterSolver.hpp          # Iterative Solvers (Gradient Descent, etc.)
-|-- pybind_interface.cpp    # Pybind11 interface for Python bindings
-|-- setup.py                # Python setup script
-|-- README.md               # Project documentation
+.
+├── CMakeLists.txt
+├── Doxyfile
+├── LICENSE
+├── README.md
+├── conanfile.txt
+├── main
+│   ├── ConjugateGradient_test.cpp
+│   ├── KrylovSubspace_test.cpp
+│   ├── LU_test.cpp
+│   ├── SparseMatrixCSCTest.cpp
+│   ├── basic_test.cpp
+│   ├── demo.cpp
+│   ├── itersolver_test.cpp
+│   ├── matrix_obj_test.cpp
+│   └── test.cpp
+├── python
+│   └── pybind.cpp
+├── script_test.sh
+├── setup.py
+└── src
+    ├──  Optimization
+    │   ├── Adjoint.hpp
+    │   └── TrustRegion.hpp
+    ├── LinearAlgebra
+    │   ├── Factorized
+    │   │   └── basic.hpp
+    │   ├── Krylov
+    │   │   ├── ConjugateGradient.hpp
+    │   │   ├── GMRES.hpp
+    │   │   └── KrylovSubspace.hpp
+    │   ├── Preconditioner
+    │   │   ├── LU.hpp
+    │   │   └── MultiGrid.hpp
+    │   └── Solver
+    │       ├── IterSolver.hpp
+    │       └── SolverBase.hpp
+    ├── MixedPrecision
+    └── Obj
+        ├── MatrixObj.hpp
+        ├── SparseObj.hpp
+        └── VectorObj.hpp
 ```
 
 ---
@@ -105,8 +138,6 @@ This project is licensed under the MIT License.
 
 ## Author
 
-**Your Name**  
-[Your Email](yincheang.ng@outlook.com) 
 [GitHub Profile](https://github.com/Yin169)
 
 ---
