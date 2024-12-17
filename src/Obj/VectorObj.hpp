@@ -17,7 +17,7 @@ public:
     // Constructors
     VectorObj() : _size(0), data() {}
 
-    explicit VectorObj(int n) : _size(n), data(n, TObj(0)) {}
+    explicit VectorObj(int n, TObj value = 0) : _size(n), data(n, value) {}
 
     VectorObj(const TObj* other, int n) : _size(n), data(other, other + n) {
         if (!other) throw std::invalid_argument("Null pointer provided to VectorObj constructor.");

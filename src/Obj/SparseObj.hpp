@@ -8,6 +8,8 @@
 #include <algorithm> // for std::lower_bound
 #include <numeric>   // for std::accumulate
 
+#include "VectorObj.hpp"
+
 template<typename TObj>
 class VectorObj;
 
@@ -40,6 +42,18 @@ public:
 
     inline int getRows() const { return _n; }
     inline int getCols() const { return _m; }
+
+    // Get a specific column
+    VectorObj<TObj> getColumn(int index) const {
+        if (index < 0 || index >= _m) {
+            throw std::out_of_range("Column index is out of range.");
+        }
+        VectorObj<TObj> column(_n);
+        for (int i = 0; i < _n; ++i) {
+            column[i] = (*this)(i, index);
+        }
+        return column;
+    }
 
     // Element access with binary search
     TObj operator()(int row, int col) const {

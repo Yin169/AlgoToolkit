@@ -48,7 +48,6 @@ public:
     // Virtual destructor
     virtual ~StaticIterMethod() = default;
 
-private:
     // Perform forward or backward substitution
     VectorObj<TNum> Substitution(const VectorObj<TNum>& b, const MatrixObj<TNum>& L, bool forward) const {
         const int n = b.size();

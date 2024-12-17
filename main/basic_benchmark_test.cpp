@@ -73,7 +73,7 @@ static void BM_GenUnitvec(benchmark::State& state) {
     VectorObj<double> e(100);
 
     for (auto _ : state) {
-        basic::genUnitVec(50, 100, e); // Assuming index 50
+        e = basic::genUnitVec<double>(50, 100); // Assuming index 50
     }
 }
 BENCHMARK(BM_GenUnitvec);
@@ -83,18 +83,18 @@ static void BM_GenUnitMatx(benchmark::State& state) {
     MatrixObj<double> I;
 
     for (auto _ : state) {
-        basic::genUnitMatx(100, 100, I);
+        I = basic::genUnitMat<double>(100);
     }
 }
 BENCHMARK(BM_GenUnitMatx);
 
-// Benchmark for houseH
+// Benchmark for householderTransform
 static void BM_HouseH(benchmark::State& state) {
     MatrixObj<double> A = GenerateRandomMatrixObj<double>(100, 100);
     MatrixObj<double> H;
 
     for (auto _ : state) {
-        basic::houseH(A, H, 50); // Assuming index 50
+        basic::householderTransform(A, H, 50); // Assuming index 50
     }
 }
 BENCHMARK(BM_HouseH);

@@ -6,7 +6,7 @@ template<typename TNum>
 void CreateRandomMatrixAndVector(MatrixObj<TNum>& A, VectorObj<TNum>& b, VectorObj<TNum>& x, int size) {
     A = MatrixObj<TNum>(size, size);
     b = VectorObj<TNum>(size);
-    x = VectorObj<TNum>(size, 0.0);  // Initialize x to zero directly
+    x = VectorObj<TNum>(size);  // Initialize x to zero directly
 
     // Fill matrix A and vector b with random values between 1 and 2.
     for (int i = 0; i < size; ++i) {
@@ -31,7 +31,7 @@ static void BM_GradientDesent(benchmark::State& state) {
     GradientDescent<TNum> solver(A, A, b, size);
 
     for (auto _ : state) {
-        solver.callUpdate(x);  // Perform the update step in the solver
+        solver.solve(x);  // Perform the update step in the solver
     }
 }
 
@@ -49,7 +49,7 @@ static void BM_StaticIterMethod(benchmark::State& state) {
     StaticIterMethod<TNum> solver(A, A, b, size);
 
     for (auto _ : state) {
-        solver.callUpdate(x);  // Perform the update step in the solver
+        solver.solve(x);  // Perform the update step in the solver
     }
 }
 

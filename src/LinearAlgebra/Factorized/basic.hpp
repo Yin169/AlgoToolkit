@@ -94,7 +94,7 @@ namespace basic {
         VectorObj<TNum> v = x + e;
         v.normalize(); // Normalize for numerical stability
 
-        MatrixObj<TNum> vMat(&v[0], n, 1);
+        MatrixObj<TNum> vMat(v, n, 1);
         H = genUnitMat<TNum>(n) - (vMat * vMat.Transpose()) * static_cast<TNum>(2);
     }
 

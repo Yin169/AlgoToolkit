@@ -13,8 +13,8 @@ namespace Krylov {
     template<typename TNum>
     void Arnoldi(MatrixObj<TNum>& A, std::vector<VectorObj<TNum>>& Q, MatrixObj<TNum>& H, TNum tol) {
         size_t m = Q.size();
-        size_t n = A.get_row();  // Assuming A is square, use rows as size
-        assert(H.get_row() == m && H.get_col() == m - 1);
+        size_t n = A.getRows();  // Assuming A is square, use rows as size
+        assert(H.getRows() == m && H.getCols() == m - 1);
         assert(Q[0].size() == n);  // Ensure the vectors in Q are of the same size as the matrix rows
 
         // Iterate over the Krylov subspace dimensions

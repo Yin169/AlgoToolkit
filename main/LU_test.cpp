@@ -4,16 +4,14 @@
 
 // Helper function to initialize a square matrix
 MatrixObj<double> initializeSquareMatrix(int n) {
-    double data[] = {4, 3, 2, 
-                     3, 4, 1, 
-                     2, 1, 4}; // Example data for a 3x3 matrix
+    std::vector<double> data({4, 3, 2, 3, 4, 1, 2, 1, 4}); // Example data for a 3x3 matrix
     return MatrixObj<double>(data, n, n);
 }
 
 // Test case for checking if the PivotLU function throws an exception for non-square matrices.
 TEST(LUDecomposition, NonSquareMatrix) {
     MatrixObj<double> A(3, 4); // Non-square matrix
-    std::vector<double> P;
+    std::vector<int> P;
     EXPECT_THROW(LU::PivotLU(A, P), std::invalid_argument);
 }
 
@@ -23,7 +21,7 @@ TEST(LUDecomposition, SquareMatrix) {
 
     // Initialize matrix A with known values.
     MatrixObj<double> A = initializeSquareMatrix(n);
-    std::vector<double> P;
+    std::vector<int> P;
 
     // Perform LU decomposition.
     LU::PivotLU(A, P);

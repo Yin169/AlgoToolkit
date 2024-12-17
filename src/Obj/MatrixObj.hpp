@@ -10,7 +10,9 @@
 
 #include "VectorObj.hpp"
 
-template<typename TObj> class VectorObj;
+template<typename TObj> 
+class VectorObj;
+
 template<typename TObj>
 class MatrixObj {
 private:
@@ -23,6 +25,23 @@ public:
     MatrixObj() : _n(0), _m(0), arr() {}
 
     MatrixObj(int n, int m) : _n(n), _m(m), arr(n * m, TObj(0)) {}
+
+    MatrixObj(const VectorObj<TObj>& data, int n, int m) 
+        : _n(n), _m(m), arr(std::vector<TObj>(data.element(), data.element() + n * m)) {
+        if (data.size() != n * m) {
+            throw std::invalid_argument("Data size does not match matrix dimensions.");
+        }
+    }
+
+    MatrixObj(const std::vector<VectorObj<TObj>>& data, int n, int m) 
+        : _n(n), _m(m) {
+        if (data.size() != n * m) {
+            throw std::invalid_argument("Data size does not match matrix dimensions.");
+        }
+        for (VectorObj<TObj> e : data){
+            arr.insert(arr.end(), e.element(), e.element() + n);
+        }
+    }
 
     MatrixObj(const std::vector<TObj>& data, int n, int m) 
         : _n(n), _m(m), arr(data) {

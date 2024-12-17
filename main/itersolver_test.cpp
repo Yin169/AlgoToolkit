@@ -14,43 +14,42 @@ MatrixObj<TNum> CreateIdentityMatrix(int size) {
 // Helper function to create a vector with a specified value.
 template<typename TNum>
 VectorObj<TNum> CreateVector(int size, TNum value) {
-    VectorObj<TNum> vec(size);
-    std::fill(vec.begin(), vec.end(), value);
+    VectorObj<TNum> vec(size, value);
     return vec;
 }
 
-// Test Fixture for GradientDesent
-class GradientDesentTest : public ::testing::Test {
+// Test Fixture for GradientDescent
+class GradientDescentTest : public ::testing::Test {
 protected:
     int size_ = 100;
     MatrixObj<double> P = CreateIdentityMatrix<double>(size_);
     MatrixObj<double> A = CreateIdentityMatrix<double>(size_);
     VectorObj<double> b = CreateVector<double>(size_, 1.0);
     VectorObj<double> x = CreateVector<double>(size_, 0.0);
-    std::unique_ptr<GradientDesent<double>> gradientDesent;
+    std::unique_ptr<GradientDescent<double>> gradientDescent;
 
     void SetUp() override {
-        gradientDesent = std::make_unique<GradientDesent<double>>(P, A, b, 100);
+        gradientDescent = std::make_unique<GradientDescent<double>>(P, A, b, 100);
     }
 };
 
-// Test the constructor of GradientDesent.
-TEST_F(GradientDesentTest, Constructor) {
-    EXPECT_EQ(gradientDesent->getIter(), 100);
+// Test the constructor of GradientDescent.
+TEST_F(GradientDescentTest, Constructor) {
+    EXPECT_EQ(gradientDescent->getMaxIter(), 100);
 }
 
 // Test the calculation of gradient.
-TEST_F(GradientDesentTest, CalGrad) {
+TEST_F(GradientDescentTest, CalGrad) {
     VectorObj<double> expectedGradient = b - (A * x);
-    VectorObj<double> actualGradient = gradientDesent->calGrad(x);
+    VectorObj<double> actualGradient = gradientDescent->calGrad(x);
     EXPECT_NEAR((actualGradient - expectedGradient).L2norm(), 0.0, 1e-8);
 }
 
-// Test the update step in GradientDesent.
-TEST_F(GradientDesentTest, Update) {
+// Test the update step in GradientDescent.
+TEST_F(GradientDescentTest, Update) {
     VectorObj<double> expectedX = CreateVector<double>(size_, 1.0);
     x = CreateVector<double>(size_, 0.0);
-    gradientDesent->callUpdate(x);
+    gradientDescent->solve(x);
     EXPECT_NEAR((x - expectedX).L2norm(), 0.0, 1e-8);
 }
 
@@ -70,7 +69,7 @@ protected:
 
 // Test the constructor of StaticIterMethod.
 TEST_F(StaticIterMethodTest, Constructor) {
-    EXPECT_EQ(staticIterMethod->getIter(), 100);
+    EXPECT_EQ(staticIterMethod->getMaxIter(), 100);
 }
 
 // Test the Substitution method of StaticIterMethod.
@@ -84,7 +83,7 @@ TEST_F(StaticIterMethodTest, Substitution) {
 TEST_F(StaticIterMethodTest, Update) {
     VectorObj<double> expectedX = CreateVector<double>(size_, 1.0);
     x = CreateVector<double>(size_, 0.0);
-    staticIterMethod->callUpdate(x);
+    staticIterMethod->solve(x);
     EXPECT_NEAR((x - expectedX).L2norm(), 0.0, 1e-8);
 }
 

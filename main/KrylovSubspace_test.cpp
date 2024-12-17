@@ -60,11 +60,35 @@ TEST_F(ArnoldiTest, OrthogonalityCheck) {
 TEST_F(ArnoldiTest, HessenbergStructure) {
     Krylov::Arnoldi(A, Q, H, tol);
 
-    for (size_t i = 0; i < H.get_row(); ++i) {
-        for (size_t j = 0; j < H.get_col(); ++j) {
+    for (size_t i = 0; i < H.getRows(); ++i) {
+        for (size_t j = 0; j < H.getCols(); ++j) {
             if (i > j + 1) {
                 EXPECT_NEAR(H(i, j), 0.0, tol) << "Hessenberg matrix entry H[" << i << "][" << j << "] is non-zero.";
             }
+        }
+    }
+}
+
+// Helper function to initialize zero matrix
+void initializeZeroMatrix(MatrixObj<double>& matrix) {
+    for (size_t i = 0; i < matrix.getRows(); ++i) {
+        for (size_t j = 0; j < matrix.getCols(); ++j) {
+            matrix(i, j) = 0.0;
+        }
+    }
+}
+
+// Helper functions for matrix initialization and copying
+void initializeDiagonalMatrix(MatrixObj<double>& matrix) {
+    for (size_t i = 0; i < matrix.getRows(); ++i) {
+        matrix(i, i) = static_cast<double>(i + 1);
+    }
+}
+
+void copyMatrix(const MatrixObj<double>& source, MatrixObj<double>& dest) {
+    for (size_t i = 0; i < source.getRows(); ++i) {
+        for (size_t j = 0; j < source.getCols(); ++j) {
+            dest(i, j) = source(i, j);
         }
     }
 }
@@ -78,15 +102,6 @@ TEST_F(ArnoldiTest, BreakdownTolerance) {
     EXPECT_NO_THROW(Krylov::Arnoldi(A, Q, H, tol)) << "Arnoldi iteration should handle breakdown gracefully.";
 }
 
-// Helper function to initialize zero matrix
-void initializeZeroMatrix(MatrixObj<double>& matrix) {
-    for (size_t i = 0; i < n; ++i) {
-        for (size_t j = 0; j < n; ++j) {
-            matrix(i, j) = 0.0;
-        }
-    }
-}
-
 // Test for specific example with known results
 TEST_F(ArnoldiTest, KnownExample) {
     // Define a simple diagonal matrix
@@ -98,7 +113,7 @@ TEST_F(ArnoldiTest, KnownExample) {
     copyMatrix(H, HA);
 
     Q.pop_back();
-    MatrixObj matQ(Q);
+    MatrixObj matQ(Q, Q[0].size(), Q.size());
     MatrixObj<double> checkLeft = A * matQ;
     MatrixObj<double> checkRight = matQ * HA;
 
@@ -109,20 +124,6 @@ TEST_F(ArnoldiTest, KnownExample) {
     }
 }
 
-// Helper functions for matrix initialization and copying
-void initializeDiagonalMatrix(MatrixObj<double>& matrix) {
-    for (size_t i = 0; i < n; ++i) {
-        matrix(i, i) = static_cast<double>(i + 1);
-    }
-}
-
-void copyMatrix(const MatrixObj<double>& source, MatrixObj<double>& dest) {
-    for (size_t i = 0; i < n; ++i) {
-        for (size_t j = 0; j < n; ++j) {
-            dest(i, j) = source(i, j);
-        }
-    }
-}
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);

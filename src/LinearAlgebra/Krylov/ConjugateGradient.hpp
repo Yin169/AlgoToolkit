@@ -19,7 +19,7 @@ public:
     explicit ConjugateGrad(MatrixObj<TNum> P, MatrixObj<TNum> A, VectorObj<TNum> b, int maxIter, double tol)
         : _tol(tol), IterSolverBase<TNum>(std::move(P), std::move(A), std::move(b), maxIter) {
         // Initialize x to zero vector
-        x = VectorObj<TNum>(b.get_row());
+        x = VectorObj<TNum>(b.size());
 
         // Compute initial residual and search direction
         r = this->b - (this->A * x);
@@ -28,10 +28,11 @@ public:
 
     virtual ~ConjugateGrad() = default;
 
-    // Removed calGrad as it's not utilized
+    // dummy function
+    VectorObj<TNum> calGrad(const VectorObj<TNum>& x) const {return VectorObj<TNum>();}; 
 
     void callUpdate() {
-        int maxIter = this->getIter();
+        int maxIter = this->getMaxIter();
         double residualNorm = r.L2norm();
 
         // Iterative loop
