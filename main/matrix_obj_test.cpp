@@ -15,9 +15,11 @@ protected:
         matrix3 = MatrixObj<double>(3, 2); // 3x2 matrix for dimension mismatch tests
 
         // Initialize values in matrix1 and matrix2
-        for (int i = 0; i < matrix1.getRows() * matrix1.getCols(); ++i) {
-            matrix1[i] = i;        // 0, 1, 2, ...
-            matrix2[i] = i + 3;    // 3, 4, 5, ...
+        for (int i = 0; i < matrix1.getRows(); ++i) {
+            for (int j = 0; j < matrix1.getCols(); ++j){
+                matrix1(i, j) = i * matrix1.getCols() + j;        // 0, 1, 2, ...
+                matrix2(i, j) = i * matrix2.getCols() + j + 3;    // 3, 4, 5, ...
+            }
         }
     }
 };
@@ -61,16 +63,22 @@ TEST_F(MatrixObjTest, Subtraction) {
 // Test for scalar multiplication
 TEST_F(MatrixObjTest, ScalarMultiplication) {
     matrix1 *= 2.0;
-    for (int i = 0; i < matrix1.size(); ++i) {
-        EXPECT_EQ(matrix1[i], 2.0 * i);
+    for (int i = 0; i < matrix1.getRows(); ++i) {
+        for (int j = 0; j < matrix1.getCols(); ++j){
+            EXPECT_EQ(matrix1(i, j), 2.0 * ( i * matrix1.getCols() + j));
+        }
     }
 }
 
 // Test for matrix multiplication
 TEST_F(MatrixObjTest, MatrixMultiplication) {
     MatrixObj<double> matrix4(3, 2);
-    for (int i = 0; i < matrix4.size(); ++i) {
-        matrix4[i] = i + 1; // 1, 2, 3, ...
+
+    for (int i = 0; i < matrix4.getRows(); ++i) {
+        for (int j = 0; j < matrix4.getCols(); ++j){
+            matrix1(j, i) = (j * matrix1.getCols()) + i;
+            matrix4(i, j) = (i * matrix4.getCols()) + j + 1; // 1, 2, 3, ...
+        }
     }
 
     MatrixObj<double> result = matrix1 * matrix4;
@@ -79,10 +87,10 @@ TEST_F(MatrixObjTest, MatrixMultiplication) {
     ASSERT_EQ(result.getCols(), 2);
 
     // Verify specific values in the result matrix
-    EXPECT_DOUBLE_EQ(result[0], 10.0);  // 0*1 + 1*3 + 2*5
-    EXPECT_DOUBLE_EQ(result[1], 13.0);  // 0*2 + 1*4 + 2*6
-    EXPECT_DOUBLE_EQ(result[2], 28.0);  // 3*1 + 4*3 + 5*5
-    EXPECT_DOUBLE_EQ(result[3], 40.0);  // 3*2 + 4*4 + 5*6
+    EXPECT_DOUBLE_EQ(result(0, 0), 13.0);  // 0*1 + 1*3 + 2*5
+    EXPECT_DOUBLE_EQ(result(0, 1), 16.0);  // 0*2 + 1*4 + 2*6
+    EXPECT_DOUBLE_EQ(result(1, 0), 40.0);  // 3*1 + 4*3 + 5*5
+    EXPECT_DOUBLE_EQ(result(1, 1), 52.0);  // 3*2 + 4*4 + 5*6
 }
 
 // Test for matrix transpose
@@ -100,7 +108,7 @@ TEST_F(MatrixObjTest, Transpose) {
 
 // Test for incompatible dimensions in multiplication
 TEST_F(MatrixObjTest, IncompatibleDimensionsMultiplication) {
-    EXPECT_THROW(matrix1 * matrix3, std::invalid_argument);
+    EXPECT_THROW(matrix1 * matrix2, std::invalid_argument);
 }
 
 // Test for accessing elements
