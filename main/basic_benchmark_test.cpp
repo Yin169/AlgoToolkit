@@ -8,7 +8,7 @@ template <typename TNum>
 MatrixObj<TNum> GenerateRandomMatrixObj(int rows, int cols) {
     MatrixObj<TNum> mat(rows, cols);
     for (int i = 0; i < rows * cols; ++i) {
-        mat[i] = static_cast<TNum>(rand()) / static_cast<TNum>(RAND_MAX);
+        mat[i] = static_cast<TNum>(rand()) / RAND_MAX;
     }
     return mat;
 }
@@ -18,7 +18,7 @@ template <typename TNum>
 VectorObj<TNum> GenerateRandomVectorObj(int size) {
     VectorObj<TNum> vec(size);
     for (int i = 0; i < size; ++i) {
-        vec[i] = static_cast<TNum>(rand()) / static_cast<TNum>(RAND_MAX);
+        vec[i] = static_cast<TNum>(rand()) / RAND_MAX;
     }
     return vec;
 }
@@ -52,7 +52,7 @@ static void BM_GramSmith(benchmark::State& state) {
     std::vector<VectorObj<double>> orthSet(100);
 
     for (auto _ : state) {
-        basic::gramSmith(A, orthSet);
+        basic::gramSchmidt(A, orthSet);
     }
 }
 BENCHMARK(BM_GramSmith);
@@ -73,7 +73,7 @@ static void BM_GenUnitvec(benchmark::State& state) {
     VectorObj<double> e(100);
 
     for (auto _ : state) {
-        basic::genUnitvec(50, 100, e); // Assuming index 50
+        basic::genUnitVec(50, 100, e); // Assuming index 50
     }
 }
 BENCHMARK(BM_GenUnitvec);

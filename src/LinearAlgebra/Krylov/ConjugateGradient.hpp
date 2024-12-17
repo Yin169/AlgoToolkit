@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <cmath>
+#include <stdexcept>
 #include "MatrixObj.hpp"
 #include "VectorObj.hpp"
 #include "SolverBase.hpp"
@@ -26,24 +27,24 @@ public:
     }
 
     virtual ~ConjugateGrad() = default;
-	VectorObj<TNum> calGrad(VectorObj<TNum> &x){return x;}
+
+    // Removed calGrad as it's not utilized
 
     void callUpdate() {
         int maxIter = this->getIter();
         double residualNorm = r.L2norm();
 
         // Iterative loop
-        while (maxIter--) {
+        for (int iter = 0; iter < maxIter; ++iter) {
             // Compute A*p and cache it
             VectorObj<TNum> Ap = this->A * p;
 
-            // Compute alpha
+            // Compute alpha (step size)
             double rDotR = r * r;
             double pDotAp = p * Ap;
             if (std::abs(pDotAp) < 1e-12) {
-                break;
-                // Prevent division by zero or near-zero values
-                throw std::runtime_error("Division by near-zero in alpha calculation.");
+                std::cerr << "Warning: Division by near-zero in alpha calculation.\n";
+                break; // Prevent division by zero or near-zero values
             }
             double alpha = rDotR / pDotAp;
 
@@ -53,14 +54,16 @@ public:
 
             // Check for convergence
             residualNorm = r.L2norm();
-            if (residualNorm < _tol) break;
+            if (residualNorm < _tol) {
+                std::cout << "Conjugate Gradient converged in " << iter + 1 << " iterations.\n";
+                return; // Converged
+            }
 
-            // Compute beta
+            // Compute beta (for new search direction)
             double rDotR_new = r * r;
             if (std::abs(rDotR) < 1e-12) {
-                break;
-                // Prevent division by zero or near-zero values
-                throw std::runtime_error("Division by near-zero in beta calculation.");
+                std::cerr << "Warning: Division by near-zero in beta calculation.\n";
+                break; // Prevent division by zero or near-zero values
             }
             double beta = rDotR_new / rDotR;
 

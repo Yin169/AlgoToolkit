@@ -2,6 +2,15 @@
 #include "VectorObj.hpp"
 #include "SparseObj.hpp"
 
+// Helper function to initialize matrices
+template <typename T>
+void initializeSparseMatrix(SparseMatrixCSC<T>& mat) {
+    mat.addValue(0, 0, 1);
+    mat.addValue(1, 1, 2);
+    mat.addValue(2, 2, 3);
+    mat.finalize();
+}
+
 // Test fixture for SparseMatrixCSC
 class SparseMatrixCSCTest : public ::testing::Test {
 protected:
@@ -11,13 +20,8 @@ protected:
     SparseMatrixCSCTest() : matA(3, 3), matB(3, 3) {}
 
     void SetUp() override {
-        // Initialize matA
-        matA.addValue(0, 0, 1);
-        matA.addValue(1, 1, 2);
-        matA.addValue(2, 2, 3);
-        matA.finalize();
-
-        // Initialize matB
+        // Initialize matA and matB using the helper function
+        initializeSparseMatrix(matA);
         matB.addValue(0, 0, 4);
         matB.addValue(1, 1, 5);
         matB.addValue(2, 2, 6);

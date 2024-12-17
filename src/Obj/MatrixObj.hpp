@@ -8,6 +8,9 @@
 #include <iostream>
 #include <openblas/cblas.h> // Ensure BLAS is installed or use a wrapper library like Eigen
 
+#include "VectorObj.hpp"
+
+template<typename TObj> class VectorObj;
 template<typename TObj>
 class MatrixObj {
 private:
@@ -44,6 +47,19 @@ public:
     ~MatrixObj() = default;
 
     // Accessors
+    TObj& operator[](size_t index) {
+        if ( index < 0 || index >= _n * _m ) {
+            throw std::out_of_range("Matrix indices are out of range.");
+        }
+        return arr[index];
+    }
+    const TObj& operator[](size_t index) const {
+        if ( index < 0 || index >= _n * _m ) {
+            throw std::out_of_range("Matrix indices are out of range.");
+        }
+        return arr[index];
+    }
+
     TObj& operator()(size_t row, size_t col) {
         if (row >= _n || col >= _m) {
             throw std::out_of_range("Matrix indices are out of range.");
@@ -113,17 +129,23 @@ public:
     }
 
     // Matrix-vector multiplication
-    std::vector<TObj> operator*(const std::vector<TObj>& vec) const {
+    VectorObj<TObj> operator*(const VectorObj<TObj>& vec) const {
         if (_m != static_cast<int>(vec.size())) {
             throw std::invalid_argument("Vector size does not match matrix columns.");
         }
-        std::vector<TObj> result(_n, TObj(0));
+        VectorObj<TObj> result(_n);
         cblas_dgemv(CblasColMajor, CblasNoTrans,
                     _n, _m, 1.0,
                     arr.data(), _n,
-                    vec.data(), 1,
-                    0.0, result.data(), 1);
+                    vec.element(), 1,
+                    0.0, const_cast<TObj*>(result.element()), 1);
         return result;
+    }
+
+    void swapRows(size_t row1, size_t row2){
+        for (size_t j = 0; j < _m; ++j){
+            std::swap((*this)(row1, j), (*this)(row2, j));
+        }
     }
 
     // Transpose
@@ -139,16 +161,19 @@ public:
     }
 
     // Get a specific column
-    std::vector<TObj> getColumn(int index) const {
+    VectorObj<TObj> getColumn(int index) const {
         if (index < 0 || index >= _m) {
             throw std::out_of_range("Column index is out of range.");
         }
-        std::vector<TObj> column(_n);
+        VectorObj<TObj> column(_n);
         for (int i = 0; i < _n; ++i) {
             column[i] = (*this)(i, index);
         }
         return column;
     }
+
+    inline int size(){ return arr.size(); }
+    
 
     // Resize matrix
     void resize(int n, int m) {

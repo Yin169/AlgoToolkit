@@ -12,10 +12,10 @@ protected:
     void SetUp() override {
         matrix1 = MatrixObj<double>(2, 3); // 2x3 matrix
         matrix2 = MatrixObj<double>(2, 3); // another 2x3 matrix
-        matrix3 = MatrixObj<double>(3, 2); // 3x2 matrix, for dimension mismatch tests
+        matrix3 = MatrixObj<double>(3, 2); // 3x2 matrix for dimension mismatch tests
 
         // Initialize values in matrix1 and matrix2
-        for (int i = 0; i < matrix1.size(); ++i) {
+        for (int i = 0; i < matrix1.getRows() * matrix1.getCols(); ++i) {
             matrix1[i] = i;        // 0, 1, 2, ...
             matrix2[i] = i + 3;    // 3, 4, 5, ...
         }
@@ -25,8 +25,8 @@ protected:
 // Test for default construction and initialization
 TEST_F(MatrixObjTest, DefaultConstructor) {
     MatrixObj<double> testMatrix(2, 2);
-    EXPECT_EQ(testMatrix.get_row(), 2);
-    EXPECT_EQ(testMatrix.get_col(), 2);
+    ASSERT_EQ(testMatrix.getRows(), 2);
+    ASSERT_EQ(testMatrix.getCols(), 2);
     for (int i = 0; i < testMatrix.size(); ++i) {
         EXPECT_EQ(testMatrix[i], 0.0);
     }
@@ -34,15 +34,15 @@ TEST_F(MatrixObjTest, DefaultConstructor) {
 
 // Test for getting matrix dimensions
 TEST_F(MatrixObjTest, GetDimensions) {
-    EXPECT_EQ(matrix1.get_row(), 2);
-    EXPECT_EQ(matrix1.get_col(), 3);
+    ASSERT_EQ(matrix1.getRows(), 2);
+    ASSERT_EQ(matrix1.getCols(), 3);
 }
 
 // Test for addition of matrices
 TEST_F(MatrixObjTest, Addition) {
     MatrixObj<double> result = matrix1 + matrix2;
-    ASSERT_EQ(result.get_row(), 2);
-    ASSERT_EQ(result.get_col(), 3);
+    ASSERT_EQ(result.getRows(), 2);
+    ASSERT_EQ(result.getCols(), 3);
     for (int i = 0; i < result.size(); ++i) {
         EXPECT_EQ(result[i], matrix1[i] + matrix2[i]);
     }
@@ -51,8 +51,8 @@ TEST_F(MatrixObjTest, Addition) {
 // Test for subtraction of matrices
 TEST_F(MatrixObjTest, Subtraction) {
     MatrixObj<double> result = matrix1 - matrix2;
-    ASSERT_EQ(result.get_row(), 2);
-    ASSERT_EQ(result.get_col(), 3);
+    ASSERT_EQ(result.getRows(), 2);
+    ASSERT_EQ(result.getCols(), 3);
     for (int i = 0; i < result.size(); ++i) {
         EXPECT_EQ(result[i], matrix1[i] - matrix2[i]);
     }
@@ -75,8 +75,8 @@ TEST_F(MatrixObjTest, MatrixMultiplication) {
 
     MatrixObj<double> result = matrix1 * matrix4;
 
-    ASSERT_EQ(result.get_row(), 2);
-    ASSERT_EQ(result.get_col(), 2);
+    ASSERT_EQ(result.getRows(), 2);
+    ASSERT_EQ(result.getCols(), 2);
 
     // Verify specific values in the result matrix
     EXPECT_DOUBLE_EQ(result[0], 10.0);  // 0*1 + 1*3 + 2*5
@@ -88,11 +88,11 @@ TEST_F(MatrixObjTest, MatrixMultiplication) {
 // Test for matrix transpose
 TEST_F(MatrixObjTest, Transpose) {
     MatrixObj<double> transposed = matrix1.Transpose();
-    ASSERT_EQ(transposed.get_row(), matrix1.get_col());
-    ASSERT_EQ(transposed.get_col(), matrix1.get_row());
+    ASSERT_EQ(transposed.getRows(), matrix1.getCols());
+    ASSERT_EQ(transposed.getCols(), matrix1.getRows());
 
-    for (int i = 0; i < transposed.get_row(); ++i) {
-        for (int j = 0; j < transposed.get_col(); ++j) {
+    for (int i = 0; i < transposed.getRows(); ++i) {
+        for (int j = 0; j < transposed.getCols(); ++j) {
             EXPECT_EQ(transposed(i, j), matrix1(j, i));
         }
     }
@@ -100,13 +100,13 @@ TEST_F(MatrixObjTest, Transpose) {
 
 // Test for incompatible dimensions in multiplication
 TEST_F(MatrixObjTest, IncompatibleDimensionsMultiplication) {
-    EXPECT_THROW(matrix1 * matrix2, std::invalid_argument);
+    EXPECT_THROW(matrix1 * matrix3, std::invalid_argument);
 }
 
 // Test for accessing elements
 TEST_F(MatrixObjTest, ElementAccess) {
-    EXPECT_EQ(matrix1[0], 0.0);
-    EXPECT_EQ(matrix1[5], 5.0);
+    ASSERT_EQ(matrix1[0], 0.0);
+    ASSERT_EQ(matrix1[5], 5.0);
 
     EXPECT_THROW(matrix1[-1], std::out_of_range);
     EXPECT_THROW(matrix1[matrix1.size()], std::out_of_range);
@@ -114,9 +114,9 @@ TEST_F(MatrixObjTest, ElementAccess) {
 
 // Test for getting a column as a vector
 TEST_F(MatrixObjTest, GetColumn) {
-    VectorObj<double> col = matrix1.get_Col(1);
-    ASSERT_EQ(col.get_row(), matrix1.get_row());
-    for (int i = 0; i < col.get_row(); ++i) {
+    VectorObj<double> col = matrix1.getColumn(1);
+    ASSERT_EQ(col.size(), matrix1.getRows());
+    for (int i = 0; i < col.size(); ++i) {
         EXPECT_EQ(col[i], matrix1(i, 1));
     }
 }

@@ -2,6 +2,14 @@
 #include "MatrixObj.hpp"
 #include "VectorObj.hpp"
 
+// Helper function for initializing matrices
+template <typename TNum>
+void initializeMatrix(MatrixObj<TNum>& matrix) {
+    for (int i = 0; i < matrix.size(); ++i) {
+        matrix[i] = static_cast<TNum>(i);
+    }
+}
+
 // Benchmark for matrix creation
 static void BM_MatrixCreation(benchmark::State& state) {
     int rows = state.range(0);
@@ -22,13 +30,11 @@ static void BM_MatrixAddition(benchmark::State& state) {
     int rows = state.range(0);
     int cols = state.range(1);
 
-    // Initialize matrices
+    // Initialize matrices outside of the benchmark loop
     MatrixObj<int> matrix1(rows, cols);
     MatrixObj<int> matrix2(rows, cols);
-    for (int i = 0; i < matrix1.size(); ++i) {
-        matrix1[i] = i;
-        matrix2[i] = i + 1;
-    }
+    initializeMatrix(matrix1);
+    initializeMatrix(matrix2);
 
     for (auto _ : state) {
         MatrixObj<int> result = matrix1 + matrix2;
@@ -47,15 +53,11 @@ static void BM_MatrixMultiplication(benchmark::State& state) {
     int cols_a = state.range(1);
     int cols_b = state.range(2);
 
-    // Initialize matrices
+    // Initialize matrices outside of the benchmark loop
     MatrixObj<double> matrix1(rows_a, cols_a);
     MatrixObj<double> matrix2(cols_a, cols_b);
-    for (int i = 0; i < matrix1.size(); ++i) {
-        matrix1[i] = static_cast<double>(i);
-    }
-    for (int i = 0; i < matrix2.size(); ++i) {
-        matrix2[i] = static_cast<double>(i + 1);
-    }
+    initializeMatrix(matrix1);
+    initializeMatrix(matrix2);
 
     for (auto _ : state) {
         MatrixObj<double> result = matrix1 * matrix2;

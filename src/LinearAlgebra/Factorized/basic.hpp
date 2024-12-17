@@ -48,7 +48,7 @@ namespace basic {
         orthSet.resize(m);
 
         for (int i = 0; i < m; ++i) {
-            VectorObj<TNum> v = A.get_Col(i);
+            VectorObj<TNum> v = A.getColumn(i);
             for (int j = 0; j < i; ++j) {
                 v = subtProj(v, orthSet[j]);
             }
@@ -70,7 +70,7 @@ namespace basic {
     MatrixObj<TNum> genUnitMat(int n) {
         MatrixObj<TNum> identity(n, n);
         for (int i = 0; i < n; ++i) {
-            identity[i][i] = static_cast<TNum>(1);
+            identity(i, i) = static_cast<TNum>(1);
         }
         return identity;
     }
@@ -85,7 +85,7 @@ namespace basic {
     template <typename TNum>
     void householderTransform(const MatrixObj<TNum>& A, MatrixObj<TNum>& H, int index) {
         int n = A.getRows();
-        VectorObj<TNum> x = A.get_Col(index);
+        VectorObj<TNum> x = A.getColumn(index);
 
         VectorObj<TNum> e = genUnitVec<TNum>(index, n);
         TNum factor = x.L2norm() * sign(x[index]);

@@ -7,8 +7,6 @@
 #include <numeric> // For std::inner_product
 #include <vector>
 
-#include "MatrixObj.hpp"
-
 template <typename TObj>
 class VectorObj {
 private:
@@ -45,7 +43,8 @@ public:
         return data[index];
     }
 
-    int size() const { return _size; }
+    inline const TObj* element() const { return data.data(); }
+    inline int size() const { return _size; }
 
     // L2 Norm
     double L2norm() const {
