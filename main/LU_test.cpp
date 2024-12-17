@@ -2,50 +2,75 @@
 #include "LU.hpp"
 #include "MatrixObj.hpp"
 
-// Test case for checking if the PivotLU function throws an exception for non-square matrices.
+// Helper function to initialize a square matrix
+MatrixObj<double> initializeSquareMatrix(int n) {
+    // Example data for a 3x3 matrix
+    std::vector<double> data = {
+        4, 3, 2,
+        3, 4, 1,
+        2, 1, 4
+    };
+    return MatrixObj<double>(data, n, n);
+}
+
+// Test case: Check if PivotLU throws an exception for non-square matrices.
 TEST(LUDecomposition, NonSquareMatrix) {
     MatrixObj<double> A(3, 4); // Non-square matrix
-    std::vector<double> P;
+    std::vector<int> P;
+
     EXPECT_THROW(LU::PivotLU(A, P), std::invalid_argument);
 }
 
-// Test case for checking if the PivotLU function correctly performs LU decomposition on a square matrix.
+// Test case: Check if PivotLU correctly performs LU decomposition on a square matrix.
 TEST(LUDecomposition, SquareMatrix) {
-    int n = 3;
+    const int n = 3;
 
     // Initialize matrix A with known values.
-    double data[] = {4, 3, 2, 3, 4, 1, 2, 1, 4};
-    MatrixObj<double>  A(data, n, n);
-    std::vector<double> P;
+    MatrixObj<double> A = initializeSquareMatrix(n);
+    std::vector<int> P;
 
-    // Perform LU decomposition.
-    LU::PivotLU(A, P);
+    // Copy the original matrix for comparison
+    MatrixObj<double> originalA = A;
 
-    // Construct L and U matrices from the decomposed A.
-    MatrixObj<double> L(n, n), U(n, n);
+    // Perform LU decomposition
+    ASSERT_NO_THROW(LU::PivotLU(A, P));
+
+    // Initialize L and U matrices
+    MatrixObj<double> L(n, n); // Start with all zeros
+    MatrixObj<double> U(n, n);
+
+    // Extract L and U from the decomposed matrix A
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
-            if (i <= j) {
-                U[i + j * n] = A[i + j * n]; // Upper triangular part of U.
+            if (i > j) {
+                L(i, j) = A(i, j) / A(i ,i); // Lower triangular part
             } else {
-                L[i + j * n] = A[i + j * n]; // Lower triangular part of L.
+                U(i, j) = A(i, j); // Upper triangular part
             }
         }
-    }
-    for (int i = 0; i < n; ++i) {
-        L[i + i * n] = 1.0; // Diagonal elements of L are 1.
+        L(i, i) = 1.0; // Set diagonal elements of L to 1
     }
 
-    // Verify if A is approximately equal to L * U
-    MatrixObj<double> A_reconstructed = L * U;
+    // Apply permutation vector P to reorder rows of the original matrix
+    MatrixObj<double> PA(n, n);
+    PA = A;
+    for (int i = 0; i < n; ++i) {
+        PA.swapRows(i, P[i]);
+    }
+
+    // Compute L * U
+    MatrixObj<double> L_times_U = L * U;
+
+    // Verify if PA is approximately equal to L * U
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
-            EXPECT_NEAR(A[i + j * n], A_reconstructed[i + j * n], 1e-8);
+            EXPECT_NEAR(PA(i, j), L_times_U(i, j), 1e-8)
+                << "Mismatch at (" << i << ", " << j << ")";
         }
     }
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

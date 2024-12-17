@@ -1,4 +1,3 @@
-// GTest for Arnoldi Iteration Implementation
 #include <vector>
 #include "KrylovSubspace.hpp" // Include the Arnoldi header file
 #include "basic.hpp"
@@ -14,18 +13,27 @@ protected:
         Q = std::vector<VectorObj<double>>(n + 1, VectorObj<double>(n));
         H = MatrixObj<double>(n + 1, n);
 
-        // Example initialization of a simple matrix A (identity matrix)
-        for (size_t i = 0; i < n; ++i) {
-            A(i, i) = 1.0;
-        }
+        // Initialize matrix A as an identity matrix
+        initializeIdentityMatrix(A);
 
+        // Initialize first vector in Q
         r = VectorObj<double>(n);
-        // Example initialization of the first vector in Q
-        for (size_t i = 0; i < n; ++i) {
-            r[i] = 1.0 / std::sqrt(static_cast<double>(n));
-        }
-        r.normalized();
+        initializeVector(r, 1.0 / std::sqrt(static_cast<double>(n)));
+        r.normalize();
         Q[0] = r;
+    }
+
+    // Helper functions for initialization
+    void initializeIdentityMatrix(MatrixObj<double>& matrix) {
+        for (size_t i = 0; i < n; ++i) {
+            matrix(i, i) = 1.0;
+        }
+    }
+
+    void initializeVector(VectorObj<double>& vec, double value) {
+        for (size_t i = 0; i < n; ++i) {
+            vec[i] = value;
+        }
     }
 
     double tol;
@@ -47,12 +55,13 @@ TEST_F(ArnoldiTest, OrthogonalityCheck) {
         }
     }
 }
+
 // Test for Hessenberg matrix correctness
 TEST_F(ArnoldiTest, HessenbergStructure) {
     Krylov::Arnoldi(A, Q, H, tol);
 
-    for (size_t i = 0; i < H.get_row(); ++i) {
-        for (size_t j = 0; j < H.get_col(); ++j) {
+    for (size_t i = 0; i < H.getRows(); ++i) {
+        for (size_t j = 0; j < H.getCols(); ++j) {
             if (i > j + 1) {
                 EXPECT_NEAR(H(i, j), 0.0, tol) << "Hessenberg matrix entry H[" << i << "][" << j << "] is non-zero.";
             }
@@ -60,14 +69,27 @@ TEST_F(ArnoldiTest, HessenbergStructure) {
     }
 }
 
+// Helper function to initialize zero matrix
+void initializeZeroMatrix(MatrixObj<double>& matrix) {
+    for (size_t i = 0; i < matrix.getRows(); ++i) {
+        for (size_t j = 0; j < matrix.getCols(); ++j) {
+            matrix(i, j) = 0.0;
+        }
+    }
+}
+
+// Helper functions for matrix initialization and copying
+void initializeDiagonalMatrix(MatrixObj<double>& matrix) {
+    for (int i = 0; i < matrix.getRows(); ++i) {
+        matrix(i, i) = static_cast<double>(i + 1);
+    }
+}
+
 // Test for breakdown tolerance
 TEST_F(ArnoldiTest, BreakdownTolerance) {
     // Modify A to induce breakdown (e.g., zero matrix)
-    for (size_t i = 0; i < n; ++i) {
-        for (size_t j = 0; j < n; ++j) {
-            A(i, j) = 0.0;
-        }
-    }
+    A = MatrixObj<double>(n, n); // Reset A
+    initializeZeroMatrix(A);
 
     EXPECT_NO_THROW(Krylov::Arnoldi(A, Q, H, tol)) << "Arnoldi iteration should handle breakdown gracefully.";
 }
@@ -75,9 +97,7 @@ TEST_F(ArnoldiTest, BreakdownTolerance) {
 // Test for specific example with known results
 TEST_F(ArnoldiTest, KnownExample) {
     // Define a simple diagonal matrix
-    for (size_t i = 0; i < n; ++i) {
-        A(i, i) = static_cast<double>(i+1);
-    }
+    initializeDiagonalMatrix(A);
 
     Krylov::Arnoldi(A, Q, H, tol);
 
@@ -89,16 +109,18 @@ TEST_F(ArnoldiTest, KnownExample) {
     }
 
     Q.pop_back();
-    MatrixObj matQ(Q);
-    MatrixObj<double> checkLeft = A * matQ ;
+    MatrixObj matQ(Q, Q[0].size(), Q.size());
+    MatrixObj<double> checkLeft = A * matQ;
     MatrixObj<double> checkRight = matQ * HA;
 
     for (size_t i = 0; i < n; ++i) {
         for (size_t j = 0; j < n; ++j) {
-            EXPECT_NEAR(checkLeft(i, j), checkRight(i, j), tol) <<  i << " " << j << " does not match the expected value.";
+            std::cout << i << " " << j << " " << std::endl;
+            EXPECT_NEAR(checkLeft(i, j), checkRight(i, j), tol) << "Mismatch at position (" << i << ", " << j << ")";
         }
     }
 }
+
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);

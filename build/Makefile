@@ -205,43 +205,17 @@ ConjugateGradient_test/fast:
 .PHONY : ConjugateGradient_test/fast
 
 #=============================================================================
-# Target rules for targets named matrix_benchmark_test
+# Target rules for targets named SparseMatrixCSCTest
 
 # Build rule for target.
-matrix_benchmark_test: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 matrix_benchmark_test
-.PHONY : matrix_benchmark_test
+SparseMatrixCSCTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SparseMatrixCSCTest
+.PHONY : SparseMatrixCSCTest
 
 # fast build rule for target.
-matrix_benchmark_test/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/matrix_benchmark_test.dir/build.make CMakeFiles/matrix_benchmark_test.dir/build
-.PHONY : matrix_benchmark_test/fast
-
-#=============================================================================
-# Target rules for targets named basic_benchmark_test
-
-# Build rule for target.
-basic_benchmark_test: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 basic_benchmark_test
-.PHONY : basic_benchmark_test
-
-# fast build rule for target.
-basic_benchmark_test/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/basic_benchmark_test.dir/build.make CMakeFiles/basic_benchmark_test.dir/build
-.PHONY : basic_benchmark_test/fast
-
-#=============================================================================
-# Target rules for targets named itersolver_benchmark_test
-
-# Build rule for target.
-itersolver_benchmark_test: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 itersolver_benchmark_test
-.PHONY : itersolver_benchmark_test
-
-# fast build rule for target.
-itersolver_benchmark_test/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/itersolver_benchmark_test.dir/build.make CMakeFiles/itersolver_benchmark_test.dir/build
-.PHONY : itersolver_benchmark_test/fast
+SparseMatrixCSCTest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SparseMatrixCSCTest.dir/build.make CMakeFiles/SparseMatrixCSCTest.dir/build
+.PHONY : SparseMatrixCSCTest/fast
 
 main/ConjugateGradient_test.o: main/ConjugateGradient_test.cpp.o
 .PHONY : main/ConjugateGradient_test.o
@@ -315,29 +289,29 @@ main/LU_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/LU_test.dir/build.make CMakeFiles/LU_test.dir/main/LU_test.cpp.s
 .PHONY : main/LU_test.cpp.s
 
-main/basic_benchmark_test.o: main/basic_benchmark_test.cpp.o
-.PHONY : main/basic_benchmark_test.o
+main/SparseMatrixCSCTest.o: main/SparseMatrixCSCTest.cpp.o
+.PHONY : main/SparseMatrixCSCTest.o
 
 # target to build an object file
-main/basic_benchmark_test.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/basic_benchmark_test.dir/build.make CMakeFiles/basic_benchmark_test.dir/main/basic_benchmark_test.cpp.o
-.PHONY : main/basic_benchmark_test.cpp.o
+main/SparseMatrixCSCTest.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SparseMatrixCSCTest.dir/build.make CMakeFiles/SparseMatrixCSCTest.dir/main/SparseMatrixCSCTest.cpp.o
+.PHONY : main/SparseMatrixCSCTest.cpp.o
 
-main/basic_benchmark_test.i: main/basic_benchmark_test.cpp.i
-.PHONY : main/basic_benchmark_test.i
+main/SparseMatrixCSCTest.i: main/SparseMatrixCSCTest.cpp.i
+.PHONY : main/SparseMatrixCSCTest.i
 
 # target to preprocess a source file
-main/basic_benchmark_test.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/basic_benchmark_test.dir/build.make CMakeFiles/basic_benchmark_test.dir/main/basic_benchmark_test.cpp.i
-.PHONY : main/basic_benchmark_test.cpp.i
+main/SparseMatrixCSCTest.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SparseMatrixCSCTest.dir/build.make CMakeFiles/SparseMatrixCSCTest.dir/main/SparseMatrixCSCTest.cpp.i
+.PHONY : main/SparseMatrixCSCTest.cpp.i
 
-main/basic_benchmark_test.s: main/basic_benchmark_test.cpp.s
-.PHONY : main/basic_benchmark_test.s
+main/SparseMatrixCSCTest.s: main/SparseMatrixCSCTest.cpp.s
+.PHONY : main/SparseMatrixCSCTest.s
 
 # target to generate assembly for a file
-main/basic_benchmark_test.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/basic_benchmark_test.dir/build.make CMakeFiles/basic_benchmark_test.dir/main/basic_benchmark_test.cpp.s
-.PHONY : main/basic_benchmark_test.cpp.s
+main/SparseMatrixCSCTest.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SparseMatrixCSCTest.dir/build.make CMakeFiles/SparseMatrixCSCTest.dir/main/SparseMatrixCSCTest.cpp.s
+.PHONY : main/SparseMatrixCSCTest.cpp.s
 
 main/basic_test.o: main/basic_test.cpp.o
 .PHONY : main/basic_test.o
@@ -363,30 +337,6 @@ main/basic_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/basic_test.dir/build.make CMakeFiles/basic_test.dir/main/basic_test.cpp.s
 .PHONY : main/basic_test.cpp.s
 
-main/itersolver_benchmark_test.o: main/itersolver_benchmark_test.cpp.o
-.PHONY : main/itersolver_benchmark_test.o
-
-# target to build an object file
-main/itersolver_benchmark_test.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/itersolver_benchmark_test.dir/build.make CMakeFiles/itersolver_benchmark_test.dir/main/itersolver_benchmark_test.cpp.o
-.PHONY : main/itersolver_benchmark_test.cpp.o
-
-main/itersolver_benchmark_test.i: main/itersolver_benchmark_test.cpp.i
-.PHONY : main/itersolver_benchmark_test.i
-
-# target to preprocess a source file
-main/itersolver_benchmark_test.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/itersolver_benchmark_test.dir/build.make CMakeFiles/itersolver_benchmark_test.dir/main/itersolver_benchmark_test.cpp.i
-.PHONY : main/itersolver_benchmark_test.cpp.i
-
-main/itersolver_benchmark_test.s: main/itersolver_benchmark_test.cpp.s
-.PHONY : main/itersolver_benchmark_test.s
-
-# target to generate assembly for a file
-main/itersolver_benchmark_test.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/itersolver_benchmark_test.dir/build.make CMakeFiles/itersolver_benchmark_test.dir/main/itersolver_benchmark_test.cpp.s
-.PHONY : main/itersolver_benchmark_test.cpp.s
-
 main/itersolver_test.o: main/itersolver_test.cpp.o
 .PHONY : main/itersolver_test.o
 
@@ -410,30 +360,6 @@ main/itersolver_test.s: main/itersolver_test.cpp.s
 main/itersolver_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/itersolver_test.dir/build.make CMakeFiles/itersolver_test.dir/main/itersolver_test.cpp.s
 .PHONY : main/itersolver_test.cpp.s
-
-main/matrix_benchmark_test.o: main/matrix_benchmark_test.cpp.o
-.PHONY : main/matrix_benchmark_test.o
-
-# target to build an object file
-main/matrix_benchmark_test.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/matrix_benchmark_test.dir/build.make CMakeFiles/matrix_benchmark_test.dir/main/matrix_benchmark_test.cpp.o
-.PHONY : main/matrix_benchmark_test.cpp.o
-
-main/matrix_benchmark_test.i: main/matrix_benchmark_test.cpp.i
-.PHONY : main/matrix_benchmark_test.i
-
-# target to preprocess a source file
-main/matrix_benchmark_test.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/matrix_benchmark_test.dir/build.make CMakeFiles/matrix_benchmark_test.dir/main/matrix_benchmark_test.cpp.i
-.PHONY : main/matrix_benchmark_test.cpp.i
-
-main/matrix_benchmark_test.s: main/matrix_benchmark_test.cpp.s
-.PHONY : main/matrix_benchmark_test.s
-
-# target to generate assembly for a file
-main/matrix_benchmark_test.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/matrix_benchmark_test.dir/build.make CMakeFiles/matrix_benchmark_test.dir/main/matrix_benchmark_test.cpp.s
-.PHONY : main/matrix_benchmark_test.cpp.s
 
 main/matrix_obj_test.o: main/matrix_obj_test.cpp.o
 .PHONY : main/matrix_obj_test.o
@@ -471,11 +397,9 @@ help:
 	@echo "... ConjugateGradient_test"
 	@echo "... KrylovSubspace_test"
 	@echo "... LU_test"
-	@echo "... basic_benchmark_test"
+	@echo "... SparseMatrixCSCTest"
 	@echo "... basic_test"
-	@echo "... itersolver_benchmark_test"
 	@echo "... itersolver_test"
-	@echo "... matrix_benchmark_test"
 	@echo "... matrix_obj_test"
 	@echo "... main/ConjugateGradient_test.o"
 	@echo "... main/ConjugateGradient_test.i"
@@ -486,21 +410,15 @@ help:
 	@echo "... main/LU_test.o"
 	@echo "... main/LU_test.i"
 	@echo "... main/LU_test.s"
-	@echo "... main/basic_benchmark_test.o"
-	@echo "... main/basic_benchmark_test.i"
-	@echo "... main/basic_benchmark_test.s"
+	@echo "... main/SparseMatrixCSCTest.o"
+	@echo "... main/SparseMatrixCSCTest.i"
+	@echo "... main/SparseMatrixCSCTest.s"
 	@echo "... main/basic_test.o"
 	@echo "... main/basic_test.i"
 	@echo "... main/basic_test.s"
-	@echo "... main/itersolver_benchmark_test.o"
-	@echo "... main/itersolver_benchmark_test.i"
-	@echo "... main/itersolver_benchmark_test.s"
 	@echo "... main/itersolver_test.o"
 	@echo "... main/itersolver_test.i"
 	@echo "... main/itersolver_test.s"
-	@echo "... main/matrix_benchmark_test.o"
-	@echo "... main/matrix_benchmark_test.i"
-	@echo "... main/matrix_benchmark_test.s"
 	@echo "... main/matrix_obj_test.o"
 	@echo "... main/matrix_obj_test.i"
 	@echo "... main/matrix_obj_test.s"

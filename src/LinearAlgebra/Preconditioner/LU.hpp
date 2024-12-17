@@ -3,49 +3,62 @@
 
 #include <vector>
 #include <stdexcept> // For std::invalid_argument
+#include <cmath>     // For std::abs
+#include <algorithm> // For std::swap
 #include "MatrixObj.hpp"
 #include "VectorObj.hpp"
 
 namespace LU {
+
     template <typename TNum>
-    void PivotLU(MatrixObj<TNum> &A, std::vector<TNum> &P) {
-        int n = A.get_row();
-        if (n != A.get_col()) {
-            // LU decomposition is only defined for square matrices.
+    void PivotLU(MatrixObj<TNum>& A, std::vector<int>& P) {
+        int n = A.getRows();
+
+        if (n != A.getCols()) {
             throw std::invalid_argument("Matrix must be square for LU decomposition.");
         }
 
         P.resize(n);
-        for (int i = 0; i < n; i++) {
+
+        // Initialize the permutation vector with row indices
+        for (int i = 0; i < n; ++i) {
             P[i] = i;
         }
 
-        for (int j = 0; j < n; j++) {
-            TNum maxVal = std::abs(A[j + j * n]);
+        // LU Decomposition with partial pivoting
+        for (int j = 0; j < n; ++j) {
+            TNum maxVal = std::abs(A(j, j));
             int maxIndex = j;
-
-            for (int i = j + 1; i < n; i++) {
-                if (maxVal < std::abs(A[i + j * n])) {
-                    maxVal = std::abs(A[i + j * n]);
+            for (int i = j + 1; i < n; ++i) {
+                TNum currentVal = std::abs(A(i, j));
+                if (currentVal > maxVal) {
+                    maxVal = currentVal;
                     maxIndex = i;
                 }
             }
 
             if (maxIndex != j) {
-                for (int k = 0; k < n; k++) {
-                    std::swap(A[j + k * n], A[maxIndex + k * n]);
-                }
+                A.swapRows(j, maxIndex);
                 std::swap(P[j], P[maxIndex]);
             }
 
-            for (int i = j + 1; i < n; i++) {
-                TNum factor = A[i + j * n] / A[j + j * n];
-                for (int k = j; k < n; k++) {
-                    A[i + k * n] -= factor * A[j + k * n];
+            // Check for singular matrix using a small tolerance
+            const TNum epsilon = static_cast<TNum>(1e-12);
+            if (std::abs(A(j, j)) < epsilon) {
+                throw std::runtime_error("Matrix is singular or nearly singular and cannot be decomposed.");
+            }
+
+            for (int i = j + 1; i < n; ++i) {
+                TNum factor = A(i, j) / A(j, j);
+                A(i, j) = factor; // Store the factor in place
+
+                for (int k = j + 1; k < n; ++k) {
+                    A(i, k) -= factor * A(j, k);
                 }
             }
         }
     }
-}
 
-#endif
+} // namespace LU
+
+#endif // LU_HPP

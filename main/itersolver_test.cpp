@@ -6,101 +6,85 @@ template<typename TNum>
 MatrixObj<TNum> CreateIdentityMatrix(int size) {
     MatrixObj<TNum> identity(size, size);
     for (int i = 0; i < size; ++i) {
-        identity[i * size + i] = 1; // Set the diagonal elements to 1.
+        identity(i , i) = 1; // Set the diagonal elements to 1.
     }
     return identity;
 }
 
-// Helper function to create an identity vector of a given size.
+// Helper function to create a vector with a specified value.
 template<typename TNum>
-VectorObj<TNum> CreateIdentityVector(int size, TNum value) {
-    VectorObj<TNum> identity(size);
-    for (int i = 0; i < size; ++i) {
-        identity[i] = value;
-    }
-    return identity;
+VectorObj<TNum> CreateVector(int size, TNum value) {
+    VectorObj<TNum> vec(size, value);
+    return vec;
 }
 
-class GradientDesentTest : public ::testing::Test {
+// Test Fixture for GradientDescent
+class GradientDescentTest : public ::testing::Test {
 protected:
-    virtual void TearDown() override {
-        // Code here will be called immediately after each test (right
-        // before the destructor).
-    }
-
     int size_ = 100;
     MatrixObj<double> P = CreateIdentityMatrix<double>(size_);
     MatrixObj<double> A = CreateIdentityMatrix<double>(size_);
-    VectorObj<double> b = CreateIdentityVector<double>(size_, 1.0);
-    VectorObj<double> x = CreateIdentityVector<double>(size_, 0.0);
-    std::unique_ptr<GradientDesent<double>> gradientDesent;
+    VectorObj<double> b = CreateVector<double>(size_, 1.0);
+    VectorObj<double> x = CreateVector<double>(size_, 0.0);
+    std::unique_ptr<GradientDescent<double>> gradientDescent;
 
-    virtual void SetUp() override {
-        gradientDesent = std::make_unique<GradientDesent<double>>(P, A, b, 100);
+    void SetUp() override {
+        gradientDescent = std::make_unique<GradientDescent<double>>(P, A, b, 100);
     }
 };
 
-// Test the constructor of GradientDesent.
-TEST_F(GradientDesentTest, Constructor) {
-    EXPECT_EQ(gradientDesent->getIter(), 100);
+// Test the constructor of GradientDescent.
+TEST_F(GradientDescentTest, Constructor) {
+    EXPECT_EQ(gradientDescent->getMaxIter(), 100);
 }
 
-TEST_F(GradientDesentTest, CalGrad) {
+// Test the calculation of gradient.
+TEST_F(GradientDescentTest, CalGrad) {
     VectorObj<double> expectedGradient = b - (A * x);
-    VectorObj<double> actualGradient = gradientDesent->calGrad(x);
-    VectorObj<double> vec_output = actualGradient - expectedGradient;
-    double output = vec_output.L2norm();
-    ASSERT_NEAR(output, 0.0, 1e-8);
+    VectorObj<double> actualGradient = gradientDescent->calGrad(x);
+    EXPECT_NEAR((actualGradient - expectedGradient).L2norm(), 0.0, 1e-8);
 }
 
-TEST_F(GradientDesentTest, Update) {
-    VectorObj<double> expectedX = CreateIdentityVector<double>(size_, 1.0);
-    x = CreateIdentityVector<double>(size_, 0.0);
-    gradientDesent->callUpdate(x);
-    VectorObj<double> vec_output = x - expectedX;
-    double output = vec_output.L2norm();
-    ASSERT_NEAR(output, 0.0, 1e-8);
+// Test the update step in GradientDescent.
+TEST_F(GradientDescentTest, Update) {
+    VectorObj<double> expectedX = CreateVector<double>(size_, 1.0);
+    x = CreateVector<double>(size_, 0.0);
+    gradientDescent->solve(x);
+    EXPECT_NEAR((x - expectedX).L2norm(), 0.0, 1e-8);
 }
 
+// Test Fixture for StaticIterMethod
 class StaticIterMethodTest : public ::testing::Test {
 protected:
-    virtual void TearDown() override {
-        // Code here will be called immediately after each test.
-    }
-
     int size_ = 100;
     MatrixObj<double> A = CreateIdentityMatrix<double>(size_);
-    VectorObj<double> b = CreateIdentityVector<double>(size_, 1.0);
-    VectorObj<double> x = CreateIdentityVector<double>(size_, 0.0);
-    std::unique_ptr<StaticIterMethod<double>> staticytermethod;
+    VectorObj<double> b = CreateVector<double>(size_, 1.0);
+    VectorObj<double> x = CreateVector<double>(size_, 0.0);
+    std::unique_ptr<StaticIterMethod<double>> staticIterMethod;
 
-    virtual void SetUp() override {
-        staticytermethod = std::make_unique<StaticIterMethod<double>>(A, A, b, 100);
+    void SetUp() override {
+        staticIterMethod = std::make_unique<StaticIterMethod<double>>(A, A, b, 100);
     }
 };
 
 // Test the constructor of StaticIterMethod.
 TEST_F(StaticIterMethodTest, Constructor) {
-    EXPECT_EQ(staticytermethod->getIter(), 100);
+    EXPECT_EQ(staticIterMethod->getMaxIter(), 100);
 }
 
 // Test the Substitution method of StaticIterMethod.
 TEST_F(StaticIterMethodTest, Substitution) {
     MatrixObj<double> L = CreateIdentityMatrix<double>(size_);
-    VectorObj<double> result = staticytermethod->Substitution(b, L, true);
-    VectorObj<double> expected = b; // Since L is identity, substitution should return b.
-    VectorObj<double> vec_output = result - expected;
-    double output = vec_output.L2norm();
-    ASSERT_NEAR(output, 0.0, 1e-8);
+    VectorObj<double> result = staticIterMethod->Substitution(b, L, true);
+    EXPECT_NEAR((result - b).L2norm(), 0.0, 1e-8);  // L is identity, so result should be b
 }
 
+// Test the update step in StaticIterMethod.
 TEST_F(StaticIterMethodTest, Update) {
-    VectorObj<double> expectedX = CreateIdentityVector<double>(size_, 1.0);
-    x = CreateIdentityVector<double>(size_, 0.0);
-    staticytermethod->callUpdate(x);
-    VectorObj<double> vec_output = x - expectedX;
-    double output = vec_output.L2norm();
-    ASSERT_NEAR(output, 0.0, 1e-8);
+    VectorObj<double> expectedX = CreateVector<double>(size_, 1.0);
+    x = CreateVector<double>(size_, 0.0);
+    staticIterMethod->solve(x);
+    EXPECT_NEAR((x - expectedX).L2norm(), 0.0, 1e-8);
 }
 
 int main(int argc, char **argv) {
