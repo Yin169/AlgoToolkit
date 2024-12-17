@@ -36,7 +36,9 @@ target_link_libraries(KrylovSubspace_test PRIVATE GTest::gtest GTest::gmock Open
 #
 add_executable(ConjugateGradient_test main/ConjugateGradient_test.cpp)
 target_link_libraries(ConjugateGradient_test PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
-
+#
+add_executable(SparseMatrixCSCTest main/SparseMatrixCSCTest.cpp)
+target_link_libraries(SparseMatrixCSCTest PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
 
 # 添加可执行文件：matrix_benchmark_test
 add_executable(matrix_benchmark_test main/matrix_benchmark_test.cpp)
@@ -51,6 +53,7 @@ target_link_libraries(itersolver_benchmark_test PRIVATE benchmark::benchmark Ope
 # 添加测试
 enable_testing()
 add_test(NAME matrix_obj_test COMMAND matrix_obj_test)
+add_test(NAME SparseMatrixCSCTest COMMAND SparseMatrixCSCTest)
 add_test(NAME basic_test COMMAND basic_test)
 add_test(NAME itersolver_test COMMAND itersolver_test)
 add_test(NAME LU_test COMMAND LU_test)

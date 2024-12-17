@@ -69,6 +69,7 @@ all: CMakeFiles/itersolver_test.dir/all
 all: CMakeFiles/LU_test.dir/all
 all: CMakeFiles/KrylovSubspace_test.dir/all
 all: CMakeFiles/ConjugateGradient_test.dir/all
+all: CMakeFiles/SparseMatrixCSCTest.dir/all
 all: CMakeFiles/matrix_benchmark_test.dir/all
 all: CMakeFiles/basic_benchmark_test.dir/all
 all: CMakeFiles/itersolver_benchmark_test.dir/all
@@ -81,6 +82,7 @@ codegen: CMakeFiles/itersolver_test.dir/codegen
 codegen: CMakeFiles/LU_test.dir/codegen
 codegen: CMakeFiles/KrylovSubspace_test.dir/codegen
 codegen: CMakeFiles/ConjugateGradient_test.dir/codegen
+codegen: CMakeFiles/SparseMatrixCSCTest.dir/codegen
 codegen: CMakeFiles/matrix_benchmark_test.dir/codegen
 codegen: CMakeFiles/basic_benchmark_test.dir/codegen
 codegen: CMakeFiles/itersolver_benchmark_test.dir/codegen
@@ -97,6 +99,7 @@ clean: CMakeFiles/itersolver_test.dir/clean
 clean: CMakeFiles/LU_test.dir/clean
 clean: CMakeFiles/KrylovSubspace_test.dir/clean
 clean: CMakeFiles/ConjugateGradient_test.dir/clean
+clean: CMakeFiles/SparseMatrixCSCTest.dir/clean
 clean: CMakeFiles/matrix_benchmark_test.dir/clean
 clean: CMakeFiles/basic_benchmark_test.dir/clean
 clean: CMakeFiles/itersolver_benchmark_test.dir/clean
@@ -109,7 +112,7 @@ clean: CMakeFiles/itersolver_benchmark_test.dir/clean
 CMakeFiles/matrix_obj_test.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/matrix_obj_test.dir/build.make CMakeFiles/matrix_obj_test.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/matrix_obj_test.dir/build.make CMakeFiles/matrix_obj_test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=17,18 "Built target matrix_obj_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=19,20 "Built target matrix_obj_test"
 .PHONY : CMakeFiles/matrix_obj_test.dir/all
 
 # Build rule for subdir invocation for target.
@@ -140,7 +143,7 @@ CMakeFiles/matrix_obj_test.dir/clean:
 CMakeFiles/basic_test.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/basic_test.dir/build.make CMakeFiles/basic_test.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/basic_test.dir/build.make CMakeFiles/basic_test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=9,10 "Built target basic_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=11,12 "Built target basic_test"
 .PHONY : CMakeFiles/basic_test.dir/all
 
 # Build rule for subdir invocation for target.
@@ -171,7 +174,7 @@ CMakeFiles/basic_test.dir/clean:
 CMakeFiles/itersolver_test.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/itersolver_test.dir/build.make CMakeFiles/itersolver_test.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/itersolver_test.dir/build.make CMakeFiles/itersolver_test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=13,14 "Built target itersolver_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=15,16 "Built target itersolver_test"
 .PHONY : CMakeFiles/itersolver_test.dir/all
 
 # Build rule for subdir invocation for target.
@@ -289,13 +292,44 @@ CMakeFiles/ConjugateGradient_test.dir/clean:
 .PHONY : CMakeFiles/ConjugateGradient_test.dir/clean
 
 #=============================================================================
+# Target rules for target CMakeFiles/SparseMatrixCSCTest.dir
+
+# All Build rule for target.
+CMakeFiles/SparseMatrixCSCTest.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SparseMatrixCSCTest.dir/build.make CMakeFiles/SparseMatrixCSCTest.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SparseMatrixCSCTest.dir/build.make CMakeFiles/SparseMatrixCSCTest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=7,8 "Built target SparseMatrixCSCTest"
+.PHONY : CMakeFiles/SparseMatrixCSCTest.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/SparseMatrixCSCTest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/SparseMatrixCSCTest.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles 0
+.PHONY : CMakeFiles/SparseMatrixCSCTest.dir/rule
+
+# Convenience name for target.
+SparseMatrixCSCTest: CMakeFiles/SparseMatrixCSCTest.dir/rule
+.PHONY : SparseMatrixCSCTest
+
+# codegen rule for target.
+CMakeFiles/SparseMatrixCSCTest.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SparseMatrixCSCTest.dir/build.make CMakeFiles/SparseMatrixCSCTest.dir/codegen
+.PHONY : CMakeFiles/SparseMatrixCSCTest.dir/codegen
+
+# clean rule for target.
+CMakeFiles/SparseMatrixCSCTest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SparseMatrixCSCTest.dir/build.make CMakeFiles/SparseMatrixCSCTest.dir/clean
+.PHONY : CMakeFiles/SparseMatrixCSCTest.dir/clean
+
+#=============================================================================
 # Target rules for target CMakeFiles/matrix_benchmark_test.dir
 
 # All Build rule for target.
 CMakeFiles/matrix_benchmark_test.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/matrix_benchmark_test.dir/build.make CMakeFiles/matrix_benchmark_test.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/matrix_benchmark_test.dir/build.make CMakeFiles/matrix_benchmark_test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=15,16 "Built target matrix_benchmark_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=17,18 "Built target matrix_benchmark_test"
 .PHONY : CMakeFiles/matrix_benchmark_test.dir/all
 
 # Build rule for subdir invocation for target.
@@ -326,7 +360,7 @@ CMakeFiles/matrix_benchmark_test.dir/clean:
 CMakeFiles/basic_benchmark_test.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/basic_benchmark_test.dir/build.make CMakeFiles/basic_benchmark_test.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/basic_benchmark_test.dir/build.make CMakeFiles/basic_benchmark_test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=7,8 "Built target basic_benchmark_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=9,10 "Built target basic_benchmark_test"
 .PHONY : CMakeFiles/basic_benchmark_test.dir/all
 
 # Build rule for subdir invocation for target.
@@ -357,7 +391,7 @@ CMakeFiles/basic_benchmark_test.dir/clean:
 CMakeFiles/itersolver_benchmark_test.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/itersolver_benchmark_test.dir/build.make CMakeFiles/itersolver_benchmark_test.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/itersolver_benchmark_test.dir/build.make CMakeFiles/itersolver_benchmark_test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=11,12 "Built target itersolver_benchmark_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=13,14 "Built target itersolver_benchmark_test"
 .PHONY : CMakeFiles/itersolver_benchmark_test.dir/all
 
 # Build rule for subdir invocation for target.

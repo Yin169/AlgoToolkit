@@ -205,6 +205,19 @@ ConjugateGradient_test/fast:
 .PHONY : ConjugateGradient_test/fast
 
 #=============================================================================
+# Target rules for targets named SparseMatrixCSCTest
+
+# Build rule for target.
+SparseMatrixCSCTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 SparseMatrixCSCTest
+.PHONY : SparseMatrixCSCTest
+
+# fast build rule for target.
+SparseMatrixCSCTest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SparseMatrixCSCTest.dir/build.make CMakeFiles/SparseMatrixCSCTest.dir/build
+.PHONY : SparseMatrixCSCTest/fast
+
+#=============================================================================
 # Target rules for targets named matrix_benchmark_test
 
 # Build rule for target.
@@ -314,6 +327,30 @@ main/LU_test.s: main/LU_test.cpp.s
 main/LU_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/LU_test.dir/build.make CMakeFiles/LU_test.dir/main/LU_test.cpp.s
 .PHONY : main/LU_test.cpp.s
+
+main/SparseMatrixCSCTest.o: main/SparseMatrixCSCTest.cpp.o
+.PHONY : main/SparseMatrixCSCTest.o
+
+# target to build an object file
+main/SparseMatrixCSCTest.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SparseMatrixCSCTest.dir/build.make CMakeFiles/SparseMatrixCSCTest.dir/main/SparseMatrixCSCTest.cpp.o
+.PHONY : main/SparseMatrixCSCTest.cpp.o
+
+main/SparseMatrixCSCTest.i: main/SparseMatrixCSCTest.cpp.i
+.PHONY : main/SparseMatrixCSCTest.i
+
+# target to preprocess a source file
+main/SparseMatrixCSCTest.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SparseMatrixCSCTest.dir/build.make CMakeFiles/SparseMatrixCSCTest.dir/main/SparseMatrixCSCTest.cpp.i
+.PHONY : main/SparseMatrixCSCTest.cpp.i
+
+main/SparseMatrixCSCTest.s: main/SparseMatrixCSCTest.cpp.s
+.PHONY : main/SparseMatrixCSCTest.s
+
+# target to generate assembly for a file
+main/SparseMatrixCSCTest.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SparseMatrixCSCTest.dir/build.make CMakeFiles/SparseMatrixCSCTest.dir/main/SparseMatrixCSCTest.cpp.s
+.PHONY : main/SparseMatrixCSCTest.cpp.s
 
 main/basic_benchmark_test.o: main/basic_benchmark_test.cpp.o
 .PHONY : main/basic_benchmark_test.o
@@ -471,6 +508,7 @@ help:
 	@echo "... ConjugateGradient_test"
 	@echo "... KrylovSubspace_test"
 	@echo "... LU_test"
+	@echo "... SparseMatrixCSCTest"
 	@echo "... basic_benchmark_test"
 	@echo "... basic_test"
 	@echo "... itersolver_benchmark_test"
@@ -486,6 +524,9 @@ help:
 	@echo "... main/LU_test.o"
 	@echo "... main/LU_test.i"
 	@echo "... main/LU_test.s"
+	@echo "... main/SparseMatrixCSCTest.o"
+	@echo "... main/SparseMatrixCSCTest.i"
+	@echo "... main/SparseMatrixCSCTest.s"
 	@echo "... main/basic_benchmark_test.o"
 	@echo "... main/basic_benchmark_test.i"
 	@echo "... main/basic_benchmark_test.s"

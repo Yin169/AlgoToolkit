@@ -1,206 +1,161 @@
 #ifndef MATRIXOBJ_HPP
 #define MATRIXOBJ_HPP
 
-#include <algorithm>
-#include <cstring>
-#include <stdexcept>
 #include <vector>
-#include <openblas/cblas.h>
+#include <stdexcept>
+#include <algorithm>
+#include <functional>
+#include <iostream>
+#include <openblas/cblas.h> // Ensure BLAS is installed or use a wrapper library like Eigen
 
-#include "VectorObj.hpp"
-
-template<typename TObj> class VectorObj;
 template<typename TObj>
 class MatrixObj {
-    private:
-    int _n, _m;
-    TObj *arr=nullptr;
-    
-    public:
-    MatrixObj(){}
-    MatrixObj(int n, int m) : _n(n), _m(m), arr(new TObj[n * m]()) {}
-    MatrixObj(const TObj *other, int n, int m) : _n(n), _m(m){
-        arr = new TObj[n * m]();
-        std::copy(other, other + n * m, arr);
-    }
-    MatrixObj(const MatrixObj &other) : _n(other._n), _m(other._m) {
-        arr = new TObj[_n * _m];
-        std::copy(other.arr, other.arr + _n * _m, arr);
-    }
+private:
+    int _n; // Number of rows
+    int _m; // Number of columns
+    std::vector<TObj> arr; // Stores matrix elements in column-major order
 
-    MatrixObj(MatrixObj&& other) noexcept : _n(other._n), _m(other._m), arr(other.arr) {
-        other._n = 0;
-        other._m = 0;
-        other.arr = nullptr;
-    }
+public:
+    // Constructors
+    MatrixObj() : _n(0), _m(0), arr() {}
 
-    explicit MatrixObj(const VectorObj<TObj>& vector) : _n(vector.get_row()), _m(vector.get_col()), arr(new TObj[_m]()) {
-        std::copy(vector.data(), vector.data() + _m, arr);
-    }
-    explicit MatrixObj(const std::vector<VectorObj<TObj>>& vectors) : _n(vectors.empty() ? 0 : vectors[0].get_row()), _m(vectors.size()) {
-        arr = new TObj[_n * _m]();
-        for (int i = 0; i < _m; ++i) {
-            std::copy(vectors[i].arr, vectors[i].arr + _n, arr + i * _n);
+    MatrixObj(int n, int m) : _n(n), _m(m), arr(n * m, TObj(0)) {}
+
+    MatrixObj(const std::vector<TObj>& data, int n, int m) 
+        : _n(n), _m(m), arr(data) {
+        if (data.size() != n * m) {
+            throw std::invalid_argument("Data size does not match matrix dimensions.");
         }
     }
 
-    ~MatrixObj() {
-        if (arr != nullptr) {
-            delete[] arr;
+    // Copy Constructor
+    MatrixObj(const MatrixObj& other) = default;
+
+    // Move Constructor
+    MatrixObj(MatrixObj&& other) noexcept = default;
+
+    // Copy Assignment
+    MatrixObj& operator=(const MatrixObj& other) = default;
+
+    // Move Assignment
+    MatrixObj& operator=(MatrixObj&& other) noexcept = default;
+
+    // Destructor
+    ~MatrixObj() = default;
+
+    // Accessors
+    TObj& operator()(size_t row, size_t col) {
+        if (row >= _n || col >= _m) {
+            throw std::out_of_range("Matrix indices are out of range.");
         }
+        return arr[row + col * _n];
     }
 
-    const int get_row() const { return _n; }
-    const int get_col() const { return _m; }
+    const TObj& operator()(size_t row, size_t col) const {
+        if (row >= _n || col >= _m) {
+            throw std::out_of_range("Matrix indices are out of range.");
+        }
+        return arr[row + col * _n];
+    }
 
+    TObj* data() { return arr.data(); }
+    const TObj* data() const { return arr.data(); }
+
+    inline int getRows() const { return _n; }
+    inline int getCols() const { return _m; }
+
+    // Scalar multiplication
+    MatrixObj& operator*=(TObj scalar) {
+        for (TObj& value : arr) {
+            value *= scalar;
+        }
+        return *this;
+    }
+
+    MatrixObj operator*(TObj scalar) const {
+        MatrixObj result = *this;
+        result *= scalar;
+        return result;
+    }
+
+    // Matrix addition and subtraction
+    MatrixObj operator+(const MatrixObj& other) const {
+        return elementWiseOperation(other, std::plus<TObj>());
+    }
+
+    MatrixObj operator-(const MatrixObj& other) const {
+        return elementWiseOperation(other, std::minus<TObj>());
+    }
+
+    // Element-wise operations
+    template <typename Op>
+    MatrixObj elementWiseOperation(const MatrixObj& other, Op operation) const {
+        if (_n != other._n || _m != other._m) {
+            throw std::invalid_argument("Matrix dimensions do not match for operation.");
+        }
+        MatrixObj result(_n, _m);
+        std::transform(arr.begin(), arr.end(), other.arr.begin(), result.arr.begin(), operation);
+        return result;
+    }
+
+    // Matrix multiplication
+    MatrixObj operator*(const MatrixObj& other) const {
+        if (_m != other._n) {
+            throw std::invalid_argument("Matrix dimensions do not match for multiplication.");
+        }
+        MatrixObj result(_n, other._m);
+        cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans,
+                    _n, other._m, _m, 1.0,
+                    arr.data(), _n,
+                    other.arr.data(), other._n,
+                    0.0, result.arr.data(), _n);
+        return result;
+    }
+
+    // Matrix-vector multiplication
+    std::vector<TObj> operator*(const std::vector<TObj>& vec) const {
+        if (_m != static_cast<int>(vec.size())) {
+            throw std::invalid_argument("Vector size does not match matrix columns.");
+        }
+        std::vector<TObj> result(_n, TObj(0));
+        cblas_dgemv(CblasColMajor, CblasNoTrans,
+                    _n, _m, 1.0,
+                    arr.data(), _n,
+                    vec.data(), 1,
+                    0.0, result.data(), 1);
+        return result;
+    }
+
+    // Transpose
+    MatrixObj Transpose() const {
+        MatrixObj result(_m, _n);
+        #pragma omp parallel for
+        for (int i = 0; i < _n; ++i) {
+            for (int j = 0; j < _m; ++j) {
+                result(j, i) = (*this)(i, j);
+            }
+        }
+        return result;
+    }
+
+    // Get a specific column
+    std::vector<TObj> getColumn(int index) const {
+        if (index < 0 || index >= _m) {
+            throw std::out_of_range("Column index is out of range.");
+        }
+        std::vector<TObj> column(_n);
+        for (int i = 0; i < _n; ++i) {
+            column[i] = (*this)(i, index);
+        }
+        return column;
+    }
+
+    // Resize matrix
     void resize(int n, int m) {
         _n = n;
         _m = m;
-        TObj *tarr = new TObj[ _n * _m];
-        std::swap(this->arr, tarr);
-        if (tarr != nullptr){
-            delete[] tarr;
-        }
+        arr.resize(n * m);
     }
-
-    void Slice(TObj* slice, int n, int m) const {
-        if (n < 0 || m < 0 || n + m > _n * _m) {
-            throw std::out_of_range("Index out of range in Slice function.");
-        }
-        std::copy(arr + n, arr + n + m, slice);
-    }
-
-    void swap(MatrixObj<TObj>& other) {
-        std::swap(this->arr, other.arr);
-        std::swap(this->_n, other._n);
-        std::swap(this->_m, other._m);
-    }
-
-    MatrixObj& operator=(const MatrixObj& other) {
-        if (this != &other) {
-            if (_n != other._n || _m != other._m) {
-                delete[] arr;
-                _n = other._n;
-                _m = other._m;
-                arr = new TObj[_n * _m];
-            }
-            std::copy(other.arr, other.arr + _n * _m, arr);
-        }
-        return *this;
-    }
-
-    MatrixObj& operator=(MatrixObj&& other) noexcept {
-        if (this != &other) {
-            delete[] arr;
-            _n = other._n;
-            _m = other._m;
-            arr = std::move(other.arr);
-            other._n = 0;
-            other._m = 0;
-            other.arr = nullptr;
-        }
-        return *this;
-    }
-    
-    MatrixObj operator+(const MatrixObj &other) {
-        if (_n != other.get_row() || _m != other.get_col()) {
-            throw std::invalid_argument("Matrix dimensions do not match for addition.");
-        }
-        MatrixObj result(_n, _m);
-        for (int i = 0; i < _n * _m; ++i) {
-            result.arr[i] = arr[i] + other.arr[i];
-        }
-        return result;
-    }
-
-    MatrixObj operator-(const MatrixObj &other) {
-        if (_n != other.get_row() || _m != other.get_col()) {
-            throw std::invalid_argument("Matrix dimensions do not match for subtraction.");
-        }
-        MatrixObj result(_n, _m);
-        for (int i = 0; i < _n * _m; ++i) {
-            result.arr[i] = arr[i] - other.arr[i];
-        }
-        return result;
-    }
-
-    inline void scalarMultiple(TObj *arrObj, TObj scalar){
-        for (int i = 0; i < _n * _m; ++i) {
-            arrObj[i] *= scalar;
-        }
-    }
-
-    MatrixObj &operator*=(double scalar) {
-        scalarMultiple(&(arr[0]), static_cast<TObj>(scalar));
-        return *this;
-    }
-
-    MatrixObj &operator*(double factor) {
-        scalarMultiple(&(arr[0]), static_cast<TObj>(factor));
-        return *this;
-    }
-    
-    VectorObj<TObj> operator*(const VectorObj<TObj> &other) {
-        if (_m != other.get_row()) {
-            throw std::invalid_argument("Matrix dimensions do not match for multiplication.");
-        }
-        TObj *C = new TObj[ _n * other.get_col()];
-        cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, _n, other.get_col(), _m, 1.0, arr, _n, other.data(), other.get_row(), 0.0, C, _n);
-        VectorObj<TObj> result(C, _n);
-        return result;
-    }
-
-    MatrixObj operator*(const MatrixObj &other) {
-        if (_m != other.get_row()) {
-            throw std::invalid_argument("Matrix dimensions do not match for multiplication.");
-        }
-        TObj *C = new TObj[ _n * other.get_col()];
-        cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, _n, other.get_col(), _m, 1.0, arr, _n, other.data(), other.get_row(), 0.0, C, _n);
-        MatrixObj result(C, _n, other.get_col());
-        return result;
-    }
-
-    MatrixObj Transpose() {
-        MatrixObj result(_m, _n);
-        for (int i = 0; i < _n; ++i) {
-            for (int j = 0; j < _m; ++j) {
-                result.arr[j * _n + i] = arr[i * _m + j];
-            }
-        }
-        return result;
-    }
-
-    TObj &operator()(size_t row, size_t col) {
-        return arr[row + col * _n];
-    }
-
-    const TObj &operator()(size_t row, size_t col) const {
-        return arr[row + col * _n];
-    }
-
-    const TObj &operator[](int index) const {
-        if (index < 0 || index >= _n * _m) {
-            throw std::out_of_range("Index out of range for matrix element access.");
-        }
-        return arr[index];
-    }
-
-    TObj &operator[](int index) {
-        if (index < 0 || index >= _n * _m) {
-            throw std::out_of_range("Index out of range for matrix element access.");
-        }
-        return arr[index];
-    }
-
-    VectorObj<TObj> get_Col(int index) const {
-        if (index < 0 || index >= _m) {
-            throw std::out_of_range("Index out of range for column access.");
-        }
-        return VectorObj<TObj>(arr+index * _n, _n);
-    }
-
-    TObj* data() { return arr; }
-    const TObj* data() const { return arr; }
 
 };
 

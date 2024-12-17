@@ -1,10 +1,10 @@
-Start testing: Dec 16 18:13 +08
+Start testing: Dec 17 07:52 +08
 ----------------------------------------------------------
-1/9 Testing: matrix_obj_test
-1/9 Test: matrix_obj_test
+1/10 Testing: matrix_obj_test
+1/10 Test: matrix_obj_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/matrix_obj_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"matrix_obj_test" start time: Dec 16 18:13 +08
+"matrix_obj_test" start time: Dec 17 07:52 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 10 tests from 1 test suite.
@@ -39,15 +39,15 @@ Output:
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"matrix_obj_test" end time: Dec 16 18:13 +08
+"matrix_obj_test" end time: Dec 17 07:52 +08
 "matrix_obj_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-2/9 Testing: basic_test
-2/9 Test: basic_test
+2/10 Testing: basic_test
+2/10 Test: basic_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/basic_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"basic_test" start time: Dec 16 18:13 +08
+"basic_test" start time: Dec 17 07:52 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 8 tests from 1 test suite.
@@ -56,7 +56,7 @@ Output:
 [ RUN      ] BasicTest.RayleighQuotientTest
 [       OK ] BasicTest.RayleighQuotientTest (0 ms)
 [ RUN      ] BasicTest.PowerIterTest
-[       OK ] BasicTest.PowerIterTest (0 ms)
+[       OK ] BasicTest.PowerIterTest (1 ms)
 [ RUN      ] BasicTest.GramSmithTest
 Starting Gram-Schmidt test...
 Checking orthogonality for vector 0...
@@ -77,24 +77,24 @@ Gram-Schmidt test completed successfully.
 
 
 [       OK ] BasicTest.QRFactTest (0 ms)
-[----------] 8 tests from BasicTest (0 ms total)
+[----------] 8 tests from BasicTest (1 ms total)
 
 [----------] Global test environment tear-down
-[==========] 8 tests from 1 test suite ran. (0 ms total)
+[==========] 8 tests from 1 test suite ran. (1 ms total)
 [  PASSED  ] 8 tests.
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"basic_test" end time: Dec 16 18:13 +08
+"basic_test" end time: Dec 17 07:52 +08
 "basic_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-3/9 Testing: itersolver_test
-3/9 Test: itersolver_test
+3/10 Testing: itersolver_test
+3/10 Test: itersolver_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/itersolver_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"itersolver_test" start time: Dec 16 18:13 +08
+"itersolver_test" start time: Dec 17 07:52 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 6 tests from 2 test suites.
@@ -118,21 +118,21 @@ Output:
 [----------] 3 tests from StaticIterMethodTest (1 ms total)
 
 [----------] Global test environment tear-down
-[==========] 6 tests from 2 test suites ran. (2 ms total)
+[==========] 6 tests from 2 test suites ran. (1 ms total)
 [  PASSED  ] 6 tests.
 <end of output>
-Test time =   0.01 sec
+Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"itersolver_test" end time: Dec 16 18:13 +08
+"itersolver_test" end time: Dec 17 07:52 +08
 "itersolver_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-4/9 Testing: LU_test
-4/9 Test: LU_test
+4/10 Testing: LU_test
+4/10 Test: LU_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/LU_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"LU_test" start time: Dec 16 18:13 +08
+"LU_test" start time: Dec 17 07:52 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 2 tests from 1 test suite.
@@ -151,15 +151,15 @@ Output:
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"LU_test" end time: Dec 16 18:13 +08
+"LU_test" end time: Dec 17 07:52 +08
 "LU_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-5/9 Testing: KrylovSubspace_test
-5/9 Test: KrylovSubspace_test
+5/10 Testing: KrylovSubspace_test
+5/10 Test: KrylovSubspace_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/KrylovSubspace_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"KrylovSubspace_test" start time: Dec 16 18:13 +08
+"KrylovSubspace_test" start time: Dec 17 07:52 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 4 tests from 1 test suite.
@@ -185,15 +185,15 @@ Breakdown: Norm below tolerance at iteration 1
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"KrylovSubspace_test" end time: Dec 16 18:13 +08
+"KrylovSubspace_test" end time: Dec 17 07:52 +08
 "KrylovSubspace_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-6/9 Testing: ConjugateGradient_test
-6/9 Test: ConjugateGradient_test
+6/10 Testing: ConjugateGradient_test
+6/10 Test: ConjugateGradient_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/ConjugateGradient_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"ConjugateGradient_test" start time: Dec 16 18:13 +08
+"ConjugateGradient_test" start time: Dec 17 07:52 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 4 tests from 1 test suite.
@@ -215,116 +215,176 @@ Warning: Conjugate Gradient did not converge within the maximum number of iterat
 [==========] 4 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 4 tests.
 <end of output>
-Test time =   0.17 sec
+Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"ConjugateGradient_test" end time: Dec 16 18:13 +08
+"ConjugateGradient_test" end time: Dec 17 07:52 +08
 "ConjugateGradient_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-7/9 Testing: matrix_benchmark_test
-7/9 Test: matrix_benchmark_test
+7/10 Testing: SparseMatrixCSCTest
+7/10 Test: SparseMatrixCSCTest
+Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/SparseMatrixCSCTest"
+Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
+"SparseMatrixCSCTest" start time: Dec 17 07:52 +08
+Output:
+----------------------------------------------------------
+[==========] Running 7 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 7 tests from SparseMatrixCSCTest
+[ RUN      ] SparseMatrixCSCTest.ElementAccess
+[       OK ] SparseMatrixCSCTest.ElementAccess (0 ms)
+[ RUN      ] SparseMatrixCSCTest.MatrixAddition
+/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/SparseMatrixCSCTest.cpp:40: Failure
+Expected equality of these values:
+  matC(1, 1)
+    Which is: 0
+  7
+
+/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/SparseMatrixCSCTest.cpp:41: Failure
+Expected equality of these values:
+  matC(2, 2)
+    Which is: 0
+  9
+
+[  FAILED  ] SparseMatrixCSCTest.MatrixAddition (0 ms)
+[ RUN      ] SparseMatrixCSCTest.MatrixMultiplication
+/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/SparseMatrixCSCTest.cpp:55: Failure
+Expected equality of these values:
+  result(1, 2)
+    Which is: 0
+  6
+
+[  FAILED  ] SparseMatrixCSCTest.MatrixMultiplication (0 ms)
+[ RUN      ] SparseMatrixCSCTest.GetColumn
+[       OK ] SparseMatrixCSCTest.GetColumn (0 ms)
+[ RUN      ] SparseMatrixCSCTest.OutOfBoundsAccess
+[       OK ] SparseMatrixCSCTest.OutOfBoundsAccess (0 ms)
+[ RUN      ] SparseMatrixCSCTest.IncompatibleMatrixAddition
+[       OK ] SparseMatrixCSCTest.IncompatibleMatrixAddition (0 ms)
+[ RUN      ] SparseMatrixCSCTest.IncompatibleMatrixMultiplication
+[       OK ] SparseMatrixCSCTest.IncompatibleMatrixMultiplication (0 ms)
+[----------] 7 tests from SparseMatrixCSCTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 7 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 5 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] SparseMatrixCSCTest.MatrixAddition
+[  FAILED  ] SparseMatrixCSCTest.MatrixMultiplication
+
+ 2 FAILED TESTS
+<end of output>
+Test time =   0.35 sec
+----------------------------------------------------------
+Test Failed.
+"SparseMatrixCSCTest" end time: Dec 17 07:52 +08
+"SparseMatrixCSCTest" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/10 Testing: matrix_benchmark_test
+8/10 Test: matrix_benchmark_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/matrix_benchmark_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"matrix_benchmark_test" start time: Dec 16 18:13 +08
+"matrix_benchmark_test" start time: Dec 17 07:52 +08
 Output:
 ----------------------------------------------------------
 Unable to determine clock rate from sysctl: hw.cpufrequency: No such file or directory
 This does not affect benchmark measurements, only the metadata output.
 ***WARNING*** Failed to set thread affinity. Estimated CPU frequency may be incorrect.
-2024-12-16T18:13:40+08:00
+2024-12-17T07:52:56+08:00
 Running /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/matrix_benchmark_test
 Run on (8 X 24 MHz CPU s)
 CPU Caches:
   L1 Data 64 KiB
   L1 Instruction 128 KiB
   L2 Unified 4096 KiB (x8)
-Load Average: 2.15, 1.97, 2.04
+Load Average: 1.57, 1.62, 1.74
 ---------------------------------------------------------------------------------
 Benchmark                                       Time             CPU   Iterations
 ---------------------------------------------------------------------------------
-BM_MatrixCreation/100/100                     358 ns          357 ns      1921214
-BM_MatrixCreation/4096/4096               2564946 ns      2562993 ns          267
-BM_MatrixAddition/100/100                    1118 ns         1118 ns       697795
-BM_MatrixAddition/4096/4096               5985447 ns      5984943 ns          106
-BM_MatrixMultiplication/4096/4096/4096  630784000 ns    595818000 ns            1
+BM_MatrixCreation/100/100                     386 ns          386 ns      1885197
+BM_MatrixCreation/4096/4096               2548615 ns      2548170 ns          283
+BM_MatrixAddition/100/100                    1022 ns         1022 ns       769265
+BM_MatrixAddition/4096/4096               5833227 ns      5832922 ns          115
+BM_MatrixMultiplication/4096/4096/4096  661095250 ns    638587000 ns            1
 <end of output>
-Test time =   5.39 sec
+Test time =   5.51 sec
 ----------------------------------------------------------
 Test Passed.
-"matrix_benchmark_test" end time: Dec 16 18:13 +08
+"matrix_benchmark_test" end time: Dec 17 07:53 +08
 "matrix_benchmark_test" time elapsed: 00:00:05
 ----------------------------------------------------------
 
-8/9 Testing: basic_benchmark_test
-8/9 Test: basic_benchmark_test
+9/10 Testing: basic_benchmark_test
+9/10 Test: basic_benchmark_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/basic_benchmark_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"basic_benchmark_test" start time: Dec 16 18:13 +08
+"basic_benchmark_test" start time: Dec 17 07:53 +08
 Output:
 ----------------------------------------------------------
 Unable to determine clock rate from sysctl: hw.cpufrequency: No such file or directory
 This does not affect benchmark measurements, only the metadata output.
 ***WARNING*** Failed to set thread affinity. Estimated CPU frequency may be incorrect.
-2024-12-16T18:13:46+08:00
+2024-12-17T07:53:01+08:00
 Running /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/basic_benchmark_test
 Run on (8 X 24 MHz CPU s)
 CPU Caches:
   L1 Data 64 KiB
   L1 Instruction 128 KiB
   L2 Unified 4096 KiB (x8)
-Load Average: 2.70, 2.08, 2.09
+Load Average: 1.48, 1.60, 1.73
 --------------------------------------------------------------
 Benchmark                    Time             CPU   Iterations
 --------------------------------------------------------------
-BM_PowerIter            321307 ns       320322 ns         2148
-BM_RayleighQuotient       3099 ns         3099 ns       226251
-BM_GramSmith           1036449 ns      1035390 ns          672
-BM_SubtProj                207 ns          206 ns      3276770
-BM_GenUnitvec              100 ns          100 ns      6753497
-BM_GenUnitMatx           12970 ns        12960 ns        59491
-BM_HouseH                40962 ns        34000 ns        23470
+BM_PowerIter            314088 ns       313853 ns         2231
+BM_RayleighQuotient       3306 ns         3175 ns       225666
+BM_GramSmith           1032508 ns      1028320 ns          675
+BM_SubtProj                219 ns          208 ns      3395866
+BM_GenUnitvec              102 ns          101 ns      7335143
+BM_GenUnitMatx           11463 ns        11461 ns        61074
+BM_HouseH                35238 ns        29904 ns        24814
 <end of output>
-Test time =   8.10 sec
+Test time =   7.91 sec
 ----------------------------------------------------------
 Test Passed.
-"basic_benchmark_test" end time: Dec 16 18:13 +08
-"basic_benchmark_test" time elapsed: 00:00:08
+"basic_benchmark_test" end time: Dec 17 07:53 +08
+"basic_benchmark_test" time elapsed: 00:00:07
 ----------------------------------------------------------
 
-9/9 Testing: itersolver_benchmark_test
-9/9 Test: itersolver_benchmark_test
+10/10 Testing: itersolver_benchmark_test
+10/10 Test: itersolver_benchmark_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/itersolver_benchmark_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"itersolver_benchmark_test" start time: Dec 16 18:13 +08
+"itersolver_benchmark_test" start time: Dec 17 07:53 +08
 Output:
 ----------------------------------------------------------
 Unable to determine clock rate from sysctl: hw.cpufrequency: No such file or directory
 This does not affect benchmark measurements, only the metadata output.
 ***WARNING*** Failed to set thread affinity. Estimated CPU frequency may be incorrect.
-2024-12-16T18:13:54+08:00
+2024-12-17T07:53:09+08:00
 Running /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/itersolver_benchmark_test
 Run on (8 X 24 MHz CPU s)
 CPU Caches:
   L1 Data 64 KiB
   L1 Instruction 128 KiB
   L2 Unified 4096 KiB (x8)
-Load Average: 2.72, 2.10, 2.09
+Load Average: 1.52, 1.60, 1.73
 --------------------------------------------------------------------------
 Benchmark                                Time             CPU   Iterations
 --------------------------------------------------------------------------
-BM_GradientDesent<double>/8           1386 ns         1371 ns       494113
-BM_GradientDesent<double>/64        129483 ns       129367 ns         5518
-BM_GradientDesent<double>/512     45964719 ns     45943133 ns           15
-BM_StaticIterMethod<double>/8         1892 ns         1892 ns       368204
-BM_StaticIterMethod<double>/64      247614 ns       247552 ns         2818
-BM_StaticIterMethod<double>/512  127067632 ns    127056833 ns            6
+BM_GradientDesent<double>/8           1320 ns         1319 ns       516293
+BM_GradientDesent<double>/64        125022 ns       125006 ns         5399
+BM_GradientDesent<double>/512     46024575 ns     46020400 ns           15
+BM_StaticIterMethod<double>/8         1891 ns         1891 ns       371357
+BM_StaticIterMethod<double>/64      245932 ns       245863 ns         2847
+BM_StaticIterMethod<double>/512  124905458 ns    124895167 ns            6
 <end of output>
-Test time =   6.69 sec
+Test time =   6.64 sec
 ----------------------------------------------------------
 Test Passed.
-"itersolver_benchmark_test" end time: Dec 16 18:14 +08
+"itersolver_benchmark_test" end time: Dec 17 07:53 +08
 "itersolver_benchmark_test" time elapsed: 00:00:06
 ----------------------------------------------------------
 
-End testing: Dec 16 18:14 +08
+End testing: Dec 17 07:53 +08

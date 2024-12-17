@@ -5,6 +5,8 @@
 #include <vector>
 #include <stdexcept>
 #include <unordered_map>
+#include <algorithm> // for std::lower_bound
+#include <numeric>   // for std::accumulate
 
 template<typename TObj>
 class VectorObj;
@@ -20,14 +22,11 @@ public:
     // Constructor
     SparseMatrixCSC(int rows, int cols) : _n(rows), _m(cols), col_ptr(cols + 1, 0) {}
 
-    // Destructor
     ~SparseMatrixCSC() = default;
 
     // Add a value to the sparse matrix
     void addValue(int row, int col, TObj value) {
-        if (col >= _m || row >= _n) {
-            throw std::out_of_range("Row or column index out of range.");
-        }
+        if (col >= _m || row >= _n) throw std::out_of_range("Row or column index out of range.");
         if (value == TObj()) return; // Skip zero values
         values.push_back(value);
         row_indices.push_back(row);
@@ -36,108 +35,72 @@ public:
 
     // Finalize column pointers after all values are added
     void finalize() {
-        for (int col = 1; col < col_ptr.size(); ++col) {
-            col_ptr[col] += col_ptr[col - 1];
-        }
+        std::partial_sum(col_ptr.begin(), col_ptr.end(), col_ptr.begin());
     }
 
-    // Get the number of rows
     inline int getRows() const { return _n; }
-
-    // Get the number of columns
     inline int getCols() const { return _m; }
 
-    // Get a column as a VectorObj
-    VectorObj<TObj> getColumn(int index) const {
-        if (index < 0 || index >= _m) {
-            throw std::out_of_range("Index out of range for column access.");
-        }
-        VectorObj<TObj> colData(_n);
-        for (int i = col_ptr[index]; i < col_ptr[index + 1]; ++i) {
-            colData[row_indices[i]] = values[i];
-        }
-        return colData;
-    }
-
-    // Access an element
+    // Element access with binary search
     TObj operator()(int row, int col) const {
-        if (row < 0 || row >= _n || col < 0 || col >= _m) {
-            throw std::out_of_range("Index out of range for element access.");
+        if (row < 0 || row >= _n || col < 0 || col >= _m) throw std::out_of_range("Index out of range.");
+        auto start = col_ptr[col];
+        auto end = col_ptr[col + 1];
+        auto it = std::lower_bound(row_indices.begin() + start, row_indices.begin() + end, row);
+        if (it != row_indices.begin() + end && *it == row) {
+            return values[it - row_indices.begin()];
         }
-        for (int i = col_ptr[col]; i < col_ptr[col + 1]; ++i) {
-            if (row_indices[i] == row) {
-                return values[i];
-            }
-        }
-        return TObj(); // Default value if not found
+        return TObj(); // Default value
     }
 
-    // Copy assignment operator
-    SparseMatrixCSC& operator=(const SparseMatrixCSC& other) {
-        if (this != &other) {
-            _n = other._n;
-            _m = other._m;
-            values = other.values;
-            row_indices = other.row_indices;
-            col_ptr = other.col_ptr;
-        }
-        return *this;
-    }
-
-    // Addition operator
+    // Optimized addition
     SparseMatrixCSC operator+(const SparseMatrixCSC& other) const {
-        if (_n != other._n || _m != other._m) {
-            throw std::invalid_argument("Matrices must be the same size for addition.");
-        }
+        if (_n != other._n || _m != other._m) throw std::invalid_argument("Matrices must be the same size for addition.");
         SparseMatrixCSC result(_n, _m);
-        result.values.reserve(values.size() + other.values.size());
-        result.row_indices.reserve(row_indices.size() + other.row_indices.size());
-        result.col_ptr = col_ptr;
 
-        // Merge-like approach
         for (int col = 0; col < _m; ++col) {
             int a_pos = col_ptr[col], b_pos = other.col_ptr[col];
-            while (a_pos < col_ptr[col + 1] || b_pos < other.col_ptr[col + 1]) {
-                if (a_pos < col_ptr[col + 1] && (b_pos >= other.col_ptr[col + 1] || row_indices[a_pos] < other.row_indices[b_pos])) {
-                    result.addValue(row_indices[a_pos], col, values[a_pos]);
-                    ++a_pos;
-                } else if (b_pos < other.col_ptr[col + 1] && (a_pos >= col_ptr[col + 1] || row_indices[a_pos] > other.row_indices[b_pos])) {
-                    result.addValue(other.row_indices[b_pos], col, other.values[b_pos]);
-                    ++b_pos;
-                } else {
-                    result.addValue(row_indices[a_pos], col, values[a_pos] + other.values[b_pos]);
-                    ++a_pos;
-                    ++b_pos;
-                }
+            std::unordered_map<int, TObj> col_data;
+
+            while (a_pos < col_ptr[col + 1]) col_data[row_indices[a_pos++]] += values[a_pos];
+            while (b_pos < other.col_ptr[col + 1]) col_data[other.row_indices[b_pos++]] += other.values[b_pos];
+
+            for (const auto& [row, value] : col_data) {
+                if (value != TObj()) result.addValue(row, col, value);
             }
         }
+        result.finalize();
         return result;
     }
 
-    // Multiplication operator
+    // Optimized multiplication using CSC * CSR
     SparseMatrixCSC operator*(const SparseMatrixCSC& other) const {
-        if (_m != other._n) {
-            throw std::invalid_argument("Number of columns in the first matrix must be equal to the number of rows in the second matrix for multiplication.");
-        }
+        if (_m != other._n) throw std::invalid_argument("Matrix dimensions incompatible for multiplication.");
         SparseMatrixCSC result(_n, other._m);
-        result.values.reserve(_n * other._m);
 
-        // Compressed multiplication logic
+        std::vector<std::vector<std::pair<int, TObj>>> rows(_n);
         for (int col = 0; col < other._m; ++col) {
-            std::vector<TObj> temp(_n, TObj());
             for (int k = other.col_ptr[col]; k < other.col_ptr[col + 1]; ++k) {
                 int row_b = other.row_indices[k];
                 TObj value_b = other.values[k];
+
                 for (int p = col_ptr[row_b]; p < col_ptr[row_b + 1]; ++p) {
-                    temp[row_indices[p]] += values[p] * value_b;
-                }
-            }
-            for (int row = 0; row < _n; ++row) {
-                if (temp[row] != TObj()) {
-                    result.addValue(row, col, temp[row]);
+                    rows[row_indices[p]].emplace_back(col, values[p] * value_b);
                 }
             }
         }
+
+        for (int row = 0; row < _n; ++row) {
+            std::unordered_map<int, TObj> temp_map;
+            for (const auto& [col, value] : rows[row]) {
+                temp_map[col] += value;
+            }
+            for (const auto& [col, value] : temp_map) {
+                if (value != TObj()) result.addValue(row, col, value);
+            }
+        }
+
+        result.finalize();
         return result;
     }
 };
