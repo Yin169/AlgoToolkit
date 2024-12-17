@@ -80,16 +80,8 @@ void initializeZeroMatrix(MatrixObj<double>& matrix) {
 
 // Helper functions for matrix initialization and copying
 void initializeDiagonalMatrix(MatrixObj<double>& matrix) {
-    for (size_t i = 0; i < matrix.getRows(); ++i) {
+    for (int i = 0; i < matrix.getRows(); ++i) {
         matrix(i, i) = static_cast<double>(i + 1);
-    }
-}
-
-void copyMatrix(const MatrixObj<double>& source, MatrixObj<double>& dest) {
-    for (size_t i = 0; i < source.getRows(); ++i) {
-        for (size_t j = 0; j < source.getCols(); ++j) {
-            dest(i, j) = source(i, j);
-        }
     }
 }
 
@@ -110,7 +102,11 @@ TEST_F(ArnoldiTest, KnownExample) {
     Krylov::Arnoldi(A, Q, H, tol);
 
     MatrixObj<double> HA(n, n);
-    copyMatrix(H, HA);
+    for (size_t i = 0; i < n; ++i) {
+        for (size_t j = 0; j < n; ++j) {
+            HA(i, j) = H(i, j);
+        }
+    }
 
     Q.pop_back();
     MatrixObj matQ(Q, Q[0].size(), Q.size());
@@ -119,6 +115,7 @@ TEST_F(ArnoldiTest, KnownExample) {
 
     for (size_t i = 0; i < n; ++i) {
         for (size_t j = 0; j < n; ++j) {
+            std::cout << i << " " << j << " " << std::endl;
             EXPECT_NEAR(checkLeft(i, j), checkRight(i, j), tol) << "Mismatch at position (" << i << ", " << j << ")";
         }
     }

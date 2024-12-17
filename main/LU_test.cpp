@@ -21,35 +21,44 @@ TEST(LUDecomposition, SquareMatrix) {
 
     // Initialize matrix A with known values.
     MatrixObj<double> A = initializeSquareMatrix(n);
+    MatrixObj<double> backup_A = A;
     std::vector<int> P;
 
     // Perform LU decomposition.
     LU::PivotLU(A, P);
 
-    // Check if L * U reconstructs A
-    MatrixObj<double> A_reconstructed = A; // Initially, copy A (since LU decomposition modifies it)
+    // Initialize L and U matrices
+    MatrixObj<double> L(n, n);
+    MatrixObj<double> U(n, n);
+
+    // Reconstruct L and U from A
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
             if (i <= j) {
                 // Upper triangular part: U
-                A_reconstructed[i + j * n] = A[i + j * n];
+                U(i, j) = A(i, j);
             } else {
                 // Lower triangular part: L
-                A_reconstructed[i + j * n] = A[i + j * n];
+                L(i, j) = A(i, j) / A(i, i); // Assuming A(i, i) is non-zero
             }
         }
     }
 
-    // Set diagonal elements to 1 for L
+    // Set diagonal elements of L to 1
     for (int i = 0; i < n; ++i) {
-        A_reconstructed[i + i * n] = 1.0;
+        L(i, i) = 1.0;
     }
 
     // Verify if A is approximately equal to L * U
-    MatrixObj<double> L_times_U = A_reconstructed;
+    MatrixObj<double> L_times_U = L * U;
+
+    for (int i = 0 ; i < P.size(); i++){
+        L_times_U.swapRows(i, P[i]);
+    }
+
     for (int i = 0; i < n; ++i) {
         for (int j = 0; j < n; ++j) {
-            EXPECT_NEAR(A[i + j * n], L_times_U[i + j * n], 1e-8);
+            EXPECT_NEAR(backup_A(i, j), L_times_U(i, j), 1e-8);
         }
     }
 }

@@ -35,11 +35,11 @@ public:
 
     MatrixObj(const std::vector<VectorObj<TObj>>& data, int n, int m) 
         : _n(n), _m(m) {
-        if (data.size() != n * m) {
+        if (data.size() != m) {
             throw std::invalid_argument("Data size does not match matrix dimensions.");
         }
-        for (VectorObj<TObj> e : data){
-            arr.insert(arr.end(), e.element(), e.element() + n);
+        for (size_t i = 0; i < data.size(); ++i){
+            arr.insert(arr.end(), data[i].element(), data[i].element() + n);
         }
     }
 

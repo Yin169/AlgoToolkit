@@ -53,7 +53,7 @@ namespace LU {
                 A(i, j) = factor; // Store the factor in place
 
                 for (int k = j + 1; k < n; ++k) {
-                    A(i, k) -= factor * A(j, k);
+                    A(i, k) = A(i, k) - factor * A(j, k);
                 }
             }
         }

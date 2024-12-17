@@ -40,16 +40,6 @@ target_link_libraries(ConjugateGradient_test PRIVATE GTest::gtest GTest::gmock O
 add_executable(SparseMatrixCSCTest main/SparseMatrixCSCTest.cpp)
 target_link_libraries(SparseMatrixCSCTest PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
 
-# 添加可执行文件：matrix_benchmark_test
-add_executable(matrix_benchmark_test main/matrix_benchmark_test.cpp)
-target_link_libraries(matrix_benchmark_test PRIVATE benchmark::benchmark OpenBLAS::OpenBLAS)
-# 添加可执行文件：basic_benchmark_test
-add_executable(basic_benchmark_test main/basic_benchmark_test.cpp)
-target_link_libraries(basic_benchmark_test PRIVATE benchmark::benchmark OpenBLAS::OpenBLAS)
-# 添加可执行文件：basic_benchmark_test
-add_executable(itersolver_benchmark_test main/itersolver_benchmark_test.cpp)
-target_link_libraries(itersolver_benchmark_test PRIVATE benchmark::benchmark OpenBLAS::OpenBLAS)
-
 # 添加测试
 enable_testing()
 add_test(NAME matrix_obj_test COMMAND matrix_obj_test)
@@ -59,8 +49,3 @@ add_test(NAME itersolver_test COMMAND itersolver_test)
 add_test(NAME LU_test COMMAND LU_test)
 add_test(NAME KrylovSubspace_test COMMAND KrylovSubspace_test)
 add_test(NAME ConjugateGradient_test COMMAND ConjugateGradient_test)
-
-# 添加基准测试
-add_test(NAME matrix_benchmark_test COMMAND matrix_benchmark_test)
-add_test(NAME basic_benchmark_test COMMAND basic_benchmark_test)
-add_test(NAME itersolver_benchmark_test COMMAND itersolver_benchmark_test)
