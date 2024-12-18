@@ -1,10 +1,10 @@
-Start testing: Dec 17 15:39 +08
+Start testing: Dec 18 08:55 +08
 ----------------------------------------------------------
 1/7 Testing: matrix_obj_test
 1/7 Test: matrix_obj_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/matrix_obj_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"matrix_obj_test" start time: Dec 17 15:39 +08
+"matrix_obj_test" start time: Dec 18 08:55 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 10 tests from 1 test suite.
@@ -36,10 +36,10 @@ Output:
 [==========] 10 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 10 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"matrix_obj_test" end time: Dec 17 15:39 +08
+"matrix_obj_test" end time: Dec 18 08:55 +08
 "matrix_obj_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -47,7 +47,7 @@ Test Passed.
 2/7 Test: SparseMatrixCSCTest
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/SparseMatrixCSCTest"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"SparseMatrixCSCTest" start time: Dec 17 15:39 +08
+"SparseMatrixCSCTest" start time: Dec 18 08:55 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 7 tests from 1 test suite.
@@ -73,10 +73,10 @@ Output:
 [==========] 7 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 7 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"SparseMatrixCSCTest" end time: Dec 17 15:39 +08
+"SparseMatrixCSCTest" end time: Dec 18 08:55 +08
 "SparseMatrixCSCTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -84,7 +84,7 @@ Test Passed.
 3/7 Test: basic_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/basic_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"basic_test" start time: Dec 17 15:39 +08
+"basic_test" start time: Dec 18 08:55 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 8 tests from 1 test suite.
@@ -111,16 +111,16 @@ Gram-Schmidt test completed successfully.
 [       OK ] BasicTest.HouseHTest (0 ms)
 [ RUN      ] BasicTest.qrFactorizationTest
 [       OK ] BasicTest.qrFactorizationTest (0 ms)
-[----------] 8 tests from BasicTest (0 ms total)
+[----------] 8 tests from BasicTest (2 ms total)
 
 [----------] Global test environment tear-down
-[==========] 8 tests from 1 test suite ran. (0 ms total)
+[==========] 8 tests from 1 test suite ran. (2 ms total)
 [  PASSED  ] 8 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"basic_test" end time: Dec 17 15:39 +08
+"basic_test" end time: Dec 18 08:55 +08
 "basic_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -128,7 +128,7 @@ Test Passed.
 4/7 Test: itersolver_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/itersolver_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"itersolver_test" start time: Dec 17 15:39 +08
+"itersolver_test" start time: Dec 18 08:55 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 6 tests from 2 test suites.
@@ -155,10 +155,10 @@ Output:
 [==========] 6 tests from 2 test suites ran. (1 ms total)
 [  PASSED  ] 6 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"itersolver_test" end time: Dec 17 15:39 +08
+"itersolver_test" end time: Dec 18 08:55 +08
 "itersolver_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -166,7 +166,7 @@ Test Passed.
 5/7 Test: LU_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/LU_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"LU_test" start time: Dec 17 15:39 +08
+"LU_test" start time: Dec 18 08:55 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 2 tests from 1 test suite.
@@ -228,10 +228,10 @@ Mismatch at (2, 2)
 
  1 FAILED TEST
 <end of output>
-Test time =   0.16 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Failed.
-"LU_test" end time: Dec 17 15:39 +08
+"LU_test" end time: Dec 18 08:55 +08
 "LU_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -239,7 +239,7 @@ Test Failed.
 6/7 Test: KrylovSubspace_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/KrylovSubspace_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"KrylovSubspace_test" start time: Dec 17 15:39 +08
+"KrylovSubspace_test" start time: Dec 18 08:55 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 4 tests from 1 test suite.
@@ -279,10 +279,10 @@ Breakdown: Norm below tolerance at iteration 4
 [==========] 4 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 4 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"KrylovSubspace_test" end time: Dec 17 15:39 +08
+"KrylovSubspace_test" end time: Dec 18 08:55 +08
 "KrylovSubspace_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -290,7 +290,7 @@ Test Passed.
 7/7 Test: ConjugateGradient_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/ConjugateGradient_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"ConjugateGradient_test" start time: Dec 17 15:39 +08
+"ConjugateGradient_test" start time: Dec 18 08:55 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 4 tests from 1 test suite.
@@ -314,11 +314,11 @@ Warning: Division by near-zero in alpha calculation.
 [==========] 4 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 4 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"ConjugateGradient_test" end time: Dec 17 15:39 +08
+"ConjugateGradient_test" end time: Dec 18 08:55 +08
 "ConjugateGradient_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Dec 17 15:39 +08
+End testing: Dec 18 08:55 +08

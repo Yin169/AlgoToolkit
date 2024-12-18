@@ -98,16 +98,16 @@ public:
     }
 
     SparseMatrixCSC &operator*=(double scalar) {
-        for (auto& e : value){ 
+        for (auto& e : values){ 
             e *= static_cast<TObj>(scalar);
         }
-        return *this 
+        return *this; 
     }
 
     SparseMatrixCSC operator*(double scalar){
         SparseMatrixCSC result = *this;
         result *= scalar;
-        return result 
+        return result;
     }
 
     VectorObj<TObj> operator*(const VectorObj<TObj>& vector) {

@@ -217,6 +217,19 @@ SparseMatrixCSCTest/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SparseMatrixCSCTest.dir/build.make CMakeFiles/SparseMatrixCSCTest.dir/build
 .PHONY : SparseMatrixCSCTest/fast
 
+#=============================================================================
+# Target rules for targets named FASTSolver
+
+# Build rule for target.
+FASTSolver: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FASTSolver
+.PHONY : FASTSolver
+
+# fast build rule for target.
+FASTSolver/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTSolver.dir/build.make CMakeFiles/FASTSolver.dir/build
+.PHONY : FASTSolver/fast
+
 main/ConjugateGradient_test.o: main/ConjugateGradient_test.cpp.o
 .PHONY : main/ConjugateGradient_test.o
 
@@ -385,6 +398,30 @@ main/matrix_obj_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/matrix_obj_test.dir/build.make CMakeFiles/matrix_obj_test.dir/main/matrix_obj_test.cpp.s
 .PHONY : main/matrix_obj_test.cpp.s
 
+python/pybind.o: python/pybind.cpp.o
+.PHONY : python/pybind.o
+
+# target to build an object file
+python/pybind.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTSolver.dir/build.make CMakeFiles/FASTSolver.dir/python/pybind.cpp.o
+.PHONY : python/pybind.cpp.o
+
+python/pybind.i: python/pybind.cpp.i
+.PHONY : python/pybind.i
+
+# target to preprocess a source file
+python/pybind.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTSolver.dir/build.make CMakeFiles/FASTSolver.dir/python/pybind.cpp.i
+.PHONY : python/pybind.cpp.i
+
+python/pybind.s: python/pybind.cpp.s
+.PHONY : python/pybind.s
+
+# target to generate assembly for a file
+python/pybind.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTSolver.dir/build.make CMakeFiles/FASTSolver.dir/python/pybind.cpp.s
+.PHONY : python/pybind.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -395,6 +432,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... ConjugateGradient_test"
+	@echo "... FASTSolver"
 	@echo "... KrylovSubspace_test"
 	@echo "... LU_test"
 	@echo "... SparseMatrixCSCTest"
@@ -422,6 +460,9 @@ help:
 	@echo "... main/matrix_obj_test.o"
 	@echo "... main/matrix_obj_test.i"
 	@echo "... main/matrix_obj_test.s"
+	@echo "... python/pybind.o"
+	@echo "... python/pybind.i"
+	@echo "... python/pybind.s"
 .PHONY : help
 
 

@@ -1,5 +1,6 @@
 #include <cmath>
 #include <iostream>
+#include "DenseObj.hpp"
 #include "basic.hpp"
 #include "gtest/gtest.h"
 
@@ -7,13 +8,13 @@ namespace {
 
 class BasicTest : public ::testing::Test {
 protected:
-    MatrixObj<double> A;
+    DenseObj<double> A;
     VectorObj<double> b;
     double setA[3*3] = {1,0,0, 0,1,0, 0,0,1};
     double setB[3] = {1, 0, 0};
 
     void SetUp() override {
-        A = MatrixObj<double>(3, 3);
+        A = DenseObj<double>(3, 3);
         std::copy(std::begin(setA), std::end(setA), A.data());
         b = VectorObj<double>(setB, 3);
     }
@@ -57,7 +58,7 @@ TEST_F(BasicTest, GenUnitvecTest) {
 }
 
 TEST_F(BasicTest, GenUnitMatxTest) {
-    MatrixObj<double> I;
+    DenseObj<double> I;
     I = basic::genUnitMat<double>(3);
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
@@ -72,10 +73,10 @@ TEST_F(BasicTest, SignTest) {
 }
 
 TEST_F(BasicTest, HouseHTest) {
-    MatrixObj<double> H;
+    DenseObj<double> H;
     basic::householderTransform(A, H, 0);
-    MatrixObj<double> Ht = H.Transpose();
-    MatrixObj<double> Res = H * Ht;
+    DenseObj<double> Ht = H.Transpose();
+    DenseObj<double> Res = H * Ht;
 
     for (int i = 0; i < A.getRows(); ++i) {
         for (int j = 0; j < A.getCols(); ++j) {
@@ -88,7 +89,7 @@ TEST_F(BasicTest, HouseHTest) {
 }
 
 TEST_F(BasicTest, qrFactorizationTest) {
-    MatrixObj<double> Q, R;
+    DenseObj<double> Q, R;
     basic::qrFactorization(A, Q, R);
 
     // Check if R is upper triangular
@@ -99,7 +100,7 @@ TEST_F(BasicTest, qrFactorizationTest) {
     }
 
     // Check if A = QR
-    MatrixObj<double> A_recons = Q * R;
+    DenseObj<double> A_recons = Q * R;
     for (int i = 0; i < A.getCols(); ++i) {
         for (int j = 0; j < A.getRows(); ++j) {
             ASSERT_NEAR(A_recons[i * A_recons.getRows() + j], A[i * A.getRows() + j], 1e-6) 

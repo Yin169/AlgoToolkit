@@ -10,7 +10,7 @@
 #include "MatrixObj.hpp"
 
 template <typename TObj>
-class VectorObj : public MatrixObj<TObj> {
+class VectorObj {
 private: 
     int _size;
     std::vector<TObj> data;

@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "ConjugateGradient.hpp"
-#include "MatrixObj.hpp"
+#include "DenseObj.hpp"
 #include "VectorObj.hpp"
 #include <cmath>
 
@@ -18,17 +18,17 @@ bool areVectorsNear(const VectorObj<T>& v1, const VectorObj<T>& v2, double tol =
 template<typename T>
 class ConjugateGradientTest : public ::testing::Test {
 protected:
-    MatrixObj<T> A, P;
+    DenseObj<T> A, P;
     VectorObj<T> b, x_exact;
 
     void SetUp() override {
         // Create a symmetric positive definite matrix A
-        A = MatrixObj<T>(3, 3);
+        A = DenseObj<T>(3, 3);
         A(0, 0) = 5; A(0, 1) = 0; A(0, 2) = 1;
         A(1, 0) = 0; A(1, 1) = 2; A(1, 2) = 0;
         A(2, 0) = 1; A(2, 1) = 0; A(2, 2) = 3;
 
-        P = MatrixObj<T>(3, 3); // Identity matrix
+        P = DenseObj<T>(3, 3); // Identity matrix
         P(0, 0) = 1; P(0, 1) = 0; P(0, 2) = 0;
         P(1, 0) = 0; P(1, 1) = 1; P(1, 2) = 0;
         P(2, 0) = 0; P(2, 1) = 0; P(2, 2) = 1;

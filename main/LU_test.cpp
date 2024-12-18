@@ -1,21 +1,21 @@
 #include <gtest/gtest.h>
 #include "LU.hpp"
-#include "MatrixObj.hpp"
+#include "DenseObj.hpp"
 
 // Helper function to initialize a square matrix
-MatrixObj<double> initializeSquareMatrix(int n) {
+DenseObj<double> initializeSquareMatrix(int n) {
     // Example data for a 3x3 matrix
     std::vector<double> data = {
         4, 3, 2,
         3, 4, 1,
         2, 1, 4
     };
-    return MatrixObj<double>(data, n, n);
+    return DenseObj<double>(data, n, n);
 }
 
 // Test case: Check if PivotLU throws an exception for non-square matrices.
 TEST(LUDecomposition, NonSquareMatrix) {
-    MatrixObj<double> A(3, 4); // Non-square matrix
+    DenseObj<double> A(3, 4); // Non-square matrix
     std::vector<int> P;
 
     EXPECT_THROW(LU::PivotLU(A, P), std::invalid_argument);
@@ -26,18 +26,18 @@ TEST(LUDecomposition, SquareMatrix) {
     const int n = 3;
 
     // Initialize matrix A with known values.
-    MatrixObj<double> A = initializeSquareMatrix(n);
+    DenseObj<double> A = initializeSquareMatrix(n);
     std::vector<int> P;
 
     // Copy the original matrix for comparison
-    MatrixObj<double> originalA = A;
+    DenseObj<double> originalA = A;
 
     // Perform LU decomposition
     ASSERT_NO_THROW(LU::PivotLU(A, P));
 
     // Initialize L and U matrices
-    MatrixObj<double> L(n, n); // Start with all zeros
-    MatrixObj<double> U(n, n);
+    DenseObj<double> L(n, n); // Start with all zeros
+    DenseObj<double> U(n, n);
 
     // Extract L and U from the decomposed matrix A
     for (int i = 0; i < n; ++i) {
@@ -52,14 +52,14 @@ TEST(LUDecomposition, SquareMatrix) {
     }
 
     // Apply permutation vector P to reorder rows of the original matrix
-    MatrixObj<double> PA(n, n);
+    DenseObj<double> PA(n, n);
     PA = A;
     for (int i = 0; i < n; ++i) {
         PA.swapRows(i, P[i]);
     }
 
     // Compute L * U
-    MatrixObj<double> L_times_U = L * U;
+    DenseObj<double> L_times_U = L * U;
 
     // Verify if PA is approximately equal to L * U
     for (int i = 0; i < n; ++i) {

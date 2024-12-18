@@ -3,7 +3,8 @@
 
 template <typename TObj>
 class MatrixObj {
-	virtual MatrixObj() {}
-	virtual ~MatrixObj() {}
+public:
+	MatrixObj() = default;
+	~MatrixObj() = default;
 };
 #endif

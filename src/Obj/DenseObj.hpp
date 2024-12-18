@@ -1,5 +1,5 @@
-#ifndef MATRIXOBJ_HPP
-#define MATRIXOBJ_HPP
+#ifndef DENSEOBJ_HPP
+#define DENSEOBJ_HPP
 
 #include <vector>
 #include <stdexcept>
@@ -13,6 +13,9 @@
 
 template<typename TObj> 
 class VectorObj;
+
+template<typename TObj> 
+class MatrixObj;
 
 template<typename TObj>
 class DenseObj : public MatrixObj<TObj> {
