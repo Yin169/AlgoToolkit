@@ -218,17 +218,17 @@ SparseMatrixCSCTest/fast:
 .PHONY : SparseMatrixCSCTest/fast
 
 #=============================================================================
-# Target rules for targets named FASTSolver
+# Target rules for targets named MultiGrid_test
 
 # Build rule for target.
-FASTSolver: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 FASTSolver
-.PHONY : FASTSolver
+MultiGrid_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 MultiGrid_test
+.PHONY : MultiGrid_test
 
 # fast build rule for target.
-FASTSolver/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTSolver.dir/build.make CMakeFiles/FASTSolver.dir/build
-.PHONY : FASTSolver/fast
+MultiGrid_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiGrid_test.dir/build.make CMakeFiles/MultiGrid_test.dir/build
+.PHONY : MultiGrid_test/fast
 
 main/ConjugateGradient_test.o: main/ConjugateGradient_test.cpp.o
 .PHONY : main/ConjugateGradient_test.o
@@ -301,6 +301,30 @@ main/LU_test.s: main/LU_test.cpp.s
 main/LU_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/LU_test.dir/build.make CMakeFiles/LU_test.dir/main/LU_test.cpp.s
 .PHONY : main/LU_test.cpp.s
+
+main/MultiGrid_test.o: main/MultiGrid_test.cpp.o
+.PHONY : main/MultiGrid_test.o
+
+# target to build an object file
+main/MultiGrid_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiGrid_test.dir/build.make CMakeFiles/MultiGrid_test.dir/main/MultiGrid_test.cpp.o
+.PHONY : main/MultiGrid_test.cpp.o
+
+main/MultiGrid_test.i: main/MultiGrid_test.cpp.i
+.PHONY : main/MultiGrid_test.i
+
+# target to preprocess a source file
+main/MultiGrid_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiGrid_test.dir/build.make CMakeFiles/MultiGrid_test.dir/main/MultiGrid_test.cpp.i
+.PHONY : main/MultiGrid_test.cpp.i
+
+main/MultiGrid_test.s: main/MultiGrid_test.cpp.s
+.PHONY : main/MultiGrid_test.s
+
+# target to generate assembly for a file
+main/MultiGrid_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiGrid_test.dir/build.make CMakeFiles/MultiGrid_test.dir/main/MultiGrid_test.cpp.s
+.PHONY : main/MultiGrid_test.cpp.s
 
 main/SparseMatrixCSCTest.o: main/SparseMatrixCSCTest.cpp.o
 .PHONY : main/SparseMatrixCSCTest.o
@@ -398,30 +422,6 @@ main/matrix_obj_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/matrix_obj_test.dir/build.make CMakeFiles/matrix_obj_test.dir/main/matrix_obj_test.cpp.s
 .PHONY : main/matrix_obj_test.cpp.s
 
-python/pybind.o: python/pybind.cpp.o
-.PHONY : python/pybind.o
-
-# target to build an object file
-python/pybind.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTSolver.dir/build.make CMakeFiles/FASTSolver.dir/python/pybind.cpp.o
-.PHONY : python/pybind.cpp.o
-
-python/pybind.i: python/pybind.cpp.i
-.PHONY : python/pybind.i
-
-# target to preprocess a source file
-python/pybind.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTSolver.dir/build.make CMakeFiles/FASTSolver.dir/python/pybind.cpp.i
-.PHONY : python/pybind.cpp.i
-
-python/pybind.s: python/pybind.cpp.s
-.PHONY : python/pybind.s
-
-# target to generate assembly for a file
-python/pybind.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTSolver.dir/build.make CMakeFiles/FASTSolver.dir/python/pybind.cpp.s
-.PHONY : python/pybind.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -432,9 +432,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... ConjugateGradient_test"
-	@echo "... FASTSolver"
 	@echo "... KrylovSubspace_test"
 	@echo "... LU_test"
+	@echo "... MultiGrid_test"
 	@echo "... SparseMatrixCSCTest"
 	@echo "... basic_test"
 	@echo "... itersolver_test"
@@ -448,6 +448,9 @@ help:
 	@echo "... main/LU_test.o"
 	@echo "... main/LU_test.i"
 	@echo "... main/LU_test.s"
+	@echo "... main/MultiGrid_test.o"
+	@echo "... main/MultiGrid_test.i"
+	@echo "... main/MultiGrid_test.s"
 	@echo "... main/SparseMatrixCSCTest.o"
 	@echo "... main/SparseMatrixCSCTest.i"
 	@echo "... main/SparseMatrixCSCTest.s"
@@ -460,9 +463,6 @@ help:
 	@echo "... main/matrix_obj_test.o"
 	@echo "... main/matrix_obj_test.i"
 	@echo "... main/matrix_obj_test.s"
-	@echo "... python/pybind.o"
-	@echo "... python/pybind.i"
-	@echo "... python/pybind.s"
 .PHONY : help
 
 

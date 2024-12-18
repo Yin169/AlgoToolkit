@@ -204,8 +204,8 @@ CMAKE_STRIP:FILEPATH=/Library/Developer/CommandLineTools/usr/bin/strip
 //Path to a program.
 CMAKE_TAPI:FILEPATH=/Library/Developer/CommandLineTools/usr/bin/tapi
 
-//No help, variable specified on the command line.
-CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=Release/generators/conan_toolchain.cmake
+//The CMake toolchain file
+CMAKE_TOOLCHAIN_FILE:FILEPATH=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators/conan_toolchain.cmake
 
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
@@ -225,30 +225,8 @@ FASTSolver_SOURCE_DIR:STATIC=/Users/yincheangng/worksapce/Github/MyAlgorithmicTo
 //The directory containing a CMake configuration file for GTest.
 GTest_DIR:PATH=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators
 
-//The directory containing a CMake configuration file for OpenBLAS.
-OpenBLAS_DIR:PATH=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators
-
-//Overwrite cached values read from Python library (classic search).
-// Turn off if cross-compiling and manually setting these values.
-PYBIND11_PYTHONLIBS_OVERWRITE:BOOL=ON
-
-//Python version to use for compiling modules
-PYBIND11_PYTHON_VERSION:STRING=
-
-//Path to a program.
-PYTHON_EXECUTABLE:FILEPATH=/Users/yincheangng/opt/anaconda3/python.app/Contents/MacOS/python
-
-//Path to a library.
-PYTHON_LIBRARY:FILEPATH=/Users/yincheangng/opt/anaconda3/lib/libpython3.9.dylib
-
-//The directory containing a CMake configuration file for PythonInterp.
-PythonInterp_DIR:PATH=PythonInterp_DIR-NOTFOUND
-
 //The directory containing a CMake configuration file for benchmark.
 benchmark_DIR:PATH=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators
-
-//The directory containing a CMake configuration file for pybind11.
-pybind11_DIR:PATH=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators
 
 
 ########################
@@ -394,28 +372,4 @@ CMAKE_TAPI-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-//Details about finding PYTHON
-FIND_PACKAGE_MESSAGE_DETAILS_PYTHON:INTERNAL=/Users/yincheangng/opt/anaconda3/python.app/Contents/MacOS/python3.9.13
-//Details about finding PythonInterp
-FIND_PACKAGE_MESSAGE_DETAILS_PythonInterp:INTERNAL=[/Users/yincheangng/opt/anaconda3/python.app/Contents/MacOS/python][v3.9.13(3.7)]
-//Test HAS_FLTO_THIN
-HAS_FLTO_THIN:INTERNAL=1
-//ADVANCED property for variable: PYTHON_EXECUTABLE
-PYTHON_EXECUTABLE-ADVANCED:INTERNAL=1
-PYTHON_INCLUDE_DIRS:INTERNAL=/Users/yincheangng/opt/anaconda3/include/python3.9
-PYTHON_IS_DEBUG:INTERNAL=0
-PYTHON_LIBRARIES:INTERNAL=/Users/yincheangng/opt/anaconda3/lib/libpython3.9.dylib
-//ADVANCED property for variable: PYTHON_LIBRARY
-PYTHON_LIBRARY-ADVANCED:INTERNAL=1
-PYTHON_MODULE_DEBUG_POSTFIX:INTERNAL=
-PYTHON_MODULE_EXTENSION:INTERNAL=.cpython-39-darwin.so
-PYTHON_MODULE_PREFIX:INTERNAL=
-PYTHON_VERSION:INTERNAL=3.9.13
-PYTHON_VERSION_MAJOR:INTERNAL=3
-PYTHON_VERSION_MINOR:INTERNAL=9
-Python_ADDITIONAL_VERSIONS:INTERNAL=3.12;3.11;3.10;3.9;3.8;3.7
-_PYBIND11_CROSSCOMPILING:INTERNAL=OFF
-_Python:INTERNAL=PYTHON
-//Directories where pybind11 and possibly Python headers are located
-pybind11_INCLUDE_DIRS:INTERNAL=/Users/yincheangng/.conan2/p/pybin0711cb137f6d7/p/include;/Users/yincheangng/opt/anaconda3/include/python3.9
 

@@ -12,7 +12,7 @@ endif()
 
 ########### VARIABLES #######################################################################
 #############################################################################################
-set(fmt_PACKAGE_FOLDER_RELEASE "/Users/yincheangng/.conan2/p/b/fmt02e66d39cfab3/p")
+set(fmt_PACKAGE_FOLDER_RELEASE "/Users/yincheangng/.conan2/p/b/fmt5eaf0a4b06e0b/p")
 set(fmt_BUILD_MODULES_PATHS_RELEASE )
 
 

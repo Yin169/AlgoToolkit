@@ -70,7 +70,7 @@ all: CMakeFiles/LU_test.dir/all
 all: CMakeFiles/KrylovSubspace_test.dir/all
 all: CMakeFiles/ConjugateGradient_test.dir/all
 all: CMakeFiles/SparseMatrixCSCTest.dir/all
-all: CMakeFiles/FASTSolver.dir/all
+all: CMakeFiles/MultiGrid_test.dir/all
 .PHONY : all
 
 # The main recursive "codegen" target.
@@ -81,7 +81,7 @@ codegen: CMakeFiles/LU_test.dir/codegen
 codegen: CMakeFiles/KrylovSubspace_test.dir/codegen
 codegen: CMakeFiles/ConjugateGradient_test.dir/codegen
 codegen: CMakeFiles/SparseMatrixCSCTest.dir/codegen
-codegen: CMakeFiles/FASTSolver.dir/codegen
+codegen: CMakeFiles/MultiGrid_test.dir/codegen
 .PHONY : codegen
 
 # The main recursive "preinstall" target.
@@ -96,7 +96,7 @@ clean: CMakeFiles/LU_test.dir/clean
 clean: CMakeFiles/KrylovSubspace_test.dir/clean
 clean: CMakeFiles/ConjugateGradient_test.dir/clean
 clean: CMakeFiles/SparseMatrixCSCTest.dir/clean
-clean: CMakeFiles/FASTSolver.dir/clean
+clean: CMakeFiles/MultiGrid_test.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -199,7 +199,7 @@ CMakeFiles/itersolver_test.dir/clean:
 CMakeFiles/LU_test.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/LU_test.dir/build.make CMakeFiles/LU_test.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/LU_test.dir/build.make CMakeFiles/LU_test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=7,8 "Built target LU_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=5,6 "Built target LU_test"
 .PHONY : CMakeFiles/LU_test.dir/all
 
 # Build rule for subdir invocation for target.
@@ -230,7 +230,7 @@ CMakeFiles/LU_test.dir/clean:
 CMakeFiles/KrylovSubspace_test.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/KrylovSubspace_test.dir/build.make CMakeFiles/KrylovSubspace_test.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/KrylovSubspace_test.dir/build.make CMakeFiles/KrylovSubspace_test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=5,6 "Built target KrylovSubspace_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=3,4 "Built target KrylovSubspace_test"
 .PHONY : CMakeFiles/KrylovSubspace_test.dir/all
 
 # Build rule for subdir invocation for target.
@@ -317,35 +317,35 @@ CMakeFiles/SparseMatrixCSCTest.dir/clean:
 .PHONY : CMakeFiles/SparseMatrixCSCTest.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/FASTSolver.dir
+# Target rules for target CMakeFiles/MultiGrid_test.dir
 
 # All Build rule for target.
-CMakeFiles/FASTSolver.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTSolver.dir/build.make CMakeFiles/FASTSolver.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTSolver.dir/build.make CMakeFiles/FASTSolver.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=3,4 "Built target FASTSolver"
-.PHONY : CMakeFiles/FASTSolver.dir/all
+CMakeFiles/MultiGrid_test.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiGrid_test.dir/build.make CMakeFiles/MultiGrid_test.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiGrid_test.dir/build.make CMakeFiles/MultiGrid_test.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=7,8 "Built target MultiGrid_test"
+.PHONY : CMakeFiles/MultiGrid_test.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/FASTSolver.dir/rule: cmake_check_build_system
+CMakeFiles/MultiGrid_test.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/FASTSolver.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/MultiGrid_test.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles 0
-.PHONY : CMakeFiles/FASTSolver.dir/rule
+.PHONY : CMakeFiles/MultiGrid_test.dir/rule
 
 # Convenience name for target.
-FASTSolver: CMakeFiles/FASTSolver.dir/rule
-.PHONY : FASTSolver
+MultiGrid_test: CMakeFiles/MultiGrid_test.dir/rule
+.PHONY : MultiGrid_test
 
 # codegen rule for target.
-CMakeFiles/FASTSolver.dir/codegen:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTSolver.dir/build.make CMakeFiles/FASTSolver.dir/codegen
-.PHONY : CMakeFiles/FASTSolver.dir/codegen
+CMakeFiles/MultiGrid_test.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiGrid_test.dir/build.make CMakeFiles/MultiGrid_test.dir/codegen
+.PHONY : CMakeFiles/MultiGrid_test.dir/codegen
 
 # clean rule for target.
-CMakeFiles/FASTSolver.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/FASTSolver.dir/build.make CMakeFiles/FASTSolver.dir/clean
-.PHONY : CMakeFiles/FASTSolver.dir/clean
+CMakeFiles/MultiGrid_test.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiGrid_test.dir/build.make CMakeFiles/MultiGrid_test.dir/clean
+.PHONY : CMakeFiles/MultiGrid_test.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

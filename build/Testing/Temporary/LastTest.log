@@ -1,10 +1,10 @@
-Start testing: Dec 18 14:19 +08
+Start testing: Dec 18 23:50 +08
 ----------------------------------------------------------
-1/7 Testing: matrix_obj_test
-1/7 Test: matrix_obj_test
+1/8 Testing: matrix_obj_test
+1/8 Test: matrix_obj_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/matrix_obj_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"matrix_obj_test" start time: Dec 18 14:19 +08
+"matrix_obj_test" start time: Dec 18 23:50 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 10 tests from 1 test suite.
@@ -36,18 +36,18 @@ Output:
 [==========] 10 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 10 tests.
 <end of output>
-Test time =   0.16 sec
+Test time =   0.31 sec
 ----------------------------------------------------------
 Test Passed.
-"matrix_obj_test" end time: Dec 18 14:19 +08
+"matrix_obj_test" end time: Dec 18 23:50 +08
 "matrix_obj_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-2/7 Testing: SparseMatrixCSCTest
-2/7 Test: SparseMatrixCSCTest
+2/8 Testing: SparseMatrixCSCTest
+2/8 Test: SparseMatrixCSCTest
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/SparseMatrixCSCTest"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"SparseMatrixCSCTest" start time: Dec 18 14:19 +08
+"SparseMatrixCSCTest" start time: Dec 18 23:50 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 7 tests from 1 test suite.
@@ -73,18 +73,18 @@ Output:
 [==========] 7 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 7 tests.
 <end of output>
-Test time =   0.12 sec
+Test time =   0.30 sec
 ----------------------------------------------------------
 Test Passed.
-"SparseMatrixCSCTest" end time: Dec 18 14:19 +08
+"SparseMatrixCSCTest" end time: Dec 18 23:50 +08
 "SparseMatrixCSCTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-3/7 Testing: basic_test
-3/7 Test: basic_test
+3/8 Testing: basic_test
+3/8 Test: basic_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/basic_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"basic_test" start time: Dec 18 14:19 +08
+"basic_test" start time: Dec 18 23:50 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 8 tests from 1 test suite.
@@ -112,56 +112,50 @@ Output:
 [==========] 8 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 8 tests.
 <end of output>
-Test time =   0.12 sec
+Test time =   0.31 sec
 ----------------------------------------------------------
 Test Passed.
-"basic_test" end time: Dec 18 14:19 +08
+"basic_test" end time: Dec 18 23:50 +08
 "basic_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-4/7 Testing: itersolver_test
-4/7 Test: itersolver_test
+4/8 Testing: itersolver_test
+4/8 Test: itersolver_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/itersolver_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"itersolver_test" start time: Dec 18 14:19 +08
+"itersolver_test" start time: Dec 18 23:50 +08
 Output:
 ----------------------------------------------------------
-[==========] Running 6 tests from 2 test suites.
+[==========] Running 3 tests from 2 test suites.
 [----------] Global test environment set-up.
-[----------] 3 tests from GradientDescentTest
-[ RUN      ] GradientDescentTest.Constructor
-[       OK ] GradientDescentTest.Constructor (0 ms)
-[ RUN      ] GradientDescentTest.CalGrad
-[       OK ] GradientDescentTest.CalGrad (0 ms)
-[ RUN      ] GradientDescentTest.Update
-[       OK ] GradientDescentTest.Update (0 ms)
-[----------] 3 tests from GradientDescentTest (0 ms total)
+[----------] 2 tests from GradientDescentSolverTest
+[ RUN      ] GradientDescentSolverTest.SimpleTestWithPreconditioner
+[       OK ] GradientDescentSolverTest.SimpleTestWithPreconditioner (0 ms)
+[ RUN      ] GradientDescentSolverTest.ConvergenceCheckEarlyStopping
+[       OK ] GradientDescentSolverTest.ConvergenceCheckEarlyStopping (0 ms)
+[----------] 2 tests from GradientDescentSolverTest (0 ms total)
 
-[----------] 3 tests from StaticIterMethodTest
-[ RUN      ] StaticIterMethodTest.Constructor
-[       OK ] StaticIterMethodTest.Constructor (0 ms)
-[ RUN      ] StaticIterMethodTest.Substitution
-[       OK ] StaticIterMethodTest.Substitution (0 ms)
-[ RUN      ] StaticIterMethodTest.Update
-[       OK ] StaticIterMethodTest.Update (1 ms)
-[----------] 3 tests from StaticIterMethodTest (1 ms total)
+[----------] 1 test from StaticIterMethodTest
+[ RUN      ] StaticIterMethodTest.JacobiMethodConvergence
+[       OK ] StaticIterMethodTest.JacobiMethodConvergence (0 ms)
+[----------] 1 test from StaticIterMethodTest (0 ms total)
 
 [----------] Global test environment tear-down
-[==========] 6 tests from 2 test suites ran. (2 ms total)
-[  PASSED  ] 6 tests.
+[==========] 3 tests from 2 test suites ran. (0 ms total)
+[  PASSED  ] 3 tests.
 <end of output>
-Test time =   0.13 sec
+Test time =   0.31 sec
 ----------------------------------------------------------
 Test Passed.
-"itersolver_test" end time: Dec 18 14:19 +08
+"itersolver_test" end time: Dec 18 23:50 +08
 "itersolver_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-5/7 Testing: LU_test
-5/7 Test: LU_test
+5/8 Testing: LU_test
+5/8 Test: LU_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/LU_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"LU_test" start time: Dec 18 14:19 +08
+"LU_test" start time: Dec 18 23:50 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 2 tests from 1 test suite.
@@ -223,18 +217,18 @@ Mismatch at (2, 2)
 
  1 FAILED TEST
 <end of output>
-Test time =   0.12 sec
+Test time =   0.30 sec
 ----------------------------------------------------------
 Test Failed.
-"LU_test" end time: Dec 18 14:19 +08
+"LU_test" end time: Dec 18 23:50 +08
 "LU_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-6/7 Testing: KrylovSubspace_test
-6/7 Test: KrylovSubspace_test
+6/8 Testing: KrylovSubspace_test
+6/8 Test: KrylovSubspace_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/KrylovSubspace_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"KrylovSubspace_test" start time: Dec 18 14:19 +08
+"KrylovSubspace_test" start time: Dec 18 23:50 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 4 tests from 1 test suite.
@@ -251,22 +245,6 @@ Breakdown: Norm below tolerance at iteration 1
 [       OK ] ArnoldiTest.BreakdownTolerance (0 ms)
 [ RUN      ] ArnoldiTest.KnownExample
 Breakdown: Norm below tolerance at iteration 4
-0 0 
-0 1 
-0 2 
-0 3 
-1 0 
-1 1 
-1 2 
-1 3 
-2 0 
-2 1 
-2 2 
-2 3 
-3 0 
-3 1 
-3 2 
-3 3 
 [       OK ] ArnoldiTest.KnownExample (0 ms)
 [----------] 4 tests from ArnoldiTest (0 ms total)
 
@@ -274,46 +252,112 @@ Breakdown: Norm below tolerance at iteration 4
 [==========] 4 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 4 tests.
 <end of output>
-Test time =   0.12 sec
+Test time =   0.16 sec
 ----------------------------------------------------------
 Test Passed.
-"KrylovSubspace_test" end time: Dec 18 14:19 +08
+"KrylovSubspace_test" end time: Dec 18 23:50 +08
 "KrylovSubspace_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-7/7 Testing: ConjugateGradient_test
-7/7 Test: ConjugateGradient_test
+7/8 Testing: ConjugateGradient_test
+7/8 Test: ConjugateGradient_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/ConjugateGradient_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"ConjugateGradient_test" start time: Dec 18 14:19 +08
+"ConjugateGradient_test" start time: Dec 18 23:50 +08
+Output:
+----------------------------------------------------------
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from ConjugateGradientTest
+[ RUN      ] ConjugateGradientTest.SolvesSPDMatrix
+/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/ConjugateGradient_test.cpp:54: Failure
+The difference between solution[i] and expected_solution[i] is 0.04166666666666663, which exceeds 1e-5, where
+solution[i] evaluates to 0.33333333333333337,
+expected_solution[i] evaluates to 0.375, and
+1e-5 evaluates to 1.0000000000000001e-05.
+Mismatch at index 0
+
+/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/ConjugateGradient_test.cpp:54: Failure
+The difference between solution[i] and expected_solution[i] is 1, which exceeds 1e-5, where
+solution[i] evaluates to 1,
+expected_solution[i] evaluates to 0, and
+1e-5 evaluates to 1.0000000000000001e-05.
+Mismatch at index 1
+
+/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/ConjugateGradient_test.cpp:54: Failure
+The difference between solution[i] and expected_solution[i] is 1, which exceeds 1e-5, where
+solution[i] evaluates to 1,
+expected_solution[i] evaluates to 0, and
+1e-5 evaluates to 1.0000000000000001e-05.
+Mismatch at index 2
+
+[  FAILED  ] ConjugateGradientTest.SolvesSPDMatrix (0 ms)
+[ RUN      ] ConjugateGradientTest.ZeroRHS
+[       OK ] ConjugateGradientTest.ZeroRHS (0 ms)
+[ RUN      ] ConjugateGradientTest.SingleIteration
+[       OK ] ConjugateGradientTest.SingleIteration (0 ms)
+[----------] 3 tests from ConjugateGradientTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 2 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ConjugateGradientTest.SolvesSPDMatrix
+
+ 1 FAILED TEST
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Failed.
+"ConjugateGradient_test" end time: Dec 18 23:50 +08
+"ConjugateGradient_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/8 Testing: MultiGrid_test
+8/8 Test: MultiGrid_test
+Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/MultiGrid_test"
+Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
+"MultiGrid_test" start time: Dec 18 23:50 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 4 tests from 1 test suite.
 [----------] Global test environment set-up.
-[----------] 4 tests from ConjugateGradientTest/0, where TypeParam = double
-[ RUN      ] ConjugateGradientTest/0.SolvesSystemCorrectly
-Conjugate Gradient converged in 3 iterations.
-[       OK ] ConjugateGradientTest/0.SolvesSystemCorrectly (0 ms)
-[ RUN      ] ConjugateGradientTest/0.ResidualBelowTolerance
-Conjugate Gradient converged in 3 iterations.
-[       OK ] ConjugateGradientTest/0.ResidualBelowTolerance (0 ms)
-[ RUN      ] ConjugateGradientTest/0.DoesNotConvergeWithinMaxIterations
-Warning: Conjugate Gradient did not converge within the maximum number of iterations.
-[       OK ] ConjugateGradientTest/0.DoesNotConvergeWithinMaxIterations (0 ms)
-[ RUN      ] ConjugateGradientTest/0.SolvesZeroRHS
-Warning: Division by near-zero in alpha calculation.
-[       OK ] ConjugateGradientTest/0.SolvesZeroRHS (0 ms)
-[----------] 4 tests from ConjugateGradientTest/0 (0 ms total)
+[----------] 4 tests from MultiGridTest
+[ RUN      ] MultiGridTest.SolvesSimpleLaplacian
+/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/MultiGrid_test.cpp:50: Failure
+The difference between solution[i] and expected_solution[i] is 0.375, which exceeds 1e-5, where
+solution[i] evaluates to 0,
+expected_solution[i] evaluates to 0.375, and
+1e-5 evaluates to 1.0000000000000001e-05.
+Mismatch at index 0
+
+[  FAILED  ] MultiGridTest.SolvesSimpleLaplacian (0 ms)
+[ RUN      ] MultiGridTest.ZeroRHS
+[       OK ] MultiGridTest.ZeroRHS (0 ms)
+[ RUN      ] MultiGridTest.SingleIteration
+[       OK ] MultiGridTest.SingleIteration (0 ms)
+[ RUN      ] MultiGridTest.NonSquareMatrix
+/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/MultiGrid_test.cpp:94: Failure
+Expected: mg_solver.amgVCycle(non_square_matrix, rhs_non_square, solution, 5, 100, 1.5) throws an exception of type std::invalid_argument.
+  Actual: it throws std::runtime_error with description "Matrix has near-zero diagonal element.".
+
+[  FAILED  ] MultiGridTest.NonSquareMatrix (0 ms)
+[----------] 4 tests from MultiGridTest (0 ms total)
 
 [----------] Global test environment tear-down
 [==========] 4 tests from 1 test suite ran. (0 ms total)
-[  PASSED  ] 4 tests.
+[  PASSED  ] 2 tests.
+[  FAILED  ] 2 tests, listed below:
+[  FAILED  ] MultiGridTest.SolvesSimpleLaplacian
+[  FAILED  ] MultiGridTest.NonSquareMatrix
+
+ 2 FAILED TESTS
 <end of output>
-Test time =   0.12 sec
+Test time =   0.27 sec
 ----------------------------------------------------------
-Test Passed.
-"ConjugateGradient_test" end time: Dec 18 14:19 +08
-"ConjugateGradient_test" time elapsed: 00:00:00
+Test Failed.
+"MultiGrid_test" end time: Dec 18 23:50 +08
+"MultiGrid_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Dec 18 14:19 +08
+End testing: Dec 18 23:50 +08

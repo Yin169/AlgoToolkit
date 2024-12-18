@@ -1,84 +1,72 @@
 #ifndef CONJUGATEGRADIENT_HPP
 #define CONJUGATEGRADIENT_HPP
 
+#include <VectorObj.hpp>
 #include <vector>
 #include <cmath>
 #include <stdexcept>
-#include "SolverBase.hpp"
 
-template <typename TNum, typename MatrixType, typename VectorType>
-class ConjugateGrad : public IterSolverBase<TNum, MatrixType, VectorType> {
+template <typename TNum, typename MatrixType, typename VectorType = VectorObj<TNum>>
+class ConjugateGrad {
 public:
     VectorType x, r, p;
     double _tol = 1e-6;
+    int _maxIter;           // Maximum number of iterations
+    MatrixType A;          // Coefficient matrix
+    VectorType b;          // Right-hand side vector
 
     // Default constructor
     ConjugateGrad() = default;
 
     // Parameterized constructor
-    explicit ConjugateGrad(MatrixType P, MatrixType A, VectorType b, int maxIter, double tol)
-        : _tol(tol), IterSolverBase<TNum, MatrixType, VectorType>(std::move(P), std::move(A), std::move(b), maxIter) {
+    explicit ConjugateGrad(const MatrixType& A, const VectorType& b, int maxIter, double tol) :A(std::move(A)), b(std::move(b)), _tol(tol), _maxIter(maxIter){
         // Initialize x to zero vector
-        x = VectorType(this->b.size());
+        x = VectorType(b.size(), 0.0);
 
         // Compute initial residual and search direction
-        r = this->b - (this->A * x);
+        r = b - (const_cast<MatrixType&>(A) * x);
         p = r;
     }
 
     // Virtual destructor
     virtual ~ConjugateGrad() = default;
 
-    // Dummy function (not used in this solver)
-    VectorType calGrad(const VectorType& x) const override {
-        return VectorType();
-    };
-
-    // Perform the conjugate gradient updates
-    void callUpdate() {
-        int maxIter = this->getMaxIter();
-        double residualNorm = r.L2norm();
-
-        // Iterative loop
-        for (int iter = 0; iter < maxIter; ++iter) {
-            // Compute A*p and cache it
-            VectorType Ap = this->A * p;
-
-            // Compute alpha (step size)
-            double rDotR = r * r;
-            double pDotAp = p * Ap;
-            if (std::abs(pDotAp) < 1e-12) {
-                std::cerr << "Warning: Division by near-zero in alpha calculation.\n";
-                break; // Prevent division by zero or near-zero values
-            }
-            double alpha = rDotR / pDotAp;
-
-            // Update x and r
-            x = x + (p * alpha);
-            r = r - (Ap * alpha);
-
-            // Check for convergence
-            residualNorm = r.L2norm();
-            if (residualNorm < _tol) {
-                std::cout << "Conjugate Gradient converged in " << iter + 1 << " iterations.\n";
-                return; // Converged
-            }
-
-            // Compute beta (for new search direction)
-            double rDotR_new = r * r;
-            if (std::abs(rDotR) < 1e-12) {
-                std::cerr << "Warning: Division by near-zero in beta calculation.\n";
-                break; // Prevent division by zero or near-zero values
-            }
-            double beta = rDotR_new / rDotR;
-
-            // Update search direction p
-            p = r + (p * beta);
+    void solve(VectorType& x_out) {
+        TNum rs_old = r * r;
+        TNum b_norm = std::sqrt(b * b);
+        if (b_norm < 1e-12) {
+            x_out = x; // Solution is zero for zero RHS
+            return;
         }
 
-        if (residualNorm > _tol) {
-            std::cerr << "Warning: Conjugate Gradient did not converge within the maximum number of iterations.\n";
+        if (std::sqrt(rs_old) / b_norm < _tol) {
+            x_out = x; // Already converged
+            return;
         }
+
+        for (int i = 0; i < _maxIter; ++i) {
+            VectorType Ap = A * p;
+            TNum pAp = p * Ap;
+
+            if (std::abs(pAp) < 1e-12) {
+                throw std::runtime_error("Breakdown: Division by near-zero in CG.");
+            }
+
+            TNum alpha = rs_old / pAp;
+            x = x + p * alpha;
+            r = r - Ap * alpha;
+
+            TNum rs_new = r * r;
+
+            if (std::sqrt(rs_new) / b_norm < _tol) {
+                break;
+            }
+
+            p = r + p * (rs_new / rs_old);
+            rs_old = rs_new;
+        }
+
+        x_out = x;
     }
 };
 
