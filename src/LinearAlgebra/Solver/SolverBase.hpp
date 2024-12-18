@@ -21,7 +21,7 @@ public:
         : maxIter(1000), alpha(static_cast<TNum>(1.0)) {}
 
     // Constructor with parameters
-    IterSolverBase(MatrixType P_, MatrixType A_, VectorType b_, int maxIter_, TNum alpha_ = static_cast<TNum>(1.0))
+    IterSolverBase(const MatrixType& P_, const MatrixType& A_, const VectorType& b_, int maxIter_, TNum alpha_ = static_cast<TNum>(1.0))
         : P(std::move(P_)), A(std::move(A_)), b(std::move(b_)), maxIter(maxIter_), alpha(alpha_) {
         if (maxIter_ <= 0) {
             throw std::invalid_argument("Maximum number of iterations must be greater than 0.");
