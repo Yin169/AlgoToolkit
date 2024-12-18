@@ -1,4 +1,3 @@
-// Optimized MultiGrid.hpp
 #ifndef AMG_HPP
 #define AMG_HPP
 
@@ -80,7 +79,7 @@ private:
 
     // Compute Galerkin coarse matrix A_c = P^T * A * P
     SparseMatrixCSC<TNum> galerkinCoarseMatrix(const SparseMatrixCSC<TNum>& A, const SparseMatrixCSC<TNum>& P) {
-        SparseMatrixCSC<TNum> PT = P.transpose();
+        SparseMatrixCSC<TNum> PT = P.Transpose();
         SparseMatrixCSC<TNum> AP = A * P;
         return PT * AP;
     }
@@ -100,7 +99,7 @@ public:
         StaticIterMethod<TNum, SparseMatrixCSC<TNum>, VectorType>(A, b, smoothingSteps).solve(x);
 
         // Compute residual r = b - A * x
-        VectorType r = b - (A * x);
+        VectorType r = b - (const_cast<SparseMatrixCSC<TNum>&>(A) * x);
 
         // Build coarse grid
         auto coarsePoints = coarseGridSelection(A, theta);
@@ -108,7 +107,7 @@ public:
         SparseMatrixCSC<TNum> A_c = galerkinCoarseMatrix(A, P);
 
         // Restrict residual to coarse grid
-        VectorType r_c = P.transpose() * r;
+        VectorType r_c = P.Transpose() * r;
 
         // Solve on coarse grid
         VectorType x_c(r_c.size(), 0.0);

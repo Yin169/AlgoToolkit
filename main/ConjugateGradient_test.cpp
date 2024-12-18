@@ -1,88 +1,116 @@
 #include <gtest/gtest.h>
 #include "ConjugateGradient.hpp"
-#include "DenseObj.hpp"
+#include "SparseObj.hpp" // For SparseMatrixCSCCSC
 #include "VectorObj.hpp"
-#include <cmath>
 
-// Helper function to compare two vectors for near equality.
-template<typename T>
-bool areVectorsNear(const VectorObj<T>& v1, const VectorObj<T>& v2, double tol = 1e-6) {
-    if (v1.size() != v2.size()) return false;
-    for (int i = 0; i < v1.size(); ++i) {
-        if (std::fabs(v1[i] - v2[i]) > tol) return false;
-    }
-    return true;
-}
+// Alias for template simplification
+// template <typename TNum>
+// using SparseMatrixCSC = SparseMatrixCSC<TNum>;
 
-// Test fixture for Conjugate Gradient tests
-template<typename T>
+// template <typename TNum>
+// using VectorObj = std::VectorObj<TNum>;
+
+// Test fixture for Conjugate Gradient
 class ConjugateGradientTest : public ::testing::Test {
 protected:
-    DenseObj<T> A, P;
-    VectorObj<T> b, x_exact;
+
+    ConjugateGradientTest() = default;
 
     void SetUp() override {
-        // Create a symmetric positive definite matrix A
-        A = DenseObj<T>(3, 3);
-        A(0, 0) = 5; A(0, 1) = 0; A(0, 2) = 1;
-        A(1, 0) = 0; A(1, 1) = 2; A(1, 2) = 0;
-        A(2, 0) = 1; A(2, 1) = 0; A(2, 2) = 3;
+        // Define a simple 3x3 symmetric positive-definite (SPD) matrix
+        matrix = SparseMatrixCSC<double>(3, 3);
+        matrix.addValue(0, 0, 4);
+        matrix.addValue(0, 1, -1);
+        matrix.addValue(1, 0, -1);
+        matrix.addValue(1, 1, 4);
+        matrix.addValue(1, 2, -1);
+        matrix.addValue(2, 1, -1);
+        matrix.addValue(2, 2, 4);
+        matrix.finalize();
 
-        P = DenseObj<T>(3, 3); // Identity matrix
-        P(0, 0) = 1; P(0, 1) = 0; P(0, 2) = 0;
-        P(1, 0) = 0; P(1, 1) = 1; P(1, 2) = 0;
-        P(2, 0) = 0; P(2, 1) = 0; P(2, 2) = 1;
-
-        // Create the right-hand side vector b
-        b = VectorObj<T>(3);
-        b[0] = 6; b[1] = 2; b[2] = 4;
-
-        // The exact solution to Ax = b
-        x_exact = VectorObj<T>(3);
-        x_exact[0] = 1; x_exact[1] = 1; x_exact[2] = 1;
+        rhs = VectorObj<double>(3);
+        rhs[0] = 1;
+        rhs[1] = 2;
+        rhs[2] = 3;
+        expected_solution = VectorObj<double>(3);
+        expected_solution[0] = 1.0 / 16;
+        expected_solution[0] = 5.0 / 16;
+        expected_solution[0] = 3.0 / 8;        
     }
+
+    SparseMatrixCSC<double> matrix;
+    VectorObj<double> rhs;
+    VectorObj<double> expected_solution;
 };
 
-using TestTypes = ::testing::Types<double>;
-TYPED_TEST_SUITE(ConjugateGradientTest, TestTypes);
+// Test for convergence on a simple SPD matrix
+TEST_F(ConjugateGradientTest, SolvesSPDMatrix) {
+    ConjugateGrad<double, SparseMatrixCSC<double>, VectorObj<double>> cg_solver(matrix, rhs, 100, 1e-6);
 
-// Test case to check if the Conjugate Gradient solver solves a system correctly.
-TYPED_TEST(ConjugateGradientTest, SolvesSystemCorrectly) {
-    ConjugateGrad<TypeParam, DenseObj<TypeParam>, VectorObj<TypeParam>> solver(this->P, this->A, this->b, 1000, 1e-12);
-    solver.callUpdate();
-    EXPECT_TRUE(areVectorsNear(solver.x, this->x_exact));
+    VectorObj<double> solution(rhs.size(), 0.0);
+    cg_solver.solve(solution);
+
+    for (size_t i = 0; i < solution.size(); ++i) {
+        EXPECT_NEAR(solution[i], expected_solution[i], 1e-5) << "Mismatch at index " << i;
+    }
 }
 
-// Test case to verify that the residual is below tolerance.
-TYPED_TEST(ConjugateGradientTest, ResidualBelowTolerance) {
-    ConjugateGrad<TypeParam, DenseObj<TypeParam>, VectorObj<TypeParam>> solver(this->P, this->A, this->b, 1000, 1e-6);
-    solver.callUpdate();
+// Test for zero RHS
+TEST_F(ConjugateGradientTest, ZeroRHS) {
+    VectorObj<double> zero_rhs(rhs.size(), 0.0);
+    VectorObj<double> solution(rhs.size(), 0.0);
 
-    VectorObj<TypeParam> residual = this->b - (this->A * solver.x);
-    EXPECT_LT(residual.L2norm(), 1e-6);
+    ConjugateGrad<double, SparseMatrixCSC<double>, VectorObj<double>> cg_solver(matrix, zero_rhs, 100, 1e-6);
+    cg_solver.solve(solution);
+
+    for (int i = 0;  i < solution.size(); ++i) {
+        EXPECT_NEAR(solution[i], 0.0, 1e-12);
+    }
 }
 
-// Test case for non-convergence due to low max iterations.
-TYPED_TEST(ConjugateGradientTest, DoesNotConvergeWithinMaxIterations) {
-    ConjugateGrad<TypeParam, DenseObj<TypeParam>, VectorObj<TypeParam>> solver(this->P, this->A, this->b, 2, 1e-12);
-    solver.callUpdate();
+// Test for a single iteration (useful for debugging)
+TEST_F(ConjugateGradientTest, SingleIteration) {
+    ConjugateGrad<double, SparseMatrixCSC<double>, VectorObj<double>> cg_solver(matrix, rhs, 1, 1e-6);
 
-    VectorObj<TypeParam> residual = this->b - (this->A * solver.x);
-    EXPECT_GT(residual.L2norm(), 1e-12);
+    VectorObj<double> solution(rhs.size(), 0.0);
+    cg_solver.solve(solution);
+
+    // Ensure the solution is not converged but has changed
+    EXPECT_GT(std::abs(rhs[0] - matrix(0, 0) * solution[0]), 1e-6);
 }
 
-// Test case for zero RHS vector (Ax = 0).
-TYPED_TEST(ConjugateGradientTest, SolvesZeroRHS) {
-    VectorObj<TypeParam> zero_b(this->b.size(), 0);
-    ConjugateGrad<TypeParam, DenseObj<TypeParam>, VectorObj<TypeParam>> solver(this->P, this->A, zero_b, 1000, 1e-12);
-    solver.callUpdate();
+// Test for a non-SPD matrix (should throw an exception or fail)
+TEST_F(ConjugateGradientTest, NonSPDMatrix) {
+    SparseMatrixCSC<double> non_spd_matrix(3, 3);
+    non_spd_matrix.addValue(0, 0, 1);
+    non_spd_matrix.addValue(0, 1, 2);
+    non_spd_matrix.addValue(1, 0, 2);
+    non_spd_matrix.addValue(1, 1, -3); // Negative eigenvalue
+    non_spd_matrix.addValue(2, 2, 1);
+    non_spd_matrix.finalize();
 
-    VectorObj<TypeParam> zero_x(this->b.size(), 0);
-    EXPECT_TRUE(areVectorsNear(solver.x, zero_x));
+    VectorObj<double> solution(rhs.size(), 0.0);
+
+    ConjugateGrad<double, SparseMatrixCSC<double>, VectorObj<double>> cg_solver(non_spd_matrix, rhs, 100, 1e-6);
+    EXPECT_THROW(cg_solver.solve(solution), std::runtime_error);
 }
 
-// Main function to run the tests.
-int main(int argc, char** argv) {
+// Test for invalid dimensions (matrix and RHS size mismatch)
+TEST_F(ConjugateGradientTest, DimensionMismatch) {
+    SparseMatrixCSC<double> invalid_matrix(4, 4);
+    invalid_matrix.addValue(0, 0, 1);
+    invalid_matrix.addValue(1, 1, 1);
+    invalid_matrix.finalize();
+
+    VectorObj<double> invalid_rhs(3, 1.0); // Dimension mismatch
+    VectorObj<double> solution(invalid_rhs.size(), 0.0);
+
+    ConjugateGrad<double, SparseMatrixCSC<double>, VectorObj<double>> cg_solver(invalid_matrix, invalid_rhs, 100, 1e-6);
+    EXPECT_THROW(cg_solver.solve(solution), std::invalid_argument);
+}
+
+
+int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

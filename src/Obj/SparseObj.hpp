@@ -26,6 +26,7 @@ public:
     std::vector<int> col_ptr;      // Column pointers
 
     // Constructor
+    SparseMatrixCSC() = default;
     SparseMatrixCSC(int rows, int cols) : _n(rows), _m(cols), col_ptr(cols + 1, 0) {}
 
     ~SparseMatrixCSC() = default;
@@ -179,6 +180,41 @@ public:
         result.finalize();
         return result;
     }
+    // Transpose
+    SparseMatrixCSC Transpose() const {
+        SparseMatrixCSC result(_m, _n);
+        result.col_ptr.resize(_n + 1, 0);
+        result.row_indices.resize(values.size());
+        result.values.resize(values.size());
+
+        for (int i = 0; i < row_indices.size(); ++i) {
+            ++result.col_ptr[row_indices[i] + 1];
+        }
+
+        // Compute cumulative sum to get column pointers
+        std::partial_sum(result.col_ptr.begin(), result.col_ptr.end(), result.col_ptr.begin());
+
+        // Populate row indices and values for the transpose
+        for (int col = 0; col < _m; ++col) {
+            for (int idx = col_ptr[col]; idx < col_ptr[col + 1]; ++idx) {
+                int row = row_indices[idx];
+                int dest_idx = result.col_ptr[row];
+
+                result.row_indices[dest_idx] = col;        // Transpose row becomes column
+                result.values[dest_idx] = values[idx];    // Copy the value
+                ++result.col_ptr[row];
+            }
+        }
+
+        // Adjust column pointers back by shifting right
+        for (int i = _n; i > 0; --i) {
+            result.col_ptr[i] = result.col_ptr[i - 1];
+        }
+        result.col_ptr[0] = 0;
+
+        return result;
+    }
+
 };
 
 #endif // SPARSEOBJ_HPP
