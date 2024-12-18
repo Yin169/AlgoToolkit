@@ -92,3 +92,8 @@ TEST_F(MultiGridTest, NonSquareMatrix) {
 
     EXPECT_THROW(mg_solver.amgVCycle(non_square_matrix, rhs_non_square, solution, 5, 100, 1.5), std::invalid_argument);
 }
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

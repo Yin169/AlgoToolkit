@@ -1,9 +1,13 @@
-matrix_obj_test 1 0.159769
-SparseMatrixCSCTest 1 0.124165
-basic_test 1 0.122815
-itersolver_test 1 0.126405
+matrix_obj_test 1 0.231917
+SparseMatrixCSCTest 1 0.127499
+basic_test 1 0.124114
+itersolver_test 0 0
 LU_test 0 0
-KrylovSubspace_test 1 0.124554
-ConjugateGradient_test 1 0.124986
+KrylovSubspace_test 1 0.123604
+ConjugateGradient_test 0 0
+MultiGrid_test 0 0
 ---
+itersolver_test
 LU_test
+ConjugateGradient_test
+MultiGrid_test
