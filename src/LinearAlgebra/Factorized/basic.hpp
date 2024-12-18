@@ -5,6 +5,7 @@
 #include <vector>
 #include <cstring> // For memset
 #include "MatrixObj.hpp"
+#include "DenseObj.hpp"
 #include "VectorObj.hpp"
 
 namespace basic {

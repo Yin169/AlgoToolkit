@@ -110,6 +110,30 @@ public:
         return result 
     }
 
+    VectorObj<TObj> operator*(const VectorObj<TObj>& vector) {
+        // Check dimension compatibility
+        if (_m != vector.size()) {
+            throw std::invalid_argument("Sparse matrix columns must match vector size.");
+        }
+
+        // Result vector initialization
+        VectorObj<TObj> result(_n, TObj(0));
+
+        // Perform sparse matrix-vector multiplication
+        for (int col = 0; col < _m; ++col) {
+            TObj vector_value = vector[col];
+            if (vector_value == TObj()) continue; // Skip multiplication by zero
+
+            // Iterate over non-zero entries in the column
+            for (int idx = col_ptr[col]; idx < col_ptr[col + 1]; ++idx) {
+                int row = row_indices[idx];
+                result[row] += values[idx] * vector_value;
+            }
+        }
+        return result;
+    }
+
+
     // Optimized multiplication using CSC * CSR
     SparseMatrixCSC operator*(const SparseMatrixCSC& other) const {
         if (_m != other._n) throw std::invalid_argument("Matrix dimensions incompatible for multiplication.");
