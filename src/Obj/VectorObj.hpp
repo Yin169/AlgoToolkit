@@ -7,9 +7,11 @@
 #include <numeric> // For std::inner_product
 #include <vector>
 
+#include "MatrixObj.hpp"
+
 template <typename TObj>
-class VectorObj {
-private:
+class VectorObj : public MatrixObj<TObj> {
+private: 
     int _size;
     std::vector<TObj> data;
 

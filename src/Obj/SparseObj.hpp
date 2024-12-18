@@ -8,13 +8,14 @@
 #include <algorithm> // for std::lower_bound
 #include <numeric>   // for std::accumulate
 
+#include "MatrixObj.hpp"
 #include "VectorObj.hpp"
 
 template<typename TObj>
 class VectorObj;
 
 template <typename TObj>
-class SparseMatrixCSC {
+class SparseMatrixCSC : public MatrixObj<TObj> {
 public:
     int _n, _m; // Number of rows and columns
     std::vector<TObj> values;      // Non-zero values
@@ -67,8 +68,8 @@ public:
         return TObj(); // Default value
     }
 
-    // Optimized addition
-    SparseMatrixCSC operator+(const SparseMatrixCSC& other) const {
+    template <typename Op>
+    SparseMatrixCSC Operator(const SparseMatrixCSC& other, Op operation) const {
         if (_n != other._n || _m != other._m) throw std::invalid_argument("Matrices must be the same size for addition.");
         SparseMatrixCSC result(_n, _m);
 
@@ -76,8 +77,8 @@ public:
             int a_pos = col_ptr[col], b_pos = other.col_ptr[col];
             std::unordered_map<int, TObj> col_data;
 
-            while (a_pos < col_ptr[col + 1]) col_data[row_indices[a_pos++]] += values[a_pos];
-            while (b_pos < other.col_ptr[col + 1]) col_data[other.row_indices[b_pos++]] += other.values[b_pos];
+            while (a_pos < col_ptr[col + 1]) col_data[row_indices[a_pos++]] = operation(col_data[row_indices[a_pos]], values[a_pos]);
+            while (b_pos < other.col_ptr[col + 1]) col_data[other.row_indices[b_pos++]] = operation(col_data[other.row_indices[b_pos]], other.values[b_pos]);
 
             for (const auto& [row, value] : col_data) {
                 if (value != TObj()) result.addValue(row, col, value);
@@ -85,6 +86,28 @@ public:
         }
         result.finalize();
         return result;
+    }
+
+    // Optimized addition
+    SparseMatrixCSC operator+(const SparseMatrixCSC& other) const {
+        return Operator(other, std::plus<TObj>());
+    }
+
+    SparseMatrixCSC operator-(const SparseMatrixCSC& other) const {
+        return Operator(other, std::minus<TObj>());
+    }
+
+    SparseMatrixCSC &operator*=(double scalar) {
+        for (auto& e : value){ 
+            e *= static_cast<TObj>(scalar);
+        }
+        return *this 
+    }
+
+    SparseMatrixCSC operator*(double scalar){
+        SparseMatrixCSC result = *this;
+        result *= scalar;
+        return result 
     }
 
     // Optimized multiplication using CSC * CSR
