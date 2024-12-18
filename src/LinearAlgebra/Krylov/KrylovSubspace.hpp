@@ -6,12 +6,9 @@
 #include <cmath>
 #include <cassert>
 
-#include "MatrixObj.hpp"
-#include "VectorObj.hpp"
-
 namespace Krylov {
-    template<typename TNum>
-    void Arnoldi(MatrixObj<TNum>& A, std::vector<VectorObj<TNum>>& Q, MatrixObj<TNum>& H, TNum tol) {
+    template<typename TNum, typename MatrixType, typename VectorType>
+    void Arnoldi(MatrixType& A, std::vector<VectorType>& Q, MatrixType& H, TNum tol) {
         size_t m = Q.size();
         size_t n = A.getRows();  // Assuming A is square, use rows as size
         assert(H.getRows() == m && H.getCols() == m - 1);
@@ -19,7 +16,7 @@ namespace Krylov {
 
         // Iterate over the Krylov subspace dimensions
         for (size_t i = 1; i < m; ++i) {
-            VectorObj<TNum> Av = A * Q[i - 1];  // A * q_(i-1)
+            VectorType Av = A * Q[i - 1];  // A * q_(i-1)
 
             // Orthogonalization
             for (size_t j = 0; j < i; ++j) {

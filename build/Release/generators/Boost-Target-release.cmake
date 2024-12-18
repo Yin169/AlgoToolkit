@@ -16,7 +16,7 @@ set_property(TARGET boost_DEPS_TARGET
              APPEND PROPERTY INTERFACE_LINK_LIBRARIES
              $<$<CONFIG:Release>:${boost_FRAMEWORKS_FOUND_RELEASE}>
              $<$<CONFIG:Release>:${boost_SYSTEM_LIBS_RELEASE}>
-             $<$<CONFIG:Release>:Boost::diagnostic_definitions;Boost::disable_autolinking;Boost::dynamic_linking;Boost::headers;boost::_libboost;Boost::system;Boost::exception;Boost::thread;Boost::context;Boost::filesystem;Boost::fiber;Boost::atomic;Boost::math;Boost::random;Boost::regex;Boost::serialization;BZip2::BZip2;ZLIB::ZLIB;Boost::container;Boost::date_time;Boost::log;Boost::test;Boost::stacktrace;Boost::chrono;Boost::prg_exec_monitor;Boost::test_exec_monitor>)
+             $<$<CONFIG:Release>:Boost::diagnostic_definitions;Boost::disable_autolinking;Boost::dynamic_linking;Boost::headers;boost::_libboost;Boost::system;Boost::exception;Boost::thread;Boost::context;Boost::filesystem;Boost::fiber;Boost::atomic;Boost::math;Boost::random;Boost::regex;Boost::serialization;BZip2::BZip2;ZLIB::ZLIB;Boost::container;Iconv::Iconv;Boost::date_time;Boost::log;Boost::test;Boost::stacktrace;libbacktrace::libbacktrace;Boost::chrono;Boost::prg_exec_monitor;Boost::test_exec_monitor>)
 
 ####### Find the libraries declared in cpp_info.libs, create an IMPORTED target for each one and link the
 ####### boost_DEPS_TARGET to all of them
@@ -271,6 +271,65 @@ set(CMAKE_MODULE_PATH ${boost_BUILD_DIRS_RELEASE} ${CMAKE_MODULE_PATH})
                      $<$<CONFIG:Release>:${boost_Boost_log_COMPILE_DEFINITIONS_RELEASE}>)
         set_property(TARGET Boost::log APPEND PROPERTY INTERFACE_COMPILE_OPTIONS
                      $<$<CONFIG:Release>:${boost_Boost_log_COMPILE_OPTIONS_RELEASE}>)
+
+    ########## COMPONENT Boost::locale #############
+
+        set(boost_Boost_locale_FRAMEWORKS_FOUND_RELEASE "")
+        conan_find_apple_frameworks(boost_Boost_locale_FRAMEWORKS_FOUND_RELEASE "${boost_Boost_locale_FRAMEWORKS_RELEASE}" "${boost_Boost_locale_FRAMEWORK_DIRS_RELEASE}")
+
+        set(boost_Boost_locale_LIBRARIES_TARGETS "")
+
+        ######## Create an interface target to contain all the dependencies (frameworks, system and conan deps)
+        if(NOT TARGET boost_Boost_locale_DEPS_TARGET)
+            add_library(boost_Boost_locale_DEPS_TARGET INTERFACE IMPORTED)
+        endif()
+
+        set_property(TARGET boost_Boost_locale_DEPS_TARGET
+                     APPEND PROPERTY INTERFACE_LINK_LIBRARIES
+                     $<$<CONFIG:Release>:${boost_Boost_locale_FRAMEWORKS_FOUND_RELEASE}>
+                     $<$<CONFIG:Release>:${boost_Boost_locale_SYSTEM_LIBS_RELEASE}>
+                     $<$<CONFIG:Release>:${boost_Boost_locale_DEPENDENCIES_RELEASE}>
+                     )
+
+        ####### Find the libraries declared in cpp_info.component["xxx"].libs,
+        ####### create an IMPORTED target for each one and link the 'boost_Boost_locale_DEPS_TARGET' to all of them
+        conan_package_library_targets("${boost_Boost_locale_LIBS_RELEASE}"
+                              "${boost_Boost_locale_LIB_DIRS_RELEASE}"
+                              "${boost_Boost_locale_BIN_DIRS_RELEASE}" # package_bindir
+                              "${boost_Boost_locale_LIBRARY_TYPE_RELEASE}"
+                              "${boost_Boost_locale_IS_HOST_WINDOWS_RELEASE}"
+                              boost_Boost_locale_DEPS_TARGET
+                              boost_Boost_locale_LIBRARIES_TARGETS
+                              "_RELEASE"
+                              "boost_Boost_locale"
+                              "${boost_Boost_locale_NO_SONAME_MODE_RELEASE}")
+
+
+        ########## TARGET PROPERTIES #####################################
+        set_property(TARGET Boost::locale
+                     APPEND PROPERTY INTERFACE_LINK_LIBRARIES
+                     $<$<CONFIG:Release>:${boost_Boost_locale_OBJECTS_RELEASE}>
+                     $<$<CONFIG:Release>:${boost_Boost_locale_LIBRARIES_TARGETS}>
+                     )
+
+        if("${boost_Boost_locale_LIBS_RELEASE}" STREQUAL "")
+            # If the component is not declaring any "cpp_info.components['foo'].libs" the system, frameworks etc are not
+            # linked to the imported targets and we need to do it to the global target
+            set_property(TARGET Boost::locale
+                         APPEND PROPERTY INTERFACE_LINK_LIBRARIES
+                         boost_Boost_locale_DEPS_TARGET)
+        endif()
+
+        set_property(TARGET Boost::locale APPEND PROPERTY INTERFACE_LINK_OPTIONS
+                     $<$<CONFIG:Release>:${boost_Boost_locale_LINKER_FLAGS_RELEASE}>)
+        set_property(TARGET Boost::locale APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES
+                     $<$<CONFIG:Release>:${boost_Boost_locale_INCLUDE_DIRS_RELEASE}>)
+        set_property(TARGET Boost::locale APPEND PROPERTY INTERFACE_LINK_DIRECTORIES
+                     $<$<CONFIG:Release>:${boost_Boost_locale_LIB_DIRS_RELEASE}>)
+        set_property(TARGET Boost::locale APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS
+                     $<$<CONFIG:Release>:${boost_Boost_locale_COMPILE_DEFINITIONS_RELEASE}>)
+        set_property(TARGET Boost::locale APPEND PROPERTY INTERFACE_COMPILE_OPTIONS
+                     $<$<CONFIG:Release>:${boost_Boost_locale_COMPILE_OPTIONS_RELEASE}>)
 
     ########## COMPONENT Boost::fiber_numa #############
 
@@ -1215,6 +1274,65 @@ set(CMAKE_MODULE_PATH ${boost_BUILD_DIRS_RELEASE} ${CMAKE_MODULE_PATH})
                      $<$<CONFIG:Release>:${boost_Boost_stacktrace_basic_COMPILE_DEFINITIONS_RELEASE}>)
         set_property(TARGET Boost::stacktrace_basic APPEND PROPERTY INTERFACE_COMPILE_OPTIONS
                      $<$<CONFIG:Release>:${boost_Boost_stacktrace_basic_COMPILE_OPTIONS_RELEASE}>)
+
+    ########## COMPONENT Boost::stacktrace_backtrace #############
+
+        set(boost_Boost_stacktrace_backtrace_FRAMEWORKS_FOUND_RELEASE "")
+        conan_find_apple_frameworks(boost_Boost_stacktrace_backtrace_FRAMEWORKS_FOUND_RELEASE "${boost_Boost_stacktrace_backtrace_FRAMEWORKS_RELEASE}" "${boost_Boost_stacktrace_backtrace_FRAMEWORK_DIRS_RELEASE}")
+
+        set(boost_Boost_stacktrace_backtrace_LIBRARIES_TARGETS "")
+
+        ######## Create an interface target to contain all the dependencies (frameworks, system and conan deps)
+        if(NOT TARGET boost_Boost_stacktrace_backtrace_DEPS_TARGET)
+            add_library(boost_Boost_stacktrace_backtrace_DEPS_TARGET INTERFACE IMPORTED)
+        endif()
+
+        set_property(TARGET boost_Boost_stacktrace_backtrace_DEPS_TARGET
+                     APPEND PROPERTY INTERFACE_LINK_LIBRARIES
+                     $<$<CONFIG:Release>:${boost_Boost_stacktrace_backtrace_FRAMEWORKS_FOUND_RELEASE}>
+                     $<$<CONFIG:Release>:${boost_Boost_stacktrace_backtrace_SYSTEM_LIBS_RELEASE}>
+                     $<$<CONFIG:Release>:${boost_Boost_stacktrace_backtrace_DEPENDENCIES_RELEASE}>
+                     )
+
+        ####### Find the libraries declared in cpp_info.component["xxx"].libs,
+        ####### create an IMPORTED target for each one and link the 'boost_Boost_stacktrace_backtrace_DEPS_TARGET' to all of them
+        conan_package_library_targets("${boost_Boost_stacktrace_backtrace_LIBS_RELEASE}"
+                              "${boost_Boost_stacktrace_backtrace_LIB_DIRS_RELEASE}"
+                              "${boost_Boost_stacktrace_backtrace_BIN_DIRS_RELEASE}" # package_bindir
+                              "${boost_Boost_stacktrace_backtrace_LIBRARY_TYPE_RELEASE}"
+                              "${boost_Boost_stacktrace_backtrace_IS_HOST_WINDOWS_RELEASE}"
+                              boost_Boost_stacktrace_backtrace_DEPS_TARGET
+                              boost_Boost_stacktrace_backtrace_LIBRARIES_TARGETS
+                              "_RELEASE"
+                              "boost_Boost_stacktrace_backtrace"
+                              "${boost_Boost_stacktrace_backtrace_NO_SONAME_MODE_RELEASE}")
+
+
+        ########## TARGET PROPERTIES #####################################
+        set_property(TARGET Boost::stacktrace_backtrace
+                     APPEND PROPERTY INTERFACE_LINK_LIBRARIES
+                     $<$<CONFIG:Release>:${boost_Boost_stacktrace_backtrace_OBJECTS_RELEASE}>
+                     $<$<CONFIG:Release>:${boost_Boost_stacktrace_backtrace_LIBRARIES_TARGETS}>
+                     )
+
+        if("${boost_Boost_stacktrace_backtrace_LIBS_RELEASE}" STREQUAL "")
+            # If the component is not declaring any "cpp_info.components['foo'].libs" the system, frameworks etc are not
+            # linked to the imported targets and we need to do it to the global target
+            set_property(TARGET Boost::stacktrace_backtrace
+                         APPEND PROPERTY INTERFACE_LINK_LIBRARIES
+                         boost_Boost_stacktrace_backtrace_DEPS_TARGET)
+        endif()
+
+        set_property(TARGET Boost::stacktrace_backtrace APPEND PROPERTY INTERFACE_LINK_OPTIONS
+                     $<$<CONFIG:Release>:${boost_Boost_stacktrace_backtrace_LINKER_FLAGS_RELEASE}>)
+        set_property(TARGET Boost::stacktrace_backtrace APPEND PROPERTY INTERFACE_INCLUDE_DIRECTORIES
+                     $<$<CONFIG:Release>:${boost_Boost_stacktrace_backtrace_INCLUDE_DIRS_RELEASE}>)
+        set_property(TARGET Boost::stacktrace_backtrace APPEND PROPERTY INTERFACE_LINK_DIRECTORIES
+                     $<$<CONFIG:Release>:${boost_Boost_stacktrace_backtrace_LIB_DIRS_RELEASE}>)
+        set_property(TARGET Boost::stacktrace_backtrace APPEND PROPERTY INTERFACE_COMPILE_DEFINITIONS
+                     $<$<CONFIG:Release>:${boost_Boost_stacktrace_backtrace_COMPILE_DEFINITIONS_RELEASE}>)
+        set_property(TARGET Boost::stacktrace_backtrace APPEND PROPERTY INTERFACE_COMPILE_OPTIONS
+                     $<$<CONFIG:Release>:${boost_Boost_stacktrace_backtrace_COMPILE_OPTIONS_RELEASE}>)
 
     ########## COMPONENT Boost::stacktrace_addr2line #############
 
@@ -3050,6 +3168,7 @@ set(CMAKE_MODULE_PATH ${boost_BUILD_DIRS_RELEASE} ${CMAKE_MODULE_PATH})
     set_property(TARGET boost::boost APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::unit_test_framework)
     set_property(TARGET boost::boost APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::type_erasure)
     set_property(TARGET boost::boost APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::log)
+    set_property(TARGET boost::boost APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::locale)
     set_property(TARGET boost::boost APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::fiber_numa)
     set_property(TARGET boost::boost APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::contract)
     set_property(TARGET boost::boost APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::wave)
@@ -3066,6 +3185,7 @@ set(CMAKE_MODULE_PATH ${boost_BUILD_DIRS_RELEASE} ${CMAKE_MODULE_PATH})
     set_property(TARGET boost::boost APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::test)
     set_property(TARGET boost::boost APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::stacktrace_noop)
     set_property(TARGET boost::boost APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::stacktrace_basic)
+    set_property(TARGET boost::boost APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::stacktrace_backtrace)
     set_property(TARGET boost::boost APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::stacktrace_addr2line)
     set_property(TARGET boost::boost APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::random)
     set_property(TARGET boost::boost APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::math_tr1l)

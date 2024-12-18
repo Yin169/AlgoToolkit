@@ -1,5 +1,4 @@
-#include "DenseObj.hpp"
-#include "IterSolver.hpp"
+#include "../src/LinearAlgebra/Solver/IterSolver.hpp"
 #include "gtest/gtest.h"
 
 // Helper function to create an identity matrix of a given size.
@@ -27,10 +26,10 @@ protected:
     DenseObj<double> A = CreateIdentityMatrix<double>(size_);
     VectorObj<double> b = CreateVector<double>(size_, 1.0);
     VectorObj<double> x = CreateVector<double>(size_, 0.0);
-    std::unique_ptr<GradientDescent<double>> gradientDescent;
+    std::unique_ptr<GradientDescent<double, DenseObj<double>, VectorObj<double>>> gradientDescent;
 
     void SetUp() override {
-        gradientDescent = std::make_unique<GradientDescent<double>>(P, A, b, 100);
+        gradientDescent = std::make_unique<GradientDescent<double, DenseObj<double>, VectorObj<double>>>(P, A, b, 100);
     }
 };
 
@@ -61,10 +60,10 @@ protected:
     DenseObj<double> A = CreateIdentityMatrix<double>(size_);
     VectorObj<double> b = CreateVector<double>(size_, 1.0);
     VectorObj<double> x = CreateVector<double>(size_, 0.0);
-    std::unique_ptr<StaticIterMethod<double>> staticIterMethod;
+    std::unique_ptr<StaticIterMethod<double, DenseObj<double>, VectorObj<double>>> staticIterMethod;
 
     void SetUp() override {
-        staticIterMethod = std::make_unique<StaticIterMethod<double>>(A, A, b, 100);
+        staticIterMethod = std::make_unique<StaticIterMethod<double, DenseObj<double>, VectorObj<double>>>(A, A, b, 100);
     }
 };
 

@@ -1,26 +1,29 @@
 ########### AGGREGATED COMPONENTS AND DEPENDENCIES FOR THE MULTI CONFIG #####################
 #############################################################################################
 
-list(APPEND boost_COMPONENT_NAMES Boost::diagnostic_definitions Boost::disable_autolinking Boost::dynamic_linking Boost::headers Boost::boost boost::_libboost Boost::atomic Boost::charconv Boost::container Boost::context Boost::date_time Boost::exception Boost::math Boost::program_options Boost::regex Boost::serialization Boost::stacktrace Boost::system Boost::timer Boost::chrono Boost::coroutine Boost::filesystem Boost::json Boost::math_c99 Boost::math_c99f Boost::math_c99l Boost::math_tr1 Boost::math_tr1f Boost::math_tr1l Boost::random Boost::stacktrace_addr2line Boost::stacktrace_basic Boost::stacktrace_noop Boost::test Boost::url Boost::wserialization Boost::fiber Boost::graph Boost::iostreams Boost::nowide Boost::prg_exec_monitor Boost::process Boost::test_exec_monitor Boost::thread Boost::wave Boost::contract Boost::fiber_numa Boost::log Boost::type_erasure Boost::unit_test_framework Boost::log_setup)
+list(APPEND boost_COMPONENT_NAMES Boost::diagnostic_definitions Boost::disable_autolinking Boost::dynamic_linking Boost::headers Boost::boost boost::_libboost Boost::atomic Boost::charconv Boost::container Boost::context Boost::date_time Boost::exception Boost::math Boost::program_options Boost::regex Boost::serialization Boost::stacktrace Boost::system Boost::timer Boost::chrono Boost::coroutine Boost::filesystem Boost::json Boost::math_c99 Boost::math_c99f Boost::math_c99l Boost::math_tr1 Boost::math_tr1f Boost::math_tr1l Boost::random Boost::stacktrace_addr2line Boost::stacktrace_backtrace Boost::stacktrace_basic Boost::stacktrace_noop Boost::test Boost::url Boost::wserialization Boost::fiber Boost::graph Boost::iostreams Boost::nowide Boost::prg_exec_monitor Boost::process Boost::test_exec_monitor Boost::thread Boost::wave Boost::contract Boost::fiber_numa Boost::locale Boost::log Boost::type_erasure Boost::unit_test_framework Boost::log_setup)
 list(REMOVE_DUPLICATES boost_COMPONENT_NAMES)
 if(DEFINED boost_FIND_DEPENDENCY_NAMES)
-  list(APPEND boost_FIND_DEPENDENCY_NAMES ZLIB BZip2)
+  list(APPEND boost_FIND_DEPENDENCY_NAMES ZLIB BZip2 libbacktrace Iconv)
   list(REMOVE_DUPLICATES boost_FIND_DEPENDENCY_NAMES)
 else()
-  set(boost_FIND_DEPENDENCY_NAMES ZLIB BZip2)
+  set(boost_FIND_DEPENDENCY_NAMES ZLIB BZip2 libbacktrace Iconv)
 endif()
 set(ZLIB_FIND_MODE "NO_MODULE")
 set(BZip2_FIND_MODE "NO_MODULE")
+set(libbacktrace_FIND_MODE "NO_MODULE")
+set(Iconv_FIND_MODE "NO_MODULE")
 
 ########### VARIABLES #######################################################################
 #############################################################################################
-set(boost_PACKAGE_FOLDER_RELEASE "/Users/yincheangng/.conan2/p/b/boostca7b12e55e64f/p")
+set(boost_PACKAGE_FOLDER_RELEASE "/Users/yincheangng/.conan2/p/b/boost7cf366c0d346d/p")
 set(boost_BUILD_MODULES_PATHS_RELEASE )
 
 
 set(boost_INCLUDE_DIRS_RELEASE "${boost_PACKAGE_FOLDER_RELEASE}/include")
 set(boost_RES_DIRS_RELEASE )
 set(boost_DEFINITIONS_RELEASE "-DBOOST_STACKTRACE_USE_NOOP"
+			"-DBOOST_STACKTRACE_USE_BACKTRACE"
 			"-DBOOST_STACKTRACE_ADDR2LINE_LOCATION=\"/usr/bin/addr2line\""
 			"-DBOOST_STACKTRACE_USE_ADDR2LINE"
 			"-DBOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED")
@@ -28,6 +31,7 @@ set(boost_SHARED_LINK_FLAGS_RELEASE )
 set(boost_EXE_LINK_FLAGS_RELEASE )
 set(boost_OBJECTS_RELEASE )
 set(boost_COMPILE_DEFINITIONS_RELEASE "BOOST_STACKTRACE_USE_NOOP"
+			"BOOST_STACKTRACE_USE_BACKTRACE"
 			"BOOST_STACKTRACE_ADDR2LINE_LOCATION=\"/usr/bin/addr2line\""
 			"BOOST_STACKTRACE_USE_ADDR2LINE"
 			"BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED")
@@ -37,7 +41,7 @@ set(boost_LIB_DIRS_RELEASE "${boost_PACKAGE_FOLDER_RELEASE}/lib")
 set(boost_BIN_DIRS_RELEASE )
 set(boost_LIBRARY_TYPE_RELEASE STATIC)
 set(boost_IS_HOST_WINDOWS_RELEASE 0)
-set(boost_LIBS_RELEASE boost_log_setup boost_unit_test_framework boost_type_erasure boost_log boost_fiber_numa boost_contract boost_wave boost_thread boost_test_exec_monitor boost_process boost_prg_exec_monitor boost_nowide boost_iostreams boost_graph boost_fiber boost_wserialization boost_url boost_stacktrace_noop boost_stacktrace_basic boost_stacktrace_addr2line boost_random boost_math_tr1l boost_math_tr1f boost_math_tr1 boost_math_c99l boost_math_c99f boost_math_c99 boost_json boost_filesystem boost_coroutine boost_chrono boost_timer boost_serialization boost_regex boost_program_options boost_exception boost_date_time boost_context boost_container boost_charconv boost_atomic)
+set(boost_LIBS_RELEASE boost_log_setup boost_unit_test_framework boost_type_erasure boost_log boost_locale boost_fiber_numa boost_contract boost_wave boost_thread boost_test_exec_monitor boost_process boost_prg_exec_monitor boost_nowide boost_iostreams boost_graph boost_fiber boost_wserialization boost_url boost_stacktrace_noop boost_stacktrace_basic boost_stacktrace_backtrace boost_stacktrace_addr2line boost_random boost_math_tr1l boost_math_tr1f boost_math_tr1 boost_math_c99l boost_math_c99f boost_math_c99 boost_json boost_filesystem boost_coroutine boost_chrono boost_timer boost_serialization boost_regex boost_program_options boost_exception boost_date_time boost_context boost_container boost_charconv boost_atomic)
 set(boost_SYSTEM_LIBS_RELEASE )
 set(boost_FRAMEWORK_DIRS_RELEASE )
 set(boost_FRAMEWORKS_RELEASE )
@@ -55,7 +59,7 @@ set(boost_LINKER_FLAGS_RELEASE
     "$<$<STREQUAL:$<TARGET_PROPERTY:TYPE>,EXECUTABLE>:${boost_EXE_LINK_FLAGS_RELEASE}>")
 
 
-set(boost_COMPONENTS_RELEASE Boost::diagnostic_definitions Boost::disable_autolinking Boost::dynamic_linking Boost::headers Boost::boost boost::_libboost Boost::atomic Boost::charconv Boost::container Boost::context Boost::date_time Boost::exception Boost::math Boost::program_options Boost::regex Boost::serialization Boost::stacktrace Boost::system Boost::timer Boost::chrono Boost::coroutine Boost::filesystem Boost::json Boost::math_c99 Boost::math_c99f Boost::math_c99l Boost::math_tr1 Boost::math_tr1f Boost::math_tr1l Boost::random Boost::stacktrace_addr2line Boost::stacktrace_basic Boost::stacktrace_noop Boost::test Boost::url Boost::wserialization Boost::fiber Boost::graph Boost::iostreams Boost::nowide Boost::prg_exec_monitor Boost::process Boost::test_exec_monitor Boost::thread Boost::wave Boost::contract Boost::fiber_numa Boost::log Boost::type_erasure Boost::unit_test_framework Boost::log_setup)
+set(boost_COMPONENTS_RELEASE Boost::diagnostic_definitions Boost::disable_autolinking Boost::dynamic_linking Boost::headers Boost::boost boost::_libboost Boost::atomic Boost::charconv Boost::container Boost::context Boost::date_time Boost::exception Boost::math Boost::program_options Boost::regex Boost::serialization Boost::stacktrace Boost::system Boost::timer Boost::chrono Boost::coroutine Boost::filesystem Boost::json Boost::math_c99 Boost::math_c99f Boost::math_c99l Boost::math_tr1 Boost::math_tr1f Boost::math_tr1l Boost::random Boost::stacktrace_addr2line Boost::stacktrace_backtrace Boost::stacktrace_basic Boost::stacktrace_noop Boost::test Boost::url Boost::wserialization Boost::fiber Boost::graph Boost::iostreams Boost::nowide Boost::prg_exec_monitor Boost::process Boost::test_exec_monitor Boost::thread Boost::wave Boost::contract Boost::fiber_numa Boost::locale Boost::log Boost::type_erasure Boost::unit_test_framework Boost::log_setup)
 ########### COMPONENT Boost::log_setup VARIABLES ############################################
 
 set(boost_Boost_log_setup_INCLUDE_DIRS_RELEASE "${boost_PACKAGE_FOLDER_RELEASE}/include")
@@ -180,6 +184,37 @@ set(boost_Boost_log_LINKER_FLAGS_RELEASE
 set(boost_Boost_log_COMPILE_OPTIONS_RELEASE
     "$<$<COMPILE_LANGUAGE:CXX>:${boost_Boost_log_COMPILE_OPTIONS_CXX_RELEASE}>"
     "$<$<COMPILE_LANGUAGE:C>:${boost_Boost_log_COMPILE_OPTIONS_C_RELEASE}>")
+########### COMPONENT Boost::locale VARIABLES ############################################
+
+set(boost_Boost_locale_INCLUDE_DIRS_RELEASE "${boost_PACKAGE_FOLDER_RELEASE}/include")
+set(boost_Boost_locale_LIB_DIRS_RELEASE "${boost_PACKAGE_FOLDER_RELEASE}/lib")
+set(boost_Boost_locale_BIN_DIRS_RELEASE )
+set(boost_Boost_locale_LIBRARY_TYPE_RELEASE STATIC)
+set(boost_Boost_locale_IS_HOST_WINDOWS_RELEASE 0)
+set(boost_Boost_locale_RES_DIRS_RELEASE )
+set(boost_Boost_locale_DEFINITIONS_RELEASE )
+set(boost_Boost_locale_OBJECTS_RELEASE )
+set(boost_Boost_locale_COMPILE_DEFINITIONS_RELEASE )
+set(boost_Boost_locale_COMPILE_OPTIONS_C_RELEASE "")
+set(boost_Boost_locale_COMPILE_OPTIONS_CXX_RELEASE "")
+set(boost_Boost_locale_LIBS_RELEASE boost_locale)
+set(boost_Boost_locale_SYSTEM_LIBS_RELEASE )
+set(boost_Boost_locale_FRAMEWORK_DIRS_RELEASE )
+set(boost_Boost_locale_FRAMEWORKS_RELEASE )
+set(boost_Boost_locale_DEPENDENCIES_RELEASE Boost::thread boost::_libboost Iconv::Iconv)
+set(boost_Boost_locale_SHARED_LINK_FLAGS_RELEASE )
+set(boost_Boost_locale_EXE_LINK_FLAGS_RELEASE )
+set(boost_Boost_locale_NO_SONAME_MODE_RELEASE FALSE)
+
+# COMPOUND VARIABLES
+set(boost_Boost_locale_LINKER_FLAGS_RELEASE
+        $<$<STREQUAL:$<TARGET_PROPERTY:TYPE>,SHARED_LIBRARY>:${boost_Boost_locale_SHARED_LINK_FLAGS_RELEASE}>
+        $<$<STREQUAL:$<TARGET_PROPERTY:TYPE>,MODULE_LIBRARY>:${boost_Boost_locale_SHARED_LINK_FLAGS_RELEASE}>
+        $<$<STREQUAL:$<TARGET_PROPERTY:TYPE>,EXECUTABLE>:${boost_Boost_locale_EXE_LINK_FLAGS_RELEASE}>
+)
+set(boost_Boost_locale_COMPILE_OPTIONS_RELEASE
+    "$<$<COMPILE_LANGUAGE:CXX>:${boost_Boost_locale_COMPILE_OPTIONS_CXX_RELEASE}>"
+    "$<$<COMPILE_LANGUAGE:C>:${boost_Boost_locale_COMPILE_OPTIONS_C_RELEASE}>")
 ########### COMPONENT Boost::fiber_numa VARIABLES ############################################
 
 set(boost_Boost_fiber_numa_INCLUDE_DIRS_RELEASE "${boost_PACKAGE_FOLDER_RELEASE}/include")
@@ -676,6 +711,37 @@ set(boost_Boost_stacktrace_basic_LINKER_FLAGS_RELEASE
 set(boost_Boost_stacktrace_basic_COMPILE_OPTIONS_RELEASE
     "$<$<COMPILE_LANGUAGE:CXX>:${boost_Boost_stacktrace_basic_COMPILE_OPTIONS_CXX_RELEASE}>"
     "$<$<COMPILE_LANGUAGE:C>:${boost_Boost_stacktrace_basic_COMPILE_OPTIONS_C_RELEASE}>")
+########### COMPONENT Boost::stacktrace_backtrace VARIABLES ############################################
+
+set(boost_Boost_stacktrace_backtrace_INCLUDE_DIRS_RELEASE "${boost_PACKAGE_FOLDER_RELEASE}/include")
+set(boost_Boost_stacktrace_backtrace_LIB_DIRS_RELEASE "${boost_PACKAGE_FOLDER_RELEASE}/lib")
+set(boost_Boost_stacktrace_backtrace_BIN_DIRS_RELEASE )
+set(boost_Boost_stacktrace_backtrace_LIBRARY_TYPE_RELEASE STATIC)
+set(boost_Boost_stacktrace_backtrace_IS_HOST_WINDOWS_RELEASE 0)
+set(boost_Boost_stacktrace_backtrace_RES_DIRS_RELEASE )
+set(boost_Boost_stacktrace_backtrace_DEFINITIONS_RELEASE "-DBOOST_STACKTRACE_USE_BACKTRACE")
+set(boost_Boost_stacktrace_backtrace_OBJECTS_RELEASE )
+set(boost_Boost_stacktrace_backtrace_COMPILE_DEFINITIONS_RELEASE "BOOST_STACKTRACE_USE_BACKTRACE")
+set(boost_Boost_stacktrace_backtrace_COMPILE_OPTIONS_C_RELEASE "")
+set(boost_Boost_stacktrace_backtrace_COMPILE_OPTIONS_CXX_RELEASE "")
+set(boost_Boost_stacktrace_backtrace_LIBS_RELEASE boost_stacktrace_backtrace)
+set(boost_Boost_stacktrace_backtrace_SYSTEM_LIBS_RELEASE )
+set(boost_Boost_stacktrace_backtrace_FRAMEWORK_DIRS_RELEASE )
+set(boost_Boost_stacktrace_backtrace_FRAMEWORKS_RELEASE )
+set(boost_Boost_stacktrace_backtrace_DEPENDENCIES_RELEASE Boost::stacktrace boost::_libboost libbacktrace::libbacktrace)
+set(boost_Boost_stacktrace_backtrace_SHARED_LINK_FLAGS_RELEASE )
+set(boost_Boost_stacktrace_backtrace_EXE_LINK_FLAGS_RELEASE )
+set(boost_Boost_stacktrace_backtrace_NO_SONAME_MODE_RELEASE FALSE)
+
+# COMPOUND VARIABLES
+set(boost_Boost_stacktrace_backtrace_LINKER_FLAGS_RELEASE
+        $<$<STREQUAL:$<TARGET_PROPERTY:TYPE>,SHARED_LIBRARY>:${boost_Boost_stacktrace_backtrace_SHARED_LINK_FLAGS_RELEASE}>
+        $<$<STREQUAL:$<TARGET_PROPERTY:TYPE>,MODULE_LIBRARY>:${boost_Boost_stacktrace_backtrace_SHARED_LINK_FLAGS_RELEASE}>
+        $<$<STREQUAL:$<TARGET_PROPERTY:TYPE>,EXECUTABLE>:${boost_Boost_stacktrace_backtrace_EXE_LINK_FLAGS_RELEASE}>
+)
+set(boost_Boost_stacktrace_backtrace_COMPILE_OPTIONS_RELEASE
+    "$<$<COMPILE_LANGUAGE:CXX>:${boost_Boost_stacktrace_backtrace_COMPILE_OPTIONS_CXX_RELEASE}>"
+    "$<$<COMPILE_LANGUAGE:C>:${boost_Boost_stacktrace_backtrace_COMPILE_OPTIONS_C_RELEASE}>")
 ########### COMPONENT Boost::stacktrace_addr2line VARIABLES ############################################
 
 set(boost_Boost_stacktrace_addr2line_INCLUDE_DIRS_RELEASE "${boost_PACKAGE_FOLDER_RELEASE}/include")

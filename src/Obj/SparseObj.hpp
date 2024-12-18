@@ -14,6 +14,9 @@
 template<typename TObj>
 class VectorObj;
 
+template<typename TObj>
+class MatrixObj;
+
 template <typename TObj>
 class SparseMatrixCSC : public MatrixObj<TObj> {
 public:
@@ -26,6 +29,18 @@ public:
     SparseMatrixCSC(int rows, int cols) : _n(rows), _m(cols), col_ptr(cols + 1, 0) {}
 
     ~SparseMatrixCSC() = default;
+
+    // Copy Constructor
+    SparseMatrixCSC(const SparseMatrixCSC& other) = default;
+
+    // Move Constructor
+    SparseMatrixCSC(SparseMatrixCSC&& other) noexcept = default;
+
+    // Copy Assignment
+    SparseMatrixCSC& operator=(const SparseMatrixCSC& other) = default;
+
+    // Move Assignment
+    SparseMatrixCSC& operator=(SparseMatrixCSC&& other) noexcept = default;
 
     // Add a value to the sparse matrix
     void addValue(int row, int col, TObj value) {
@@ -41,11 +56,11 @@ public:
         std::partial_sum(col_ptr.begin(), col_ptr.end(), col_ptr.begin());
     }
 
-    inline int getRows() const { return _n; }
-    inline int getCols() const { return _m; }
+    inline int getRows() const override { return _n; }
+    inline int getCols() const override { return _m; }
 
     // Get a specific column
-    VectorObj<TObj> getColumn(int index) const {
+    VectorObj<TObj> getColumn(int index) const override {
         if (index < 0 || index >= _m) {
             throw std::out_of_range("Column index is out of range.");
         }

@@ -5,13 +5,11 @@
 #include <stdexcept> // For std::invalid_argument
 #include <cmath>     // For std::abs
 #include <algorithm> // For std::swap
-#include "MatrixObj.hpp"
-#include "VectorObj.hpp"
 
 namespace LU {
 
-    template <typename TNum>
-    void PivotLU(MatrixObj<TNum>& A, std::vector<int>& P) {
+    template <typename TNum, typename MatrixType>
+    void PivotLU(MatrixType& A, std::vector<int>& P) {
         int n = A.getRows();
 
         if (n != A.getCols()) {

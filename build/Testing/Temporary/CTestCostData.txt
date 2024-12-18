@@ -1,12 +1,9 @@
-matrix_obj_test 104 6.96222e-05
-basic_test 108 9.82022e-05
-itersolver_test 97 9.48999e-05
-matrix_benchmark_test 115 0.0809613
-basic_benchmark_test 105 0.0704258
-itersolver_benchmark_test 96 0.0641692
-LU_test 73 0
-KrylovSubspace_test 37 0.000167927
-ConjugateGradient_test 28 0.000336988
-SparseMatrixCSCTest 6 0.00106884
+matrix_obj_test 1 0.159421
+SparseMatrixCSCTest 1 0.123975
+basic_test 1 0.123694
+itersolver_test 1 0.125862
+LU_test 0 0
+KrylovSubspace_test 1 0.123527
+ConjugateGradient_test 1 0.123768
 ---
 LU_test

@@ -47,7 +47,7 @@ protected:
 
 // Test for Arnoldi orthogonality
 TEST_F(ArnoldiTest, OrthogonalityCheck) {
-    Krylov::Arnoldi(A, Q, H, tol);
+    Krylov::Arnoldi<double, DenseObj<double>, VectorObj<double>>(A, Q, H, tol);
 
     for (size_t i = 0; i < n; ++i) {
         for (size_t j = i + 1; j < n; ++j) {
@@ -59,7 +59,7 @@ TEST_F(ArnoldiTest, OrthogonalityCheck) {
 
 // Test for Hessenberg matrix correctness
 TEST_F(ArnoldiTest, HessenbergStructure) {
-    Krylov::Arnoldi(A, Q, H, tol);
+    Krylov::Arnoldi<double, DenseObj<double>, VectorObj<double>>(A, Q, H, tol);
 
     for (size_t i = 0; i < H.getRows(); ++i) {
         for (size_t j = 0; j < H.getCols(); ++j) {
@@ -92,7 +92,9 @@ TEST_F(ArnoldiTest, BreakdownTolerance) {
     A = DenseObj<double>(n, n); // Reset A
     initializeZeroMatrix(A);
 
-    EXPECT_NO_THROW(Krylov::Arnoldi(A, Q, H, tol)) << "Arnoldi iteration should handle breakdown gracefully.";
+    void(*funPtr)(DenseObj<double>& A, std::vector<VectorObj<double>>& Q, DenseObj<double>& H, double tol) = &(Krylov::Arnoldi<double, DenseObj<double>, VectorObj<double>>);
+
+    EXPECT_NO_THROW(funPtr(A, Q, H, tol)) << "Arnoldi iteration should handle breakdown gracefully.";
 }
 
 // Test for specific example with known results
@@ -100,7 +102,7 @@ TEST_F(ArnoldiTest, KnownExample) {
     // Define a simple diagonal matrix
     initializeDiagonalMatrix(A);
 
-    Krylov::Arnoldi(A, Q, H, tol);
+    Krylov::Arnoldi<double, DenseObj<double>, VectorObj<double>>(A, Q, H, tol);
 
     DenseObj<double> HA(n, n);
     for (size_t i = 0; i < n; ++i) {

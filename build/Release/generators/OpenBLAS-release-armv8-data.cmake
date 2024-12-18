@@ -12,7 +12,7 @@ endif()
 
 ########### VARIABLES #######################################################################
 #############################################################################################
-set(openblas_PACKAGE_FOLDER_RELEASE "/Users/yincheangng/.conan2/p/b/openbc779489151058/p")
+set(openblas_PACKAGE_FOLDER_RELEASE "/Users/yincheangng/.conan2/p/b/openbda08c8633a811/p")
 set(openblas_BUILD_MODULES_PATHS_RELEASE )
 
 

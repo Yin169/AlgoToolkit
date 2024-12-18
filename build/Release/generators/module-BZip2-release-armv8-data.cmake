@@ -11,7 +11,7 @@ endif()
 
 ########### VARIABLES #######################################################################
 #############################################################################################
-set(bzip2_PACKAGE_FOLDER_RELEASE "/Users/yincheangng/.conan2/p/b/bzip29dc34a08498fb/p")
+set(bzip2_PACKAGE_FOLDER_RELEASE "/Users/yincheangng/.conan2/p/b/bzip23ea61297b7147/p")
 set(bzip2_BUILD_MODULES_PATHS_RELEASE "${bzip2_PACKAGE_FOLDER_RELEASE}/lib/cmake/conan-official-bzip2-variables.cmake")
 
 

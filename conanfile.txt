@@ -6,10 +6,6 @@ gtest/1.15.0
 benchmark/1.9.0
 pybind11/2.13.6
 
-[options]
-boost/1.86.0:without_locale=True
-boost/1.86.0:with_stacktrace_backtrace=False
-
 [generators]
 CMakeDeps
 CMakeToolchain

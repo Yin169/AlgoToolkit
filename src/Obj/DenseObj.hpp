@@ -83,14 +83,14 @@ public:
         return arr[index];
     }
 
-    TObj& operator()(size_t row, size_t col) {
+    TObj& operator()(int row, int col) {
         if (row >= _n || col >= _m) {
             throw std::out_of_range("Matrix indices are out of range.");
         }
         return arr[row + col * _n];
     }
 
-    const TObj& operator()(size_t row, size_t col) const {
+    const TObj& operator()(int row, int col) const {
         if (row >= _n || col >= _m) {
             throw std::out_of_range("Matrix indices are out of range.");
         }
@@ -100,8 +100,8 @@ public:
     TObj* data() { return arr.data(); }
     const TObj* data() const { return arr.data(); }
 
-    inline int getRows() const { return _n; }
-    inline int getCols() const { return _m; }
+    inline int getRows() const override { return _n; }
+    inline int getCols() const override { return _m; }
 
     // Scalar multiplication
     DenseObj& operator*=(TObj scalar) {
@@ -184,7 +184,7 @@ public:
     }
 
     // Get a specific column
-    VectorObj<TObj> getColumn(int index) const {
+    VectorObj<TObj> getColumn(int index) const override {
         if (index < 0 || index >= _m) {
             throw std::out_of_range("Column index is out of range.");
         }

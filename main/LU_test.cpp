@@ -17,8 +17,9 @@ DenseObj<double> initializeSquareMatrix(int n) {
 TEST(LUDecomposition, NonSquareMatrix) {
     DenseObj<double> A(3, 4); // Non-square matrix
     std::vector<int> P;
-
-    EXPECT_THROW(LU::PivotLU(A, P), std::invalid_argument);
+    
+    void(*funcPtr)(DenseObj<double>&, std::vector<int>&) = &(LU::PivotLU<double, DenseObj<double>>);
+    EXPECT_THROW(funcPtr(A, P), std::invalid_argument);
 }
 
 // Test case: Check if PivotLU correctly performs LU decomposition on a square matrix.
@@ -32,8 +33,9 @@ TEST(LUDecomposition, SquareMatrix) {
     // Copy the original matrix for comparison
     DenseObj<double> originalA = A;
 
+    void(*funcPtr)(DenseObj<double>&, std::vector<int>&) = &(LU::PivotLU<double, DenseObj<double>>);
     // Perform LU decomposition
-    ASSERT_NO_THROW(LU::PivotLU(A, P));
+    ASSERT_NO_THROW(funcPtr(A, P));
 
     // Initialize L and U matrices
     DenseObj<double> L(n, n); // Start with all zeros

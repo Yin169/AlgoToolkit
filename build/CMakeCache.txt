@@ -225,15 +225,6 @@ FASTSolver_SOURCE_DIR:STATIC=/Users/yincheangng/worksapce/Github/MyAlgorithmicTo
 //The directory containing a CMake configuration file for GTest.
 GTest_DIR:PATH=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators
 
-//Value Computed by CMake
-MyCppProject_BINARY_DIR:STATIC=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-
-//Value Computed by CMake
-MyCppProject_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-MyCppProject_SOURCE_DIR:STATIC=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit
-
 //The directory containing a CMake configuration file for OpenBLAS.
 OpenBLAS_DIR:PATH=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators
 
@@ -255,18 +246,6 @@ PythonInterp_DIR:PATH=PythonInterp_DIR-NOTFOUND
 
 //The directory containing a CMake configuration file for benchmark.
 benchmark_DIR:PATH=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators
-
-//Value Computed by CMake
-demo_BINARY_DIR:STATIC=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-
-//Value Computed by CMake
-demo_IS_TOP_LEVEL:STATIC=ON
-
-//Value Computed by CMake
-demo_SOURCE_DIR:STATIC=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit
-
-//The directory containing a CMake configuration file for fmt.
-fmt_DIR:PATH=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators
 
 //The directory containing a CMake configuration file for pybind11.
 pybind11_DIR:PATH=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators
