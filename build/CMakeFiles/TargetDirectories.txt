@@ -5,7 +5,6 @@
 /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles/KrylovSubspace_test.dir
 /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles/ConjugateGradient_test.dir
 /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles/SparseMatrixCSCTest.dir
-/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles/FASTSolver.dir
 /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles/test.dir
 /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles/edit_cache.dir
 /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles/rebuild_cache.dir

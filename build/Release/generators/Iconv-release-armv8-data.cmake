@@ -11,7 +11,7 @@ endif()
 
 ########### VARIABLES #######################################################################
 #############################################################################################
-set(libiconv_PACKAGE_FOLDER_RELEASE "/Users/yincheangng/.conan2/p/b/libicbe6b405daf294/p")
+set(libiconv_PACKAGE_FOLDER_RELEASE "/Users/yincheangng/.conan2/p/b/libic2d2923d26e2ca/p")
 set(libiconv_BUILD_MODULES_PATHS_RELEASE )
 
 

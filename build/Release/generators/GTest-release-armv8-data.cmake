@@ -12,7 +12,7 @@ endif()
 
 ########### VARIABLES #######################################################################
 #############################################################################################
-set(gtest_PACKAGE_FOLDER_RELEASE "/Users/yincheangng/.conan2/p/b/gtestdb6c8408674de/p")
+set(gtest_PACKAGE_FOLDER_RELEASE "/Users/yincheangng/.conan2/p/b/gtestc5efacfbab3a6/p")
 set(gtest_BUILD_MODULES_PATHS_RELEASE )
 
 

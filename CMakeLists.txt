@@ -4,6 +4,7 @@ project(FASTSolver)
 # 设置C++标准
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(OpenBLAS_DIR "build/Release/generators")
 
 # 添加头文件搜索路径
 include_directories(src)
@@ -17,7 +18,7 @@ include_directories(src/Obj)
 find_package(OpenBLAS REQUIRED)
 find_package(benchmark REQUIRED)
 find_package(GTest REQUIRED)
-find_package(pybind11 REQUIRED)
+# find_package(pybind11 REQUIRED)
 
 # 添加可执行文件：matrix_obj_test
 add_executable(matrix_obj_test main/matrix_obj_test.cpp)
@@ -41,8 +42,8 @@ target_link_libraries(ConjugateGradient_test PRIVATE GTest::gtest GTest::gmock O
 add_executable(SparseMatrixCSCTest main/SparseMatrixCSCTest.cpp)
 target_link_libraries(SparseMatrixCSCTest PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
 
-add_library(FASTSolver MODULE python/pybind.cpp)
-target_link_libraries(FASTSolver PRIVATE pybind11::module)
+# add_library(FASTSolver MODULE python/pybind.cpp)
+# target_link_libraries(FASTSolver PRIVATE pybind11::module)
 
 # 添加测试
 enable_testing()
