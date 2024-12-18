@@ -4,14 +4,14 @@
 #include <iostream>
 #include <vector>
 #include <cstring> // For memset
-#include "MatrixObj.hpp"
+#include "DenseObj.hpp"
 #include "VectorObj.hpp"
 
 namespace basic {
 
     // Power Iteration for finding the dominant eigenvector
-    template <typename TNum>
-    void powerIter(MatrixObj<TNum>& A, VectorObj<TNum>& b, int max_iter_num) {
+    template <typename TNum, typename MatrixType>
+    void powerIter(MatrixType& A, VectorObj<TNum>& b, int max_iter_num) {
         if (max_iter_num <= 0) return;
 
         for (int i = 0; i < max_iter_num; ++i) {
@@ -22,8 +22,8 @@ namespace basic {
     }
 
     // Rayleigh Quotient for estimating the dominant eigenvalue
-    template <typename TNum>
-    double rayleighQuotient(const MatrixObj<TNum>& A, const VectorObj<TNum>& b) {
+    template <typename TNum, typename MatrixType>
+    double rayleighQuotient(const MatrixType& A, const VectorObj<TNum>& b) {
         if (b.L2norm() == 0) return 0;
 
         VectorObj<TNum> Ab = A * b;
@@ -42,8 +42,8 @@ namespace basic {
     }
 
     // Gram-Schmidt process for orthogonalization
-    template <typename TNum>
-    void gramSchmidt(const MatrixObj<TNum>& A, std::vector<VectorObj<TNum>>& orthSet) {
+    template <typename TNum, typename MatrixType>
+    void gramSchmidt(const MatrixType& A, std::vector<VectorObj<TNum>>& orthSet) {
         int m = A.getCols();
         orthSet.resize(m);
 
@@ -66,9 +66,9 @@ namespace basic {
     }
 
     // Generate an identity matrix
-    template <typename TNum>
-    MatrixObj<TNum> genUnitMat(int n) {
-        MatrixObj<TNum> identity(n, n);
+    template <typename TNum, typename MatrixType>
+    MatrixType genUnitMat(int n) {
+        MatrixType identity(n, n);
         for (int i = 0; i < n; ++i) {
             identity(i, i) = static_cast<TNum>(1);
         }
@@ -82,8 +82,8 @@ namespace basic {
     }
 
     // Generate a Householder transformation matrix
-    template <typename TNum>
-    void householderTransform(const MatrixObj<TNum>& A, MatrixObj<TNum>& H, int index) {
+    template <typename TNum, typename MatrixType>
+    void householderTransform(const MatrixType& A, MatrixType& H, int index) {
         int n = A.getRows();
         VectorObj<TNum> x = A.getColumn(index);
 
@@ -94,20 +94,20 @@ namespace basic {
         VectorObj<TNum> v = x + e;
         v.normalize(); // Normalize for numerical stability
 
-        MatrixObj<TNum> vMat(v, n, 1);
-        H = genUnitMat<TNum>(n) - (vMat * vMat.Transpose()) * static_cast<TNum>(2);
+        MatrixType vMat(v, n, 1);
+        H = genUnitMat<TNum, MatrixType>(n) - (vMat * vMat.Transpose()) * static_cast<TNum>(2);
     }
 
     // QR factorization using Householder reflections
-    template <typename TNum>
-    void qrFactorization(const MatrixObj<TNum>& A, MatrixObj<TNum>& Q, MatrixObj<TNum>& R) {
+    template <typename TNum, typename MatrixType>
+    void qrFactorization(const MatrixType& A, MatrixType& Q, MatrixType& R) {
         int n = A.getRows(), m = A.getCols();
         R = A;
-        Q = genUnitMat<TNum>(n);
+        Q = genUnitMat<TNum, MatrixType>(n);
 
         for (int i = 0; i < std::min(n, m); ++i) {
-            MatrixObj<TNum> H;
-            householderTransform(R, H, i);
+            MatrixType H;
+            householderTransform<TNum, MatrixType>(R, H, i);
             R = H * R;
             Q = Q * H.Transpose();
         }

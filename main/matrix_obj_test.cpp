@@ -1,18 +1,18 @@
 #include <gtest/gtest.h>
-#include "MatrixObj.hpp"
+#include "DenseObj.hpp"
 #include "VectorObj.hpp"
 
-// Test fixture for MatrixObj
-class MatrixObjTest : public ::testing::Test {
+// Test fixture for DenseObj
+class DenseObjTest : public ::testing::Test {
 protected:
-    MatrixObj<double> matrix1;
-    MatrixObj<double> matrix2;
-    MatrixObj<double> matrix3;
+    DenseObj<double> matrix1;
+    DenseObj<double> matrix2;
+    DenseObj<double> matrix3;
 
     void SetUp() override {
-        matrix1 = MatrixObj<double>(2, 3); // 2x3 matrix
-        matrix2 = MatrixObj<double>(2, 3); // another 2x3 matrix
-        matrix3 = MatrixObj<double>(3, 2); // 3x2 matrix for dimension mismatch tests
+        matrix1 = DenseObj<double>(2, 3); // 2x3 matrix
+        matrix2 = DenseObj<double>(2, 3); // another 2x3 matrix
+        matrix3 = DenseObj<double>(3, 2); // 3x2 matrix for dimension mismatch tests
 
         // Initialize values in matrix1 and matrix2
         for (int i = 0; i < matrix1.getRows(); ++i) {
@@ -25,8 +25,8 @@ protected:
 };
 
 // Test for default construction and initialization
-TEST_F(MatrixObjTest, DefaultConstructor) {
-    MatrixObj<double> testMatrix(2, 2);
+TEST_F(DenseObjTest, DefaultConstructor) {
+    DenseObj<double> testMatrix(2, 2);
     ASSERT_EQ(testMatrix.getRows(), 2);
     ASSERT_EQ(testMatrix.getCols(), 2);
     for (int i = 0; i < testMatrix.size(); ++i) {
@@ -35,14 +35,14 @@ TEST_F(MatrixObjTest, DefaultConstructor) {
 }
 
 // Test for getting matrix dimensions
-TEST_F(MatrixObjTest, GetDimensions) {
+TEST_F(DenseObjTest, GetDimensions) {
     ASSERT_EQ(matrix1.getRows(), 2);
     ASSERT_EQ(matrix1.getCols(), 3);
 }
 
 // Test for addition of matrices
-TEST_F(MatrixObjTest, Addition) {
-    MatrixObj<double> result = matrix1 + matrix2;
+TEST_F(DenseObjTest, Addition) {
+    DenseObj<double> result = matrix1 + matrix2;
     ASSERT_EQ(result.getRows(), 2);
     ASSERT_EQ(result.getCols(), 3);
     for (int i = 0; i < result.size(); ++i) {
@@ -51,8 +51,8 @@ TEST_F(MatrixObjTest, Addition) {
 }
 
 // Test for subtraction of matrices
-TEST_F(MatrixObjTest, Subtraction) {
-    MatrixObj<double> result = matrix1 - matrix2;
+TEST_F(DenseObjTest, Subtraction) {
+    DenseObj<double> result = matrix1 - matrix2;
     ASSERT_EQ(result.getRows(), 2);
     ASSERT_EQ(result.getCols(), 3);
     for (int i = 0; i < result.size(); ++i) {
@@ -61,7 +61,7 @@ TEST_F(MatrixObjTest, Subtraction) {
 }
 
 // Test for scalar multiplication
-TEST_F(MatrixObjTest, ScalarMultiplication) {
+TEST_F(DenseObjTest, ScalarMultiplication) {
     matrix1 *= 2.0;
     for (int i = 0; i < matrix1.getRows(); ++i) {
         for (int j = 0; j < matrix1.getCols(); ++j){
@@ -71,8 +71,8 @@ TEST_F(MatrixObjTest, ScalarMultiplication) {
 }
 
 // Test for matrix multiplication
-TEST_F(MatrixObjTest, MatrixMultiplication) {
-    MatrixObj<double> matrix4(3, 2);
+TEST_F(DenseObjTest, MatrixMultiplication) {
+    DenseObj<double> matrix4(3, 2);
 
     for (int i = 0; i < matrix4.getRows(); ++i) {
         for (int j = 0; j < matrix4.getCols(); ++j){
@@ -81,7 +81,7 @@ TEST_F(MatrixObjTest, MatrixMultiplication) {
         }
     }
 
-    MatrixObj<double> result = matrix1 * matrix4;
+    DenseObj<double> result = matrix1 * matrix4;
 
     ASSERT_EQ(result.getRows(), 2);
     ASSERT_EQ(result.getCols(), 2);
@@ -94,8 +94,8 @@ TEST_F(MatrixObjTest, MatrixMultiplication) {
 }
 
 // Test for matrix transpose
-TEST_F(MatrixObjTest, Transpose) {
-    MatrixObj<double> transposed = matrix1.Transpose();
+TEST_F(DenseObjTest, Transpose) {
+    DenseObj<double> transposed = matrix1.Transpose();
     ASSERT_EQ(transposed.getRows(), matrix1.getCols());
     ASSERT_EQ(transposed.getCols(), matrix1.getRows());
 
@@ -107,12 +107,12 @@ TEST_F(MatrixObjTest, Transpose) {
 }
 
 // Test for incompatible dimensions in multiplication
-TEST_F(MatrixObjTest, IncompatibleDimensionsMultiplication) {
+TEST_F(DenseObjTest, IncompatibleDimensionsMultiplication) {
     EXPECT_THROW(matrix1 * matrix2, std::invalid_argument);
 }
 
 // Test for accessing elements
-TEST_F(MatrixObjTest, ElementAccess) {
+TEST_F(DenseObjTest, ElementAccess) {
     ASSERT_EQ(matrix1[0], 0.0);
     ASSERT_EQ(matrix1[5], 5.0);
 
@@ -121,7 +121,7 @@ TEST_F(MatrixObjTest, ElementAccess) {
 }
 
 // Test for getting a column as a vector
-TEST_F(MatrixObjTest, GetColumn) {
+TEST_F(DenseObjTest, GetColumn) {
     VectorObj<double> col = matrix1.getColumn(1);
     ASSERT_EQ(col.size(), matrix1.getRows());
     for (int i = 0; i < col.size(); ++i) {

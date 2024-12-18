@@ -1,45 +1,45 @@
-Start testing: Dec 17 15:39 +08
+Start testing: Dec 18 14:19 +08
 ----------------------------------------------------------
 1/7 Testing: matrix_obj_test
 1/7 Test: matrix_obj_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/matrix_obj_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"matrix_obj_test" start time: Dec 17 15:39 +08
+"matrix_obj_test" start time: Dec 18 14:19 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 10 tests from 1 test suite.
 [----------] Global test environment set-up.
-[----------] 10 tests from MatrixObjTest
-[ RUN      ] MatrixObjTest.DefaultConstructor
-[       OK ] MatrixObjTest.DefaultConstructor (0 ms)
-[ RUN      ] MatrixObjTest.GetDimensions
-[       OK ] MatrixObjTest.GetDimensions (0 ms)
-[ RUN      ] MatrixObjTest.Addition
-[       OK ] MatrixObjTest.Addition (0 ms)
-[ RUN      ] MatrixObjTest.Subtraction
-[       OK ] MatrixObjTest.Subtraction (0 ms)
-[ RUN      ] MatrixObjTest.ScalarMultiplication
-[       OK ] MatrixObjTest.ScalarMultiplication (0 ms)
-[ RUN      ] MatrixObjTest.MatrixMultiplication
-[       OK ] MatrixObjTest.MatrixMultiplication (0 ms)
-[ RUN      ] MatrixObjTest.Transpose
-[       OK ] MatrixObjTest.Transpose (0 ms)
-[ RUN      ] MatrixObjTest.IncompatibleDimensionsMultiplication
-[       OK ] MatrixObjTest.IncompatibleDimensionsMultiplication (0 ms)
-[ RUN      ] MatrixObjTest.ElementAccess
-[       OK ] MatrixObjTest.ElementAccess (0 ms)
-[ RUN      ] MatrixObjTest.GetColumn
-[       OK ] MatrixObjTest.GetColumn (0 ms)
-[----------] 10 tests from MatrixObjTest (0 ms total)
+[----------] 10 tests from DenseObjTest
+[ RUN      ] DenseObjTest.DefaultConstructor
+[       OK ] DenseObjTest.DefaultConstructor (0 ms)
+[ RUN      ] DenseObjTest.GetDimensions
+[       OK ] DenseObjTest.GetDimensions (0 ms)
+[ RUN      ] DenseObjTest.Addition
+[       OK ] DenseObjTest.Addition (0 ms)
+[ RUN      ] DenseObjTest.Subtraction
+[       OK ] DenseObjTest.Subtraction (0 ms)
+[ RUN      ] DenseObjTest.ScalarMultiplication
+[       OK ] DenseObjTest.ScalarMultiplication (0 ms)
+[ RUN      ] DenseObjTest.MatrixMultiplication
+[       OK ] DenseObjTest.MatrixMultiplication (0 ms)
+[ RUN      ] DenseObjTest.Transpose
+[       OK ] DenseObjTest.Transpose (0 ms)
+[ RUN      ] DenseObjTest.IncompatibleDimensionsMultiplication
+[       OK ] DenseObjTest.IncompatibleDimensionsMultiplication (0 ms)
+[ RUN      ] DenseObjTest.ElementAccess
+[       OK ] DenseObjTest.ElementAccess (0 ms)
+[ RUN      ] DenseObjTest.GetColumn
+[       OK ] DenseObjTest.GetColumn (0 ms)
+[----------] 10 tests from DenseObjTest (0 ms total)
 
 [----------] Global test environment tear-down
 [==========] 10 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 10 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.16 sec
 ----------------------------------------------------------
 Test Passed.
-"matrix_obj_test" end time: Dec 17 15:39 +08
+"matrix_obj_test" end time: Dec 18 14:19 +08
 "matrix_obj_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -47,7 +47,7 @@ Test Passed.
 2/7 Test: SparseMatrixCSCTest
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/SparseMatrixCSCTest"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"SparseMatrixCSCTest" start time: Dec 17 15:39 +08
+"SparseMatrixCSCTest" start time: Dec 18 14:19 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 7 tests from 1 test suite.
@@ -73,10 +73,10 @@ Output:
 [==========] 7 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 7 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.12 sec
 ----------------------------------------------------------
 Test Passed.
-"SparseMatrixCSCTest" end time: Dec 17 15:39 +08
+"SparseMatrixCSCTest" end time: Dec 18 14:19 +08
 "SparseMatrixCSCTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -84,43 +84,38 @@ Test Passed.
 3/7 Test: basic_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/basic_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"basic_test" start time: Dec 17 15:39 +08
+"basic_test" start time: Dec 18 14:19 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 8 tests from 1 test suite.
 [----------] Global test environment set-up.
-[----------] 8 tests from BasicTest
-[ RUN      ] BasicTest.RayleighQuotientTest
-[       OK ] BasicTest.RayleighQuotientTest (0 ms)
-[ RUN      ] BasicTest.PowerIterTest
-[       OK ] BasicTest.PowerIterTest (0 ms)
-[ RUN      ] BasicTest.GramSmithTest
-Starting Gram-Schmidt test...
-Checking orthogonality for vector 0...
-Checking orthogonality for vector 1...
-Checking orthogonality for vector 2...
-Gram-Schmidt test completed successfully.
-[       OK ] BasicTest.GramSmithTest (0 ms)
-[ RUN      ] BasicTest.GenUnitvecTest
-[       OK ] BasicTest.GenUnitvecTest (0 ms)
-[ RUN      ] BasicTest.GenUnitMatxTest
-[       OK ] BasicTest.GenUnitMatxTest (0 ms)
-[ RUN      ] BasicTest.SignTest
-[       OK ] BasicTest.SignTest (0 ms)
-[ RUN      ] BasicTest.HouseHTest
-[       OK ] BasicTest.HouseHTest (0 ms)
-[ RUN      ] BasicTest.qrFactorizationTest
-[       OK ] BasicTest.qrFactorizationTest (0 ms)
-[----------] 8 tests from BasicTest (0 ms total)
+[----------] 8 tests from MyTest
+[ RUN      ] MyTest.RayleighQuotientTest
+[       OK ] MyTest.RayleighQuotientTest (0 ms)
+[ RUN      ] MyTest.PowerIterTest
+[       OK ] MyTest.PowerIterTest (0 ms)
+[ RUN      ] MyTest.GramSchmidtTest
+[       OK ] MyTest.GramSchmidtTest (0 ms)
+[ RUN      ] MyTest.GenUnitVecTest
+[       OK ] MyTest.GenUnitVecTest (0 ms)
+[ RUN      ] MyTest.GenUnitMatTest
+[       OK ] MyTest.GenUnitMatTest (0 ms)
+[ RUN      ] MyTest.SignTest
+[       OK ] MyTest.SignTest (0 ms)
+[ RUN      ] MyTest.HouseholderTransformTest
+[       OK ] MyTest.HouseholderTransformTest (0 ms)
+[ RUN      ] MyTest.QrFactorizationTest
+[       OK ] MyTest.QrFactorizationTest (0 ms)
+[----------] 8 tests from MyTest (0 ms total)
 
 [----------] Global test environment tear-down
 [==========] 8 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 8 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.12 sec
 ----------------------------------------------------------
 Test Passed.
-"basic_test" end time: Dec 17 15:39 +08
+"basic_test" end time: Dec 18 14:19 +08
 "basic_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -128,7 +123,7 @@ Test Passed.
 4/7 Test: itersolver_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/itersolver_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"itersolver_test" start time: Dec 17 15:39 +08
+"itersolver_test" start time: Dec 18 14:19 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 6 tests from 2 test suites.
@@ -148,17 +143,17 @@ Output:
 [ RUN      ] StaticIterMethodTest.Substitution
 [       OK ] StaticIterMethodTest.Substitution (0 ms)
 [ RUN      ] StaticIterMethodTest.Update
-[       OK ] StaticIterMethodTest.Update (0 ms)
-[----------] 3 tests from StaticIterMethodTest (0 ms total)
+[       OK ] StaticIterMethodTest.Update (1 ms)
+[----------] 3 tests from StaticIterMethodTest (1 ms total)
 
 [----------] Global test environment tear-down
-[==========] 6 tests from 2 test suites ran. (1 ms total)
+[==========] 6 tests from 2 test suites ran. (2 ms total)
 [  PASSED  ] 6 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.13 sec
 ----------------------------------------------------------
 Test Passed.
-"itersolver_test" end time: Dec 17 15:39 +08
+"itersolver_test" end time: Dec 18 14:19 +08
 "itersolver_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -166,7 +161,7 @@ Test Passed.
 5/7 Test: LU_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/LU_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"LU_test" start time: Dec 17 15:39 +08
+"LU_test" start time: Dec 18 14:19 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 2 tests from 1 test suite.
@@ -175,42 +170,42 @@ Output:
 [ RUN      ] LUDecomposition.NonSquareMatrix
 [       OK ] LUDecomposition.NonSquareMatrix (0 ms)
 [ RUN      ] LUDecomposition.SquareMatrix
-/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:67: Failure
+/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:69: Failure
 The difference between PA(i, j) and L_times_U(i, j) is 0.96428571428571419, which exceeds 1e-8, where
 PA(i, j) evaluates to 0.75,
 L_times_U(i, j) evaluates to 1.7142857142857142, and
 1e-8 evaluates to 1e-08.
 Mismatch at (1, 0)
 
-/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:67: Failure
+/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:69: Failure
 The difference between PA(i, j) and L_times_U(i, j) is 1.2857142857142856, which exceeds 1e-8, where
 PA(i, j) evaluates to 1.75,
 L_times_U(i, j) evaluates to 3.0357142857142856, and
 1e-8 evaluates to 1e-08.
 Mismatch at (1, 1)
 
-/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:67: Failure
+/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:69: Failure
 The difference between PA(i, j) and L_times_U(i, j) is 0.8571428571428571, which exceeds 1e-8, where
 PA(i, j) evaluates to -0.5,
 L_times_U(i, j) evaluates to 0.3571428571428571, and
 1e-8 evaluates to 1e-08.
 Mismatch at (1, 2)
 
-/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:67: Failure
+/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:69: Failure
 The difference between PA(i, j) and L_times_U(i, j) is 0.19999999999999996, which exceeds 1e-8, where
 PA(i, j) evaluates to 0.5,
 L_times_U(i, j) evaluates to 0.69999999999999996, and
 1e-8 evaluates to 1e-08.
 Mismatch at (2, 0)
 
-/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:67: Failure
+/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:69: Failure
 The difference between PA(i, j) and L_times_U(i, j) is 0.63571428571428568, which exceeds 1e-8, where
 PA(i, j) evaluates to -0.2857142857142857,
 L_times_U(i, j) evaluates to 0.34999999999999992, and
 1e-8 evaluates to 1e-08.
 Mismatch at (2, 1)
 
-/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:67: Failure
+/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:69: Failure
 The difference between PA(i, j) and L_times_U(i, j) is 0.39999999999999991, which exceeds 1e-8, where
 PA(i, j) evaluates to 2.8571428571428572,
 L_times_U(i, j) evaluates to 3.2571428571428571, and
@@ -228,10 +223,10 @@ Mismatch at (2, 2)
 
  1 FAILED TEST
 <end of output>
-Test time =   0.16 sec
+Test time =   0.12 sec
 ----------------------------------------------------------
 Test Failed.
-"LU_test" end time: Dec 17 15:39 +08
+"LU_test" end time: Dec 18 14:19 +08
 "LU_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -239,7 +234,7 @@ Test Failed.
 6/7 Test: KrylovSubspace_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/KrylovSubspace_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"KrylovSubspace_test" start time: Dec 17 15:39 +08
+"KrylovSubspace_test" start time: Dec 18 14:19 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 4 tests from 1 test suite.
@@ -279,10 +274,10 @@ Breakdown: Norm below tolerance at iteration 4
 [==========] 4 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 4 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.12 sec
 ----------------------------------------------------------
 Test Passed.
-"KrylovSubspace_test" end time: Dec 17 15:39 +08
+"KrylovSubspace_test" end time: Dec 18 14:19 +08
 "KrylovSubspace_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -290,7 +285,7 @@ Test Passed.
 7/7 Test: ConjugateGradient_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/ConjugateGradient_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"ConjugateGradient_test" start time: Dec 17 15:39 +08
+"ConjugateGradient_test" start time: Dec 18 14:19 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 4 tests from 1 test suite.
@@ -314,11 +309,11 @@ Warning: Division by near-zero in alpha calculation.
 [==========] 4 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 4 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.12 sec
 ----------------------------------------------------------
 Test Passed.
-"ConjugateGradient_test" end time: Dec 17 15:39 +08
+"ConjugateGradient_test" end time: Dec 18 14:19 +08
 "ConjugateGradient_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Dec 17 15:39 +08
+End testing: Dec 18 14:19 +08

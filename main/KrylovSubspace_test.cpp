@@ -1,4 +1,5 @@
 #include <vector>
+#include "DenseObj.hpp"
 #include "KrylovSubspace.hpp" // Include the Arnoldi header file
 #include "basic.hpp"
 #include <gtest/gtest.h>
@@ -9,9 +10,9 @@ protected:
     void SetUp() override {
         tol = 1e-8;
         n = 4;
-        A = MatrixObj<double>(n, n);
+        A = DenseObj<double>(n, n);
         Q = std::vector<VectorObj<double>>(n + 1, VectorObj<double>(n));
-        H = MatrixObj<double>(n + 1, n);
+        H = DenseObj<double>(n + 1, n);
 
         // Initialize matrix A as an identity matrix
         initializeIdentityMatrix(A);
@@ -24,7 +25,7 @@ protected:
     }
 
     // Helper functions for initialization
-    void initializeIdentityMatrix(MatrixObj<double>& matrix) {
+    void initializeIdentityMatrix(DenseObj<double>& matrix) {
         for (size_t i = 0; i < n; ++i) {
             matrix(i, i) = 1.0;
         }
@@ -38,15 +39,15 @@ protected:
 
     double tol;
     size_t n;
-    MatrixObj<double> A;
+    DenseObj<double> A;
     std::vector<VectorObj<double>> Q;
-    MatrixObj<double> H;
+    DenseObj<double> H;
     VectorObj<double> r;
 };
 
 // Test for Arnoldi orthogonality
 TEST_F(ArnoldiTest, OrthogonalityCheck) {
-    Krylov::Arnoldi(A, Q, H, tol);
+    Krylov::Arnoldi<double, DenseObj<double>, VectorObj<double>>(A, Q, H, tol);
 
     for (size_t i = 0; i < n; ++i) {
         for (size_t j = i + 1; j < n; ++j) {
@@ -58,7 +59,7 @@ TEST_F(ArnoldiTest, OrthogonalityCheck) {
 
 // Test for Hessenberg matrix correctness
 TEST_F(ArnoldiTest, HessenbergStructure) {
-    Krylov::Arnoldi(A, Q, H, tol);
+    Krylov::Arnoldi<double, DenseObj<double>, VectorObj<double>>(A, Q, H, tol);
 
     for (size_t i = 0; i < H.getRows(); ++i) {
         for (size_t j = 0; j < H.getCols(); ++j) {
@@ -70,7 +71,7 @@ TEST_F(ArnoldiTest, HessenbergStructure) {
 }
 
 // Helper function to initialize zero matrix
-void initializeZeroMatrix(MatrixObj<double>& matrix) {
+void initializeZeroMatrix(DenseObj<double>& matrix) {
     for (size_t i = 0; i < matrix.getRows(); ++i) {
         for (size_t j = 0; j < matrix.getCols(); ++j) {
             matrix(i, j) = 0.0;
@@ -79,7 +80,7 @@ void initializeZeroMatrix(MatrixObj<double>& matrix) {
 }
 
 // Helper functions for matrix initialization and copying
-void initializeDiagonalMatrix(MatrixObj<double>& matrix) {
+void initializeDiagonalMatrix(DenseObj<double>& matrix) {
     for (int i = 0; i < matrix.getRows(); ++i) {
         matrix(i, i) = static_cast<double>(i + 1);
     }
@@ -88,10 +89,12 @@ void initializeDiagonalMatrix(MatrixObj<double>& matrix) {
 // Test for breakdown tolerance
 TEST_F(ArnoldiTest, BreakdownTolerance) {
     // Modify A to induce breakdown (e.g., zero matrix)
-    A = MatrixObj<double>(n, n); // Reset A
+    A = DenseObj<double>(n, n); // Reset A
     initializeZeroMatrix(A);
 
-    EXPECT_NO_THROW(Krylov::Arnoldi(A, Q, H, tol)) << "Arnoldi iteration should handle breakdown gracefully.";
+    void(*funPtr)(DenseObj<double>& A, std::vector<VectorObj<double>>& Q, DenseObj<double>& H, double tol) = &(Krylov::Arnoldi<double, DenseObj<double>, VectorObj<double>>);
+
+    EXPECT_NO_THROW(funPtr(A, Q, H, tol)) << "Arnoldi iteration should handle breakdown gracefully.";
 }
 
 // Test for specific example with known results
@@ -99,9 +102,9 @@ TEST_F(ArnoldiTest, KnownExample) {
     // Define a simple diagonal matrix
     initializeDiagonalMatrix(A);
 
-    Krylov::Arnoldi(A, Q, H, tol);
+    Krylov::Arnoldi<double, DenseObj<double>, VectorObj<double>>(A, Q, H, tol);
 
-    MatrixObj<double> HA(n, n);
+    DenseObj<double> HA(n, n);
     for (size_t i = 0; i < n; ++i) {
         for (size_t j = 0; j < n; ++j) {
             HA(i, j) = H(i, j);
@@ -109,9 +112,9 @@ TEST_F(ArnoldiTest, KnownExample) {
     }
 
     Q.pop_back();
-    MatrixObj matQ(Q, Q[0].size(), Q.size());
-    MatrixObj<double> checkLeft = A * matQ;
-    MatrixObj<double> checkRight = matQ * HA;
+    DenseObj matQ(Q, Q[0].size(), Q.size());
+    DenseObj<double> checkLeft = A * matQ;
+    DenseObj<double> checkRight = matQ * HA;
 
     for (size_t i = 0; i < n; ++i) {
         for (size_t j = 0; j < n; ++j) {

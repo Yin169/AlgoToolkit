@@ -8,13 +8,17 @@
 #include <algorithm> // for std::lower_bound
 #include <numeric>   // for std::accumulate
 
+#include "MatrixObj.hpp"
 #include "VectorObj.hpp"
 
 template<typename TObj>
 class VectorObj;
 
+template<typename TObj>
+class MatrixObj;
+
 template <typename TObj>
-class SparseMatrixCSC {
+class SparseMatrixCSC : public MatrixObj<TObj> {
 public:
     int _n, _m; // Number of rows and columns
     std::vector<TObj> values;      // Non-zero values
@@ -25,6 +29,18 @@ public:
     SparseMatrixCSC(int rows, int cols) : _n(rows), _m(cols), col_ptr(cols + 1, 0) {}
 
     ~SparseMatrixCSC() = default;
+
+    // Copy Constructor
+    SparseMatrixCSC(const SparseMatrixCSC& other) = default;
+
+    // Move Constructor
+    SparseMatrixCSC(SparseMatrixCSC&& other) noexcept = default;
+
+    // Copy Assignment
+    SparseMatrixCSC& operator=(const SparseMatrixCSC& other) = default;
+
+    // Move Assignment
+    SparseMatrixCSC& operator=(SparseMatrixCSC&& other) noexcept = default;
 
     // Add a value to the sparse matrix
     void addValue(int row, int col, TObj value) {
@@ -40,11 +56,11 @@ public:
         std::partial_sum(col_ptr.begin(), col_ptr.end(), col_ptr.begin());
     }
 
-    inline int getRows() const { return _n; }
-    inline int getCols() const { return _m; }
+    inline int getRows() const override { return _n; }
+    inline int getCols() const override { return _m; }
 
     // Get a specific column
-    VectorObj<TObj> getColumn(int index) const {
+    VectorObj<TObj> getColumn(int index) const override {
         if (index < 0 || index >= _m) {
             throw std::out_of_range("Column index is out of range.");
         }
@@ -67,8 +83,8 @@ public:
         return TObj(); // Default value
     }
 
-    // Optimized addition
-    SparseMatrixCSC operator+(const SparseMatrixCSC& other) const {
+    template <typename Op>
+    SparseMatrixCSC Operator(const SparseMatrixCSC& other, Op operation) const {
         if (_n != other._n || _m != other._m) throw std::invalid_argument("Matrices must be the same size for addition.");
         SparseMatrixCSC result(_n, _m);
 
@@ -76,8 +92,8 @@ public:
             int a_pos = col_ptr[col], b_pos = other.col_ptr[col];
             std::unordered_map<int, TObj> col_data;
 
-            while (a_pos < col_ptr[col + 1]) col_data[row_indices[a_pos++]] += values[a_pos];
-            while (b_pos < other.col_ptr[col + 1]) col_data[other.row_indices[b_pos++]] += other.values[b_pos];
+            while (a_pos < col_ptr[col + 1]) col_data[row_indices[a_pos++]] = operation(col_data[row_indices[a_pos]], values[a_pos]);
+            while (b_pos < other.col_ptr[col + 1]) col_data[other.row_indices[b_pos++]] = operation(col_data[other.row_indices[b_pos]], other.values[b_pos]);
 
             for (const auto& [row, value] : col_data) {
                 if (value != TObj()) result.addValue(row, col, value);
@@ -86,6 +102,52 @@ public:
         result.finalize();
         return result;
     }
+
+    // Optimized addition
+    SparseMatrixCSC operator+(const SparseMatrixCSC& other) const {
+        return Operator(other, std::plus<TObj>());
+    }
+
+    SparseMatrixCSC operator-(const SparseMatrixCSC& other) const {
+        return Operator(other, std::minus<TObj>());
+    }
+
+    SparseMatrixCSC &operator*=(double scalar) {
+        for (auto& e : values){ 
+            e *= static_cast<TObj>(scalar);
+        }
+        return *this; 
+    }
+
+    SparseMatrixCSC operator*(double scalar){
+        SparseMatrixCSC result = *this;
+        result *= scalar;
+        return result;
+    }
+
+    VectorObj<TObj> operator*(const VectorObj<TObj>& vector) {
+        // Check dimension compatibility
+        if (_m != vector.size()) {
+            throw std::invalid_argument("Sparse matrix columns must match vector size.");
+        }
+
+        // Result vector initialization
+        VectorObj<TObj> result(_n, TObj(0));
+
+        // Perform sparse matrix-vector multiplication
+        for (int col = 0; col < _m; ++col) {
+            TObj vector_value = vector[col];
+            if (vector_value == TObj()) continue; // Skip multiplication by zero
+
+            // Iterate over non-zero entries in the column
+            for (int idx = col_ptr[col]; idx < col_ptr[col + 1]; ++idx) {
+                int row = row_indices[idx];
+                result[row] += values[idx] * vector_value;
+            }
+        }
+        return result;
+    }
+
 
     // Optimized multiplication using CSC * CSR
     SparseMatrixCSC operator*(const SparseMatrixCSC& other) const {

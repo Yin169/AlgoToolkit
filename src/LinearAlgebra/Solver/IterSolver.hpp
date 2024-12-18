@@ -1,57 +1,55 @@
 #ifndef ITERSOLVER_HPP
 #define ITERSOLVER_HPP
 
-#include "MatrixObj.hpp"
-#include "VectorObj.hpp"
 #include "basic.hpp"
 #include "SolverBase.hpp"
 
 // GradientDescent Solver
-template <typename TNum>
-class GradientDescent : public IterSolverBase<TNum> {
+template <typename TNum, typename MatrixType, typename VectorType>
+class GradientDescent : public IterSolverBase<TNum, MatrixType, VectorType> {
 public:
     // Default constructor
     GradientDescent() = default;
 
     // Parameterized constructor
-    GradientDescent(MatrixObj<TNum> P, MatrixObj<TNum> A, VectorObj<TNum> b, int max_iter)
-        : IterSolverBase<TNum>(std::move(P), std::move(A), std::move(b), max_iter) {}
+    GradientDescent(MatrixType P, MatrixType A, VectorType b, int max_iter)
+        : IterSolverBase<TNum, MatrixType, VectorType>(std::move(P), std::move(A), std::move(b), max_iter) {}
 
     // Virtual destructor
     virtual ~GradientDescent() = default;
 
     // Calculate the gradient (negative residual direction)
-    VectorObj<TNum> calGrad(const VectorObj<TNum>& x) const override {
+    VectorType calGrad(const VectorType& x) const override {
         return this->b - (this->A * x); // Gradient: b - Ax
     }
 
     // Perform the iterative gradient descent updates
-    void solve(VectorObj<TNum>& x) {
+    void solve(VectorType& x) {
         for (int i = 0; i < this->getMaxIter(); ++i) {
-            VectorObj<TNum> grad = calGrad(x);
+            VectorType grad = calGrad(x);
             this->Update(x, grad);
         }
     }
 };
 
 // Static Iterative Method Solver
-template <typename TNum>
-class StaticIterMethod : public IterSolverBase<TNum> {
+template <typename TNum, typename MatrixType, typename VectorType>
+class StaticIterMethod : public IterSolverBase<TNum, MatrixType, VectorType> {
 public:
     // Default constructor
     StaticIterMethod() = default;
 
     // Parameterized constructor
-    StaticIterMethod(MatrixObj<TNum> P, MatrixObj<TNum> A, VectorObj<TNum> b, int max_iter)
-        : IterSolverBase<TNum>(std::move(P), std::move(A), std::move(b), max_iter) {}
+    StaticIterMethod(MatrixType P, MatrixType A, VectorType b, int max_iter)
+        : IterSolverBase<TNum, MatrixType, VectorType>(std::move(P), std::move(A), std::move(b), max_iter) {}
 
     // Virtual destructor
     virtual ~StaticIterMethod() = default;
 
     // Perform forward or backward substitution
-    VectorObj<TNum> Substitution(const VectorObj<TNum>& b, const MatrixObj<TNum>& L, bool forward) const {
+    VectorType Substitution(const VectorType& b, const MatrixType& L, bool forward) const {
         const int n = b.size();
-        VectorObj<TNum> x(n);
+        VectorType x(n);
 
         for (int i = forward ? 0 : n - 1; forward ? i < n : i >= 0; forward ? ++i : --i) {
             TNum sum = static_cast<TNum>(0);
@@ -70,17 +68,16 @@ public:
         return x;
     }
 
-public:
     // Calculate the gradient using preconditioned residual
-    VectorObj<TNum> calGrad(const VectorObj<TNum>& x) const override {
-        VectorObj<TNum> residual = this->b - (this->A * x);
+    VectorType calGrad(const VectorType& x) const override {
+        VectorType residual = this->b - (this->A * x);
         return Substitution(residual, this->P, true); // Forward substitution for preconditioning
     }
 
     // Perform the iterative updates using the static iterative method
-    void solve(VectorObj<TNum>& x) {
+    void solve(VectorType& x) {
         for (int i = 0; i < this->getMaxIter(); ++i) {
-            VectorObj<TNum> grad = calGrad(x);
+            VectorType grad = calGrad(x);
             this->Update(x, grad);
         }
     }

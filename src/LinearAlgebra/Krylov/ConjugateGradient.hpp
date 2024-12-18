@@ -4,33 +4,37 @@
 #include <vector>
 #include <cmath>
 #include <stdexcept>
-#include "MatrixObj.hpp"
-#include "VectorObj.hpp"
 #include "SolverBase.hpp"
 
-template <typename TNum>
-class ConjugateGrad : public IterSolverBase<TNum> {
+template <typename TNum, typename MatrixType, typename VectorType>
+class ConjugateGrad : public IterSolverBase<TNum, MatrixType, VectorType> {
 public:
-    VectorObj<TNum> x, r, p;
+    VectorType x, r, p;
     double _tol = 1e-6;
 
+    // Default constructor
     ConjugateGrad() = default;
 
-    explicit ConjugateGrad(MatrixObj<TNum> P, MatrixObj<TNum> A, VectorObj<TNum> b, int maxIter, double tol)
-        : _tol(tol), IterSolverBase<TNum>(std::move(P), std::move(A), std::move(b), maxIter) {
+    // Parameterized constructor
+    explicit ConjugateGrad(MatrixType P, MatrixType A, VectorType b, int maxIter, double tol)
+        : _tol(tol), IterSolverBase<TNum, MatrixType, VectorType>(std::move(P), std::move(A), std::move(b), maxIter) {
         // Initialize x to zero vector
-        x = VectorObj<TNum>(b.size());
+        x = VectorType(this->b.size());
 
         // Compute initial residual and search direction
         r = this->b - (this->A * x);
         p = r;
     }
 
+    // Virtual destructor
     virtual ~ConjugateGrad() = default;
 
-    // dummy function
-    VectorObj<TNum> calGrad(const VectorObj<TNum>& x) const {return VectorObj<TNum>();}; 
+    // Dummy function (not used in this solver)
+    VectorType calGrad(const VectorType& x) const override {
+        return VectorType();
+    };
 
+    // Perform the conjugate gradient updates
     void callUpdate() {
         int maxIter = this->getMaxIter();
         double residualNorm = r.L2norm();
@@ -38,7 +42,7 @@ public:
         // Iterative loop
         for (int iter = 0; iter < maxIter; ++iter) {
             // Compute A*p and cache it
-            VectorObj<TNum> Ap = this->A * p;
+            VectorType Ap = this->A * p;
 
             // Compute alpha (step size)
             double rDotR = r * r;

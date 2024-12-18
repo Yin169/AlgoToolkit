@@ -3,8 +3,8 @@
 
 // Helper function to create an identity matrix of a given size.
 template<typename TNum>
-MatrixObj<TNum> CreateIdentityMatrix(int size) {
-    MatrixObj<TNum> identity(size, size);
+DenseObj<TNum> CreateIdentityMatrix(int size) {
+    DenseObj<TNum> identity(size, size);
     for (int i = 0; i < size; ++i) {
         identity(i , i) = 1; // Set the diagonal elements to 1.
     }
@@ -22,14 +22,14 @@ VectorObj<TNum> CreateVector(int size, TNum value) {
 class GradientDescentTest : public ::testing::Test {
 protected:
     int size_ = 100;
-    MatrixObj<double> P = CreateIdentityMatrix<double>(size_);
-    MatrixObj<double> A = CreateIdentityMatrix<double>(size_);
+    DenseObj<double> P = CreateIdentityMatrix<double>(size_);
+    DenseObj<double> A = CreateIdentityMatrix<double>(size_);
     VectorObj<double> b = CreateVector<double>(size_, 1.0);
     VectorObj<double> x = CreateVector<double>(size_, 0.0);
-    std::unique_ptr<GradientDescent<double>> gradientDescent;
+    std::unique_ptr<GradientDescent<double, DenseObj<double>, VectorObj<double>>> gradientDescent;
 
     void SetUp() override {
-        gradientDescent = std::make_unique<GradientDescent<double>>(P, A, b, 100);
+        gradientDescent = std::make_unique<GradientDescent<double, DenseObj<double>, VectorObj<double>>>(P, A, b, 100);
     }
 };
 
@@ -57,13 +57,13 @@ TEST_F(GradientDescentTest, Update) {
 class StaticIterMethodTest : public ::testing::Test {
 protected:
     int size_ = 100;
-    MatrixObj<double> A = CreateIdentityMatrix<double>(size_);
+    DenseObj<double> A = CreateIdentityMatrix<double>(size_);
     VectorObj<double> b = CreateVector<double>(size_, 1.0);
     VectorObj<double> x = CreateVector<double>(size_, 0.0);
-    std::unique_ptr<StaticIterMethod<double>> staticIterMethod;
+    std::unique_ptr<StaticIterMethod<double, DenseObj<double>, VectorObj<double>>> staticIterMethod;
 
     void SetUp() override {
-        staticIterMethod = std::make_unique<StaticIterMethod<double>>(A, A, b, 100);
+        staticIterMethod = std::make_unique<StaticIterMethod<double, DenseObj<double>, VectorObj<double>>>(A, A, b, 100);
     }
 };
 
@@ -74,7 +74,7 @@ TEST_F(StaticIterMethodTest, Constructor) {
 
 // Test the Substitution method of StaticIterMethod.
 TEST_F(StaticIterMethodTest, Substitution) {
-    MatrixObj<double> L = CreateIdentityMatrix<double>(size_);
+    DenseObj<double> L = CreateIdentityMatrix<double>(size_);
     VectorObj<double> result = staticIterMethod->Substitution(b, L, true);
     EXPECT_NEAR((result - b).L2norm(), 0.0, 1e-8);  // L is identity, so result should be b
 }
