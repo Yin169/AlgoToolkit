@@ -28,6 +28,7 @@ public:
         for (int iter = 0; iter < maxIter && residualNorm > tol; ++iter) {
             VectorType Ar = const_cast<SparseMatrixType&>(A) * r;
             TNum alpha = (r * r) / (r * Ar);
+            // std::cout << (r * Ar) << std::endl;
             x = x + r * alpha;
             r = r - Ar * alpha;
 

@@ -33,6 +33,7 @@ protected:
     }
 
     SparseMatrixCSC<double> matrix;
+    SparseMatrixCSC<double> P;
     VectorObj<double> rhs;
     VectorObj<double> expected_solution;
 };
