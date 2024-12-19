@@ -204,8 +204,8 @@ CMAKE_STRIP:FILEPATH=/Library/Developer/CommandLineTools/usr/bin/strip
 //Path to a program.
 CMAKE_TAPI:FILEPATH=/Library/Developer/CommandLineTools/usr/bin/tapi
 
-//No help, variable specified on the command line.
-CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=Release/generators/conan_toolchain.cmake
+//The CMake toolchain file
+CMAKE_TOOLCHAIN_FILE:FILEPATH=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators/conan_toolchain.cmake
 
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
@@ -224,6 +224,9 @@ FASTSolver_SOURCE_DIR:STATIC=/Users/yincheangng/worksapce/Github/MyAlgorithmicTo
 
 //The directory containing a CMake configuration file for GTest.
 GTest_DIR:PATH=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators
+
+//The directory containing a CMake configuration file for OpenBLAS.
+OpenBLAS_DIR:PATH=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators
 
 //The directory containing a CMake configuration file for benchmark.
 benchmark_DIR:PATH=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/generators
