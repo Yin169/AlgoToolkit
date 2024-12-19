@@ -153,6 +153,19 @@ basic_test/fast:
 .PHONY : basic_test/fast
 
 #=============================================================================
+# Target rules for targets named debuglogger
+
+# Build rule for target.
+debuglogger: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 debuglogger
+.PHONY : debuglogger
+
+# fast build rule for target.
+debuglogger/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/debuglogger.dir/build.make CMakeFiles/debuglogger.dir/build
+.PHONY : debuglogger/fast
+
+#=============================================================================
 # Target rules for targets named itersolver_test
 
 # Build rule for target.
@@ -374,6 +387,30 @@ main/basic_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/basic_test.dir/build.make CMakeFiles/basic_test.dir/main/basic_test.cpp.s
 .PHONY : main/basic_test.cpp.s
 
+main/debuglogger.o: main/debuglogger.cpp.o
+.PHONY : main/debuglogger.o
+
+# target to build an object file
+main/debuglogger.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/debuglogger.dir/build.make CMakeFiles/debuglogger.dir/main/debuglogger.cpp.o
+.PHONY : main/debuglogger.cpp.o
+
+main/debuglogger.i: main/debuglogger.cpp.i
+.PHONY : main/debuglogger.i
+
+# target to preprocess a source file
+main/debuglogger.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/debuglogger.dir/build.make CMakeFiles/debuglogger.dir/main/debuglogger.cpp.i
+.PHONY : main/debuglogger.cpp.i
+
+main/debuglogger.s: main/debuglogger.cpp.s
+.PHONY : main/debuglogger.s
+
+# target to generate assembly for a file
+main/debuglogger.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/debuglogger.dir/build.make CMakeFiles/debuglogger.dir/main/debuglogger.cpp.s
+.PHONY : main/debuglogger.cpp.s
+
 main/itersolver_test.o: main/itersolver_test.cpp.o
 .PHONY : main/itersolver_test.o
 
@@ -437,6 +474,7 @@ help:
 	@echo "... MultiGrid_test"
 	@echo "... SparseMatrixCSCTest"
 	@echo "... basic_test"
+	@echo "... debuglogger"
 	@echo "... itersolver_test"
 	@echo "... matrix_obj_test"
 	@echo "... main/ConjugateGradient_test.o"
@@ -457,6 +495,9 @@ help:
 	@echo "... main/basic_test.o"
 	@echo "... main/basic_test.i"
 	@echo "... main/basic_test.s"
+	@echo "... main/debuglogger.o"
+	@echo "... main/debuglogger.i"
+	@echo "... main/debuglogger.s"
 	@echo "... main/itersolver_test.o"
 	@echo "... main/itersolver_test.i"
 	@echo "... main/itersolver_test.s"

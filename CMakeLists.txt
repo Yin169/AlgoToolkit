@@ -26,6 +26,9 @@ target_link_libraries(matrix_obj_test PRIVATE GTest::gtest GTest::gmock OpenBLAS
 # 添加可执行文件：basic_test
 add_executable(basic_test main/basic_test.cpp)
 target_link_libraries(basic_test PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
+
+add_executable(debuglogger main/debuglogger.cpp)
+target_link_libraries(debuglogger PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
 #
 add_executable(itersolver_test main/itersolver_test.cpp)
 target_link_libraries(itersolver_test PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
@@ -53,6 +56,7 @@ enable_testing()
 add_test(NAME matrix_obj_test COMMAND matrix_obj_test)
 add_test(NAME SparseMatrixCSCTest COMMAND SparseMatrixCSCTest)
 add_test(NAME basic_test COMMAND basic_test)
+add_test(NAME debuglogger COMMAND debuglogger)
 add_test(NAME itersolver_test COMMAND itersolver_test)
 add_test(NAME LU_test COMMAND LU_test)
 add_test(NAME KrylovSubspace_test COMMAND KrylovSubspace_test)
