@@ -1,7 +1,7 @@
 # FASTSolver: A High-Performance Numerical Solution Framework
 
 ## Author(s)
-NG YIN CHEASNG
+NG YIN CHEANG
 
 ## Description:
 
