@@ -2,6 +2,8 @@
 
 ## Author(s)
 `NG YIN CHEANG`
+`ChatGPT`
+`KIMI`
 
 ## Description:
 
