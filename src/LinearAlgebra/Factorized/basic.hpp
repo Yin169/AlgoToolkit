@@ -113,6 +113,29 @@ namespace basic {
         }
     }
 
+    // Perform forward or backward substitution
+    template <typename TNum, typename MatrixType>
+    VectorObj<TNum> Substitution(const VectorObj<TNum>& b, const MatrixType& L, bool forward) {
+        const int n = b.size();
+        VectorObj<TNum> x(n);
+
+        for (int i = forward ? 0 : n - 1; forward ? i < n : i >= 0; forward ? ++i : --i) {
+            TNum sum = TNum(0);
+
+            for (int j = forward ? 0 : n - 1; forward ? j < i : j > i; forward ? ++j : --j) {
+                sum += L(i, j) * x[j]; // Using more readable row-major accessor
+            }
+
+            if (L(i, i) == static_cast<TNum>(0)) {
+                throw std::runtime_error("Division by zero during substitution.");
+            }
+
+            x[i] = (b[i] - sum) / L(i, i);
+        }
+
+        return x;
+    }
+
 } // namespace basic
 
 #endif // BASIC_HPP
