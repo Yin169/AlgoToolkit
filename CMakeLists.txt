@@ -4,7 +4,7 @@ project(FASTSolver)
 # 设置C++标准
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(OpenBLAS_DIR "build/Release/generators")
+# set(OpenBLAS_DIR "build/Release/generators")
 
 # 添加头文件搜索路径
 include_directories(src)
@@ -48,8 +48,8 @@ target_link_libraries(SparseMatrixCSCTest PRIVATE GTest::gtest GTest::gmock Open
 add_executable(MultiGrid_test main/MultiGrid_test.cpp)
 target_link_libraries(MultiGrid_test PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
 
-# add_library(FASTSolver MODULE python/pybind.cpp)
-# target_link_libraries(FASTSolver PRIVATE pybind11::module)
+# add_library(pybind MODULE python/pybind.cpp)
+# target_link_libraries(pybind PRIVATE pybind11::module)
 
 # 添加测试
 enable_testing()

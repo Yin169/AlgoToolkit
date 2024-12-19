@@ -1,10 +1,10 @@
-Start testing: Dec 19 10:51 +08
+Start testing: Dec 19 10:55 +08
 ----------------------------------------------------------
 1/9 Testing: matrix_obj_test
 1/9 Test: matrix_obj_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/matrix_obj_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"matrix_obj_test" start time: Dec 19 10:51 +08
+"matrix_obj_test" start time: Dec 19 10:55 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 10 tests from 1 test suite.
@@ -36,10 +36,10 @@ Output:
 [==========] 10 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 10 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.17 sec
 ----------------------------------------------------------
 Test Passed.
-"matrix_obj_test" end time: Dec 19 10:51 +08
+"matrix_obj_test" end time: Dec 19 10:55 +08
 "matrix_obj_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -47,7 +47,7 @@ Test Passed.
 2/9 Test: SparseMatrixCSCTest
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/SparseMatrixCSCTest"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"SparseMatrixCSCTest" start time: Dec 19 10:51 +08
+"SparseMatrixCSCTest" start time: Dec 19 10:55 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 7 tests from 1 test suite.
@@ -73,10 +73,10 @@ Output:
 [==========] 7 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 7 tests.
 <end of output>
-Test time =   0.41 sec
+Test time =   0.13 sec
 ----------------------------------------------------------
 Test Passed.
-"SparseMatrixCSCTest" end time: Dec 19 10:51 +08
+"SparseMatrixCSCTest" end time: Dec 19 10:55 +08
 "SparseMatrixCSCTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -84,7 +84,7 @@ Test Passed.
 3/9 Test: basic_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/basic_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"basic_test" start time: Dec 19 10:51 +08
+"basic_test" start time: Dec 19 10:55 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 8 tests from 1 test suite.
@@ -112,10 +112,10 @@ Output:
 [==========] 8 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 8 tests.
 <end of output>
-Test time =   0.01 sec
+Test time =   0.13 sec
 ----------------------------------------------------------
 Test Passed.
-"basic_test" end time: Dec 19 10:51 +08
+"basic_test" end time: Dec 19 10:55 +08
 "basic_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -123,7 +123,7 @@ Test Passed.
 4/9 Test: debuglogger
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/debuglogger"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"debuglogger" start time: Dec 19 10:51 +08
+"debuglogger" start time: Dec 19 10:55 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 1 test from 1 test suite.
@@ -153,10 +153,10 @@ Iteration 3:
 [==========] 1 test from 1 test suite ran. (0 ms total)
 [  PASSED  ] 1 test.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.13 sec
 ----------------------------------------------------------
 Test Passed.
-"debuglogger" end time: Dec 19 10:51 +08
+"debuglogger" end time: Dec 19 10:55 +08
 "debuglogger" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -164,7 +164,7 @@ Test Passed.
 5/9 Test: itersolver_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/itersolver_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"itersolver_test" start time: Dec 19 10:51 +08
+"itersolver_test" start time: Dec 19 10:55 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 3 tests from 2 test suites.
@@ -185,10 +185,10 @@ Output:
 [==========] 3 tests from 2 test suites ran. (0 ms total)
 [  PASSED  ] 3 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.13 sec
 ----------------------------------------------------------
 Test Passed.
-"itersolver_test" end time: Dec 19 10:51 +08
+"itersolver_test" end time: Dec 19 10:55 +08
 "itersolver_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -196,7 +196,7 @@ Test Passed.
 6/9 Test: LU_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/LU_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"LU_test" start time: Dec 19 10:51 +08
+"LU_test" start time: Dec 19 10:55 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 1 test from 1 test suite.
@@ -210,10 +210,10 @@ Output:
 [==========] 1 test from 1 test suite ran. (0 ms total)
 [  PASSED  ] 1 test.
 <end of output>
-Test time =   0.27 sec
+Test time =   0.13 sec
 ----------------------------------------------------------
 Test Passed.
-"LU_test" end time: Dec 19 10:51 +08
+"LU_test" end time: Dec 19 10:55 +08
 "LU_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -221,7 +221,7 @@ Test Passed.
 7/9 Test: KrylovSubspace_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/KrylovSubspace_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"KrylovSubspace_test" start time: Dec 19 10:51 +08
+"KrylovSubspace_test" start time: Dec 19 10:55 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 4 tests from 1 test suite.
@@ -245,10 +245,10 @@ Breakdown: Norm below tolerance at iteration 4
 [==========] 4 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 4 tests.
 <end of output>
-Test time =   0.30 sec
+Test time =   0.13 sec
 ----------------------------------------------------------
 Test Passed.
-"KrylovSubspace_test" end time: Dec 19 10:51 +08
+"KrylovSubspace_test" end time: Dec 19 10:55 +08
 "KrylovSubspace_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -256,7 +256,7 @@ Test Passed.
 8/9 Test: ConjugateGradient_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/ConjugateGradient_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"ConjugateGradient_test" start time: Dec 19 10:51 +08
+"ConjugateGradient_test" start time: Dec 19 10:55 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 3 tests from 1 test suite.
@@ -294,10 +294,10 @@ Iteration 0:
 [==========] 3 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 3 tests.
 <end of output>
-Test time =   0.26 sec
+Test time =   0.13 sec
 ----------------------------------------------------------
 Test Passed.
-"ConjugateGradient_test" end time: Dec 19 10:51 +08
+"ConjugateGradient_test" end time: Dec 19 10:55 +08
 "ConjugateGradient_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -305,7 +305,7 @@ Test Passed.
 9/9 Test: MultiGrid_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/MultiGrid_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"MultiGrid_test" start time: Dec 19 10:51 +08
+"MultiGrid_test" start time: Dec 19 10:55 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 3 tests from 1 test suite.
@@ -323,11 +323,11 @@ Output:
 [==========] 3 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 3 tests.
 <end of output>
-Test time =   0.27 sec
+Test time =   0.13 sec
 ----------------------------------------------------------
 Test Passed.
-"MultiGrid_test" end time: Dec 19 10:51 +08
+"MultiGrid_test" end time: Dec 19 10:55 +08
 "MultiGrid_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Dec 19 10:51 +08
+End testing: Dec 19 10:55 +08
