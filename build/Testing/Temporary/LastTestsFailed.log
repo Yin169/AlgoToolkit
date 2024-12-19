@@ -1,1 +1,5 @@
+2:SparseMatrixCSCTest
 6:LU_test
+7:KrylovSubspace_test
+8:ConjugateGradient_test
+9:MultiGrid_test

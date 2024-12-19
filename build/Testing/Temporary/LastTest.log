@@ -1,10 +1,10 @@
-Start testing: Dec 19 10:44 +08
+Start testing: Dec 19 10:51 +08
 ----------------------------------------------------------
 1/9 Testing: matrix_obj_test
 1/9 Test: matrix_obj_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/matrix_obj_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"matrix_obj_test" start time: Dec 19 10:44 +08
+"matrix_obj_test" start time: Dec 19 10:51 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 10 tests from 1 test suite.
@@ -39,7 +39,7 @@ Output:
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"matrix_obj_test" end time: Dec 19 10:44 +08
+"matrix_obj_test" end time: Dec 19 10:51 +08
 "matrix_obj_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -47,7 +47,7 @@ Test Passed.
 2/9 Test: SparseMatrixCSCTest
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/SparseMatrixCSCTest"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"SparseMatrixCSCTest" start time: Dec 19 10:44 +08
+"SparseMatrixCSCTest" start time: Dec 19 10:51 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 7 tests from 1 test suite.
@@ -73,10 +73,10 @@ Output:
 [==========] 7 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 7 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.41 sec
 ----------------------------------------------------------
 Test Passed.
-"SparseMatrixCSCTest" end time: Dec 19 10:44 +08
+"SparseMatrixCSCTest" end time: Dec 19 10:51 +08
 "SparseMatrixCSCTest" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -84,7 +84,7 @@ Test Passed.
 3/9 Test: basic_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/basic_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"basic_test" start time: Dec 19 10:44 +08
+"basic_test" start time: Dec 19 10:51 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 8 tests from 1 test suite.
@@ -112,10 +112,10 @@ Output:
 [==========] 8 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 8 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.01 sec
 ----------------------------------------------------------
 Test Passed.
-"basic_test" end time: Dec 19 10:44 +08
+"basic_test" end time: Dec 19 10:51 +08
 "basic_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -123,7 +123,7 @@ Test Passed.
 4/9 Test: debuglogger
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/debuglogger"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"debuglogger" start time: Dec 19 10:44 +08
+"debuglogger" start time: Dec 19 10:51 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 1 test from 1 test suite.
@@ -156,7 +156,7 @@ Iteration 3:
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"debuglogger" end time: Dec 19 10:44 +08
+"debuglogger" end time: Dec 19 10:51 +08
 "debuglogger" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -164,7 +164,7 @@ Test Passed.
 5/9 Test: itersolver_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/itersolver_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"itersolver_test" start time: Dec 19 10:44 +08
+"itersolver_test" start time: Dec 19 10:51 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 3 tests from 2 test suites.
@@ -188,7 +188,7 @@ Output:
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"itersolver_test" end time: Dec 19 10:44 +08
+"itersolver_test" end time: Dec 19 10:51 +08
 "itersolver_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -196,72 +196,24 @@ Test Passed.
 6/9 Test: LU_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/LU_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"LU_test" start time: Dec 19 10:44 +08
+"LU_test" start time: Dec 19 10:51 +08
 Output:
 ----------------------------------------------------------
-[==========] Running 2 tests from 1 test suite.
+[==========] Running 1 test from 1 test suite.
 [----------] Global test environment set-up.
-[----------] 2 tests from LUDecomposition
-[ RUN      ] LUDecomposition.NonSquareMatrix
-[       OK ] LUDecomposition.NonSquareMatrix (0 ms)
+[----------] 1 test from LUDecomposition
 [ RUN      ] LUDecomposition.SquareMatrix
-/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:69: Failure
-The difference between PA(i, j) and L_times_U(i, j) is 0.96428571428571419, which exceeds 1e-8, where
-PA(i, j) evaluates to 0.75,
-L_times_U(i, j) evaluates to 1.7142857142857142, and
-1e-8 evaluates to 1e-08.
-Mismatch at (1, 0)
-
-/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:69: Failure
-The difference between PA(i, j) and L_times_U(i, j) is 1.2857142857142856, which exceeds 1e-8, where
-PA(i, j) evaluates to 1.75,
-L_times_U(i, j) evaluates to 3.0357142857142856, and
-1e-8 evaluates to 1e-08.
-Mismatch at (1, 1)
-
-/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:69: Failure
-The difference between PA(i, j) and L_times_U(i, j) is 0.8571428571428571, which exceeds 1e-8, where
-PA(i, j) evaluates to -0.5,
-L_times_U(i, j) evaluates to 0.3571428571428571, and
-1e-8 evaluates to 1e-08.
-Mismatch at (1, 2)
-
-/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:69: Failure
-The difference between PA(i, j) and L_times_U(i, j) is 0.19999999999999996, which exceeds 1e-8, where
-PA(i, j) evaluates to 0.5,
-L_times_U(i, j) evaluates to 0.69999999999999996, and
-1e-8 evaluates to 1e-08.
-Mismatch at (2, 0)
-
-/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:69: Failure
-The difference between PA(i, j) and L_times_U(i, j) is 0.63571428571428568, which exceeds 1e-8, where
-PA(i, j) evaluates to -0.2857142857142857,
-L_times_U(i, j) evaluates to 0.34999999999999992, and
-1e-8 evaluates to 1e-08.
-Mismatch at (2, 1)
-
-/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/main/LU_test.cpp:69: Failure
-The difference between PA(i, j) and L_times_U(i, j) is 0.39999999999999991, which exceeds 1e-8, where
-PA(i, j) evaluates to 2.8571428571428572,
-L_times_U(i, j) evaluates to 3.2571428571428571, and
-1e-8 evaluates to 1e-08.
-Mismatch at (2, 2)
-
-[  FAILED  ] LUDecomposition.SquareMatrix (0 ms)
-[----------] 2 tests from LUDecomposition (0 ms total)
+[       OK ] LUDecomposition.SquareMatrix (0 ms)
+[----------] 1 test from LUDecomposition (0 ms total)
 
 [----------] Global test environment tear-down
-[==========] 2 tests from 1 test suite ran. (0 ms total)
+[==========] 1 test from 1 test suite ran. (0 ms total)
 [  PASSED  ] 1 test.
-[  FAILED  ] 1 test, listed below:
-[  FAILED  ] LUDecomposition.SquareMatrix
-
- 1 FAILED TEST
 <end of output>
-Test time =   0.00 sec
+Test time =   0.27 sec
 ----------------------------------------------------------
-Test Failed.
-"LU_test" end time: Dec 19 10:44 +08
+Test Passed.
+"LU_test" end time: Dec 19 10:51 +08
 "LU_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -269,7 +221,7 @@ Test Failed.
 7/9 Test: KrylovSubspace_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/KrylovSubspace_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"KrylovSubspace_test" start time: Dec 19 10:44 +08
+"KrylovSubspace_test" start time: Dec 19 10:51 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 4 tests from 1 test suite.
@@ -293,10 +245,10 @@ Breakdown: Norm below tolerance at iteration 4
 [==========] 4 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 4 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.30 sec
 ----------------------------------------------------------
 Test Passed.
-"KrylovSubspace_test" end time: Dec 19 10:44 +08
+"KrylovSubspace_test" end time: Dec 19 10:51 +08
 "KrylovSubspace_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -304,7 +256,7 @@ Test Passed.
 8/9 Test: ConjugateGradient_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/ConjugateGradient_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"ConjugateGradient_test" start time: Dec 19 10:44 +08
+"ConjugateGradient_test" start time: Dec 19 10:51 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 3 tests from 1 test suite.
@@ -342,10 +294,10 @@ Iteration 0:
 [==========] 3 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 3 tests.
 <end of output>
-Test time =   0.00 sec
+Test time =   0.26 sec
 ----------------------------------------------------------
 Test Passed.
-"ConjugateGradient_test" end time: Dec 19 10:44 +08
+"ConjugateGradient_test" end time: Dec 19 10:51 +08
 "ConjugateGradient_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -353,7 +305,7 @@ Test Passed.
 9/9 Test: MultiGrid_test
 Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/MultiGrid_test"
 Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
-"MultiGrid_test" start time: Dec 19 10:44 +08
+"MultiGrid_test" start time: Dec 19 10:51 +08
 Output:
 ----------------------------------------------------------
 [==========] Running 3 tests from 1 test suite.
@@ -371,11 +323,11 @@ Output:
 [==========] 3 tests from 1 test suite ran. (0 ms total)
 [  PASSED  ] 3 tests.
 <end of output>
-Test time =   0.34 sec
+Test time =   0.27 sec
 ----------------------------------------------------------
 Test Passed.
-"MultiGrid_test" end time: Dec 19 10:44 +08
+"MultiGrid_test" end time: Dec 19 10:51 +08
 "MultiGrid_test" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Dec 19 10:44 +08
+End testing: Dec 19 10:51 +08
