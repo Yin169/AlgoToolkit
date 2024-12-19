@@ -1,7 +1,7 @@
 # FASTSolver: A High-Performance Numerical Solution Framework
 
 ## Author(s)
-NG YIN CHEANG
+`NG YIN CHEANG`
 
 ## Description:
 
@@ -10,8 +10,11 @@ NG YIN CHEANG
 ## Key Features:
 
 **Efficient Solvers**: FASTSolver implements a variety of numerical solvers. These solvers are optimized for performance, ensuring fast computations for complex problems.
+
 **Scalability**: The framework is designed to scale effectively on multi-core and multi-processor systems, allowing you to harness the power of parallel computing for even larger-scale problems.
+
 **User-Friendly Interface**: FASTSolver provides a user-friendly interface that simplifies problem setup and solution extraction. This makes it accessible to users with varying levels of programming experience.
+
 **Customizable**: The framework allows for customization through. This flexibility enables users to tailor FASTSolver to their specific needs.
 
 ## Requirements
@@ -27,8 +30,8 @@ NG YIN CHEANG
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/numerical_solver.git
-cd numerical_solver
+git clone https://github.com/Yin169/FASTSolver.git
+cd FASTSolver
 ```
 
 ### 2. Build the Module
@@ -50,10 +53,10 @@ make
 
 ## Usage
 
-Here is an example of how to use the `numerical_solver` module in Python:
+Here is an example of how to use the `FASTSolver` module in Python:
 
 ```python
-import numerical_solver as ns
+import FASTSolver as ns
 
 # Example: LU decomposition
 A = [[4, 1], [1, 3]]
