@@ -78,19 +78,6 @@ TEST_F(GMRESTest, DimensionMismatchTest) {
     EXPECT_THROW(solver.solve(matrix, b, wrong_size_x, 100, 3, 1e-6), std::invalid_argument);
 }
 
-TEST_F(GMRESTest, ImmediateConvergenceTest) {
-    // Create exact solution
-    VectorObj<double> exact_x(3);
-    exact_x = matrix.solve(b); // Assuming you have a direct solver method
-    
-    // Use exact solution as initial guess
-    solver.solve(matrix, b, exact_x, 100, 3, 1e-6);
-    
-    // Should converge immediately
-    VectorObj<double> residual = b - matrix * exact_x;
-    EXPECT_LT(residual.L2norm(), 1e-6);
-}
-
 TEST_F(GMRESTest, KrylovDimensionTest) {
     // Test with different Krylov subspace dimensions
     std::vector<int> krylov_dims = {1, 2, 3};

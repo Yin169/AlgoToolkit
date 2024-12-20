@@ -30,7 +30,9 @@ public:
 
         VectorType r = b - const_cast<MatrixType&>(A) * x;
         double beta = r.L2norm();
+        std::cout << "Initial residual norm: " << beta << std::endl;
         if (beta < tol) {
+            std::cout << "Initial guess is good enough." << std::endl;
             return; // Initial guess is good enough
         }
 
@@ -46,13 +48,17 @@ public:
 
             for (int j = 0; j < KrylovDim; ++j) {
                 VectorType w = const_cast<MatrixType&>(A) * V[j];
+                std::cout << "Iteration " << iter + j << ", w: " << w.L2norm() << std::endl;
 
                 for (int i = 0; i <= j; ++i) {
-                    setMatrixValue(H, i, j, V[i] * w);                 
+                    setMatrixValue(H, i, j, V[i] * w);
                     w = w - V[i] * H(i, j);
+                    std::cout << "H(" << i << ", " << j << "): " << H(i, j) << ", w: " << w.L2norm() << std::endl;
                 }
-                setMatrixValue(H, j+1, j, w.L2norm());
+                setMatrixValue(H, j + 1, j, w.L2norm());
+                std::cout << "H(" << j + 1 << ", " << j << "): " << H(j + 1, j) << std::endl;
                 if (H(j + 1, j) < tol) {
+                    std::cout << "Happy breakdown at iteration " << iter + j << std::endl;
                     break; // Happy breakdown
                 }
                 V[j + 1] = w / H(j + 1, j);
@@ -66,20 +72,25 @@ public:
                 applyGivensRotation(e1[j], e1[j + 1], cs[j], sn[j]);
 
                 beta = std::abs(e1[j + 1]);
+                std::cout << "Residual norm at inner iteration " << j << ": " << beta << std::endl;
                 if (beta < tol) {
                     updateSolution(x, H, V, e1, j + 1);
+                    std::cout << "Converged at iteration " << iter + j << std::endl;
                     return; // Converged
                 }
             }
             updateSolution(x, H, V, e1, KrylovDim);
             r = b - const_cast<MatrixType&>(A) * x;
             beta = r.L2norm();
+            std::cout << "Residual norm after restart: " << beta << " " << x.L2norm() << std::endl;
             if (beta < tol) {
+                std::cout << "Converged after restart at iteration " << iter + KrylovDim << std::endl;
                 return; // Converged
             }
             e1 = VectorType(KrylovDim + 1, TNum(0));
             e1[0] = beta;
         }
+        std::cout << "Reached maximum iterations without convergence." << std::endl;
     }
 
 private:

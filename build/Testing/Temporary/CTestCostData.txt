@@ -1,11 +1,11 @@
-matrix_obj_test 7 0.000272333
-basic_test 7 0.000245839
-debuglogger 7 0.000224929
-itersolver_test 7 0.000208214
-LU_test 7 0.000234994
-KrylovSubspace_test 7 0.000237202
-ConjugateGradient_test 7 0.000431738
-SparseMatrixCSCTest 7 0.000460077
+matrix_obj_test 4 0.0004815
+basic_test 4 0.000441167
+debuglogger 4 0.000415521
+itersolver_test 4 0.000369958
+LU_test 4 0.000401937
+KrylovSubspace_test 4 0.000407677
+ConjugateGradient_test 4 0.000365291
+SparseMatrixCSCTest 4 0.000415927
 GMRES_test 0 0
 ---
 GMRES_test
