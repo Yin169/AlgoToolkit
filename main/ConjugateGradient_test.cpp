@@ -64,7 +64,7 @@ TEST_F(ConjugateGradientTest, SolvesSPDMatrix) {
     VectorObj<double> solution(rhs.size(), 0.0);
     cg_solver.solve(solution);
 
-    for (size_t i = 0; i < solution.size(); ++i) {
+    for (int i = 0; i < solution.size(); ++i) {
         EXPECT_NEAR(solution[i], expected_solution[i], 1e-5) << "Mismatch at index " << i;
     }
 }

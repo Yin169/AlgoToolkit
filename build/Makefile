@@ -231,17 +231,17 @@ SparseMatrixCSCTest/fast:
 .PHONY : SparseMatrixCSCTest/fast
 
 #=============================================================================
-# Target rules for targets named MultiGrid_test
+# Target rules for targets named GMRES_test
 
 # Build rule for target.
-MultiGrid_test: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 MultiGrid_test
-.PHONY : MultiGrid_test
+GMRES_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 GMRES_test
+.PHONY : GMRES_test
 
 # fast build rule for target.
-MultiGrid_test/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiGrid_test.dir/build.make CMakeFiles/MultiGrid_test.dir/build
-.PHONY : MultiGrid_test/fast
+GMRES_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GMRES_test.dir/build.make CMakeFiles/GMRES_test.dir/build
+.PHONY : GMRES_test/fast
 
 main/ConjugateGradient_test.o: main/ConjugateGradient_test.cpp.o
 .PHONY : main/ConjugateGradient_test.o
@@ -266,6 +266,30 @@ main/ConjugateGradient_test.s: main/ConjugateGradient_test.cpp.s
 main/ConjugateGradient_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ConjugateGradient_test.dir/build.make CMakeFiles/ConjugateGradient_test.dir/main/ConjugateGradient_test.cpp.s
 .PHONY : main/ConjugateGradient_test.cpp.s
+
+main/GMRES_test.o: main/GMRES_test.cpp.o
+.PHONY : main/GMRES_test.o
+
+# target to build an object file
+main/GMRES_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GMRES_test.dir/build.make CMakeFiles/GMRES_test.dir/main/GMRES_test.cpp.o
+.PHONY : main/GMRES_test.cpp.o
+
+main/GMRES_test.i: main/GMRES_test.cpp.i
+.PHONY : main/GMRES_test.i
+
+# target to preprocess a source file
+main/GMRES_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GMRES_test.dir/build.make CMakeFiles/GMRES_test.dir/main/GMRES_test.cpp.i
+.PHONY : main/GMRES_test.cpp.i
+
+main/GMRES_test.s: main/GMRES_test.cpp.s
+.PHONY : main/GMRES_test.s
+
+# target to generate assembly for a file
+main/GMRES_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GMRES_test.dir/build.make CMakeFiles/GMRES_test.dir/main/GMRES_test.cpp.s
+.PHONY : main/GMRES_test.cpp.s
 
 main/KrylovSubspace_test.o: main/KrylovSubspace_test.cpp.o
 .PHONY : main/KrylovSubspace_test.o
@@ -314,30 +338,6 @@ main/LU_test.s: main/LU_test.cpp.s
 main/LU_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/LU_test.dir/build.make CMakeFiles/LU_test.dir/main/LU_test.cpp.s
 .PHONY : main/LU_test.cpp.s
-
-main/MultiGrid_test.o: main/MultiGrid_test.cpp.o
-.PHONY : main/MultiGrid_test.o
-
-# target to build an object file
-main/MultiGrid_test.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiGrid_test.dir/build.make CMakeFiles/MultiGrid_test.dir/main/MultiGrid_test.cpp.o
-.PHONY : main/MultiGrid_test.cpp.o
-
-main/MultiGrid_test.i: main/MultiGrid_test.cpp.i
-.PHONY : main/MultiGrid_test.i
-
-# target to preprocess a source file
-main/MultiGrid_test.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiGrid_test.dir/build.make CMakeFiles/MultiGrid_test.dir/main/MultiGrid_test.cpp.i
-.PHONY : main/MultiGrid_test.cpp.i
-
-main/MultiGrid_test.s: main/MultiGrid_test.cpp.s
-.PHONY : main/MultiGrid_test.s
-
-# target to generate assembly for a file
-main/MultiGrid_test.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/MultiGrid_test.dir/build.make CMakeFiles/MultiGrid_test.dir/main/MultiGrid_test.cpp.s
-.PHONY : main/MultiGrid_test.cpp.s
 
 main/SparseMatrixCSCTest.o: main/SparseMatrixCSCTest.cpp.o
 .PHONY : main/SparseMatrixCSCTest.o
@@ -469,9 +469,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... ConjugateGradient_test"
+	@echo "... GMRES_test"
 	@echo "... KrylovSubspace_test"
 	@echo "... LU_test"
-	@echo "... MultiGrid_test"
 	@echo "... SparseMatrixCSCTest"
 	@echo "... basic_test"
 	@echo "... debuglogger"
@@ -480,15 +480,15 @@ help:
 	@echo "... main/ConjugateGradient_test.o"
 	@echo "... main/ConjugateGradient_test.i"
 	@echo "... main/ConjugateGradient_test.s"
+	@echo "... main/GMRES_test.o"
+	@echo "... main/GMRES_test.i"
+	@echo "... main/GMRES_test.s"
 	@echo "... main/KrylovSubspace_test.o"
 	@echo "... main/KrylovSubspace_test.i"
 	@echo "... main/KrylovSubspace_test.s"
 	@echo "... main/LU_test.o"
 	@echo "... main/LU_test.i"
 	@echo "... main/LU_test.s"
-	@echo "... main/MultiGrid_test.o"
-	@echo "... main/MultiGrid_test.i"
-	@echo "... main/MultiGrid_test.s"
 	@echo "... main/SparseMatrixCSCTest.o"
 	@echo "... main/SparseMatrixCSCTest.i"
 	@echo "... main/SparseMatrixCSCTest.s"

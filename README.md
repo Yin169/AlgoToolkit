@@ -18,7 +18,7 @@
 
 **User-Friendly Interface**: FASTSolver provides a user-friendly interface that simplifies problem setup and solution extraction. This makes it accessible to users with varying levels of programming experience.
 
-**Customizable**: The framework allows for customization through. This flexibility enables users to tailor FASTSolver to their specific needs.
+**Customizable**: The framework allows for customization through user-defined modules and plugins. This flexibility enables users to tailor FASTSolver to their specific needs.
 
 ## Requirements
 
@@ -69,6 +69,7 @@ print("LU Decomposition Result:", A, "Pivot:", P)
 
 # Example: Solve using Conjugate Gradient
 solver = ns.ConjugateGrad()
+x = [0, 0]  # Initialize x with appropriate values
 solver.solve(x)
 ```
 

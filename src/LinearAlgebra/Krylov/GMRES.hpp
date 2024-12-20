@@ -3,8 +3,9 @@
 
 #include <vector>
 #include <cmath>
+#include <type_traits>
 #include <stdexcept>
-#include <iostream> // For debugging logs
+#include <iostream>
 #include "SparseObj.hpp"
 #include "VectorObj.hpp"
 #include "KrylovSubspace.hpp"
@@ -12,54 +13,56 @@
 template <typename TNum, typename MatrixType = SparseMatrixCSC<TNum>, typename VectorType = VectorObj<TNum>>
 class GMRES {
 public:
-    // Default constructor
     GMRES() = default;
-
-    // Virtual destructor
     virtual ~GMRES() = default;
 
-    // GMRES solver
-    void solve(const MatrixType& A, const VectorType& b, VectorType& x, int maxIter, int restart, double tol) {
-        int n = b.size();
+    void solve(const MatrixType& A, const VectorType& b, VectorType& x, int maxIter, int KrylovDim, double tol) {
+        const int n = b.size();
+        if (A.getRows() != n || A.getCols() != n) {
+            throw std::invalid_argument("Matrix dimensions must match vector size");
+        }
         if (x.size() != n) {
-            throw std::invalid_argument("Dimension mismatch between x and b.");
+            throw std::invalid_argument("Initial guess vector must match system size");
+        }
+        if (KrylovDim <= 0 || KrylovDim > n) {
+            throw std::invalid_argument("Invalid Krylov subspace dimension");
         }
 
-        VectorType r = b - A * x;
+        VectorType r = b - const_cast<MatrixType&>(A) * x;
         double beta = r.L2norm();
         if (beta < tol) {
             return; // Initial guess is good enough
         }
 
-        std::vector<VectorType> V(restart + 1, VectorType(n));
-        std::vector<std::vector<TNum>> H(restart + 1, std::vector<TNum>(restart, TNum(0)));
-        std::vector<TNum> cs(restart, TNum(0));
-        std::vector<TNum> sn(restart, TNum(0));
-        std::vector<TNum> e1(restart + 1, TNum(0));
+        std::vector<VectorType> V(KrylovDim + 1, VectorType(n));
+        MatrixType H(KrylovDim + 1, KrylovDim);
+        std::vector<TNum> cs(KrylovDim, TNum(0));
+        std::vector<TNum> sn(KrylovDim, TNum(0));
+        VectorType e1(KrylovDim + 1, TNum(0));
         e1[0] = beta;
 
-        for (int iter = 0; iter < maxIter; iter += restart) {
+        for (int iter = 0; iter < maxIter; iter += KrylovDim) {
             V[0] = r / beta;
 
-            for (int j = 0; j < restart; ++j) {
-                VectorType w = A * V[j];
+            for (int j = 0; j < KrylovDim; ++j) {
+                VectorType w = const_cast<MatrixType&>(A) * V[j];
 
                 for (int i = 0; i <= j; ++i) {
-                    H[i][j] = V[i] * w;
-                    w = w - V[i] * H[i][j];
+                    setMatrixValue(H, i, j, V[i] * w);                 
+                    w = w - V[i] * H(i, j);
                 }
-                H[j + 1][j] = w.L2norm();
-                if (H[j + 1][j] < tol) {
+                setMatrixValue(H, j+1, j, w.L2norm());
+                if (H(j + 1, j) < tol) {
                     break; // Happy breakdown
                 }
-                V[j + 1] = w / H[j + 1][j];
+                V[j + 1] = w / H(j + 1, j);
 
                 // Apply Givens rotations
                 for (int i = 0; i < j; ++i) {
-                    applyGivensRotation(H[i][j], H[i + 1][j], cs[i], sn[i]);
+                    applyMatrixGivensRotation(H, i, j, i + 1, j, cs[i], sn[i]);
                 }
-                generateGivensRotation(H[j][j], H[j + 1][j], cs[j], sn[j]);
-                applyGivensRotation(H[j][j], H[j + 1][j], cs[j], sn[j]);
+                generateGivensRotation(H(j, j), H(j + 1, j), cs[j], sn[j]);
+                applyMatrixGivensRotation(H, j, j, j + 1, j, cs[j], sn[j]);
                 applyGivensRotation(e1[j], e1[j + 1], cs[j], sn[j]);
 
                 beta = std::abs(e1[j + 1]);
@@ -68,26 +71,39 @@ public:
                     return; // Converged
                 }
             }
-            updateSolution(x, H, V, e1, restart);
-            r = b - A * x;
+            updateSolution(x, H, V, e1, KrylovDim);
+            r = b - const_cast<MatrixType&>(A) * x;
             beta = r.L2norm();
             if (beta < tol) {
                 return; // Converged
             }
+            e1 = VectorType(KrylovDim + 1, TNum(0));
             e1[0] = beta;
-            std::fill(e1.begin() + 1, e1.end(), TNum(0));
         }
     }
 
 private:
-    // Apply Givens rotation
+    void setMatrixValue(MatrixType& H, int i, int j, TNum value) {
+        if constexpr (std::is_same_v<MatrixType, SparseMatrixCSC<TNum>>) {
+            H.addValue(i, j, value);
+            H.finalize();
+        } else {
+            H(i, j) = value;
+        }
+    }
+
     void applyGivensRotation(TNum& dx, TNum& dy, TNum cs, TNum sn) {
         TNum temp = cs * dx + sn * dy;
         dy = -sn * dx + cs * dy;
         dx = temp;
     }
 
-    // Generate Givens rotation
+    void applyMatrixGivensRotation(MatrixType& H, int i, int j, int ii, int jj, TNum cs, TNum sn) {
+        TNum temp = cs * H(i, j) + sn * H(ii, jj);
+        setMatrixValue(H, ii, jj, -sn * H(i, j) + cs * H(ii, jj));
+        setMatrixValue(H, i, j, temp);
+    }
+
     void generateGivensRotation(TNum dx, TNum dy, TNum& cs, TNum& sn) {
         if (dy == TNum(0)) {
             cs = 1;
@@ -103,15 +119,14 @@ private:
         }
     }
 
-    // Update solution
-    void updateSolution(VectorType& x, const std::vector<std::vector<TNum>>& H, const std::vector<VectorType>& V, const std::vector<TNum>& e1, int k) {
-        std::vector<TNum> y(k, TNum(0));
+    void updateSolution(VectorType& x, const MatrixType& H, const std::vector<VectorType>& V, const VectorType& e1, int k) {
+        VectorType y(k, TNum(0));
         for (int i = k - 1; i >= 0; --i) {
             y[i] = e1[i];
             for (int j = i + 1; j < k; ++j) {
-                y[i] -= H[i][j] * y[j];
+                y[i] = y[i] - H(i, j) * y[j];
             }
-            y[i] /= H[i][i];
+            y[i] = y[i] / H(i, i);
         }
         for (int i = 0; i < k; ++i) {
             x = x + V[i] * y[i];

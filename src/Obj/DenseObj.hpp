@@ -42,7 +42,7 @@ public:
         if (data.size() != m) {
             throw std::invalid_argument("Data size does not match matrix dimensions.");
         }
-        for (size_t i = 0; i < data.size(); ++i){
+        for (int i = 0; i < data.size(); ++i){
             arr.insert(arr.end(), data[i].element(), data[i].element() + n);
         }
     }
@@ -70,13 +70,13 @@ public:
     ~DenseObj() = default;
 
     // Accessors
-    TObj& operator[](size_t index) {
+    TObj& operator[](int index) {
         if ( index < 0 || index >= _n * _m ) {
             throw std::out_of_range("Matrix indices are out of range.");
         }
         return arr[index];
     }
-    const TObj& operator[](size_t index) const {
+    const TObj& operator[](int index) const {
         if ( index < 0 || index >= _n * _m ) {
             throw std::out_of_range("Matrix indices are out of range.");
         }
@@ -84,14 +84,14 @@ public:
     }
 
     TObj& operator()(int row, int col) {
-        if (row >= _n || col >= _m) {
+        if (row < 0 || col < 0 || row >= _n || col >= _m) {
             throw std::out_of_range("Matrix indices are out of range.");
         }
         return arr[row + col * _n];
     }
 
     const TObj& operator()(int row, int col) const {
-        if (row >= _n || col >= _m) {
+        if (row < 0 || col < 0 || row >= _n || col >= _m) {
             throw std::out_of_range("Matrix indices are out of range.");
         }
         return arr[row + col * _n];
@@ -165,8 +165,8 @@ public:
         return result;
     }
 
-    void swapRows(size_t row1, size_t row2){
-        for (size_t j = 0; j < _m; ++j){
+    void swapRows(int row1, int row2){
+        for (int j = 0; j < _m; ++j){
             std::swap((*this)(row1, j), (*this)(row2, j));
         }
     }
