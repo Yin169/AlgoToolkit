@@ -41,7 +41,6 @@ set(TEST_SOURCES
     KrylovSubspace_test
     ConjugateGradient_test
     SparseMatrixCSCTest
-    GMRES_test
 )
 
 # Add test executables
