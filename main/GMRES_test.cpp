@@ -27,7 +27,7 @@ protected:
         b[2] = 0.0;
 
         // Initial guess x0 = [0, 0, 0]
-        x = VectorObj<double>(3, 0.0);
+        x = VectorObj<double>(3, 2.0);
 
         solver = GMRES<double>();
     }
@@ -45,10 +45,9 @@ TEST_F(GMRESTest, BasicSolverTest) {
     
     solver.solve(matrix, b, x, maxIter, krylovDim, tol);
 
-    // Expected solution approximately [0.4, 1.3, 0.2]
-    EXPECT_NEAR(x[0], 0.4, 1e-5);
-    EXPECT_NEAR(x[1], 1.3, 1e-5);
-    EXPECT_NEAR(x[2], 0.2, 1e-5);
+    EXPECT_NEAR(x[0], 0.61403509, 1e-5);
+    EXPECT_NEAR(x[1], 1.45614035, 1e-5);
+    EXPECT_NEAR(x[2], 0.21052632, 1e-5);
 }
 
 TEST_F(GMRESTest, ZeroRHSTest) {

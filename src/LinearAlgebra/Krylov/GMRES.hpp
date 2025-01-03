@@ -37,18 +37,18 @@ public:
         }
 
         std::vector<VectorType> V(KrylovDim + 1, VectorType(n));
-        MatrixType H(KrylovDim + 1, KrylovDim);
+        MatrixType H(KrylovDim + 1, KrylovDim + 1);
         std::vector<TNum> cs(KrylovDim, TNum(0));
         std::vector<TNum> sn(KrylovDim, TNum(0));
         VectorType e1(KrylovDim + 1, TNum(0));
         e1[0] = beta;
 
-        for (int iter = 0; iter < maxIter; iter += KrylovDim) {
+        for (int iter = 0; iter < maxIter; iter ++) {
             V[0] = r / beta;
 
             for (int j = 0; j < KrylovDim; ++j) {
                 VectorType w = const_cast<MatrixType&>(A) * V[j];
-                std::cout << "Iteration " << iter + j << ", w: " << w.L2norm() << std::endl;
+                std::cout << "Iteration " << iter * KrylovDim + j << ", w: " << w.L2norm() << std::endl;
 
                 for (int i = 0; i <= j; ++i) {
                     setMatrixValue(H, i, j, V[i] * w);
@@ -57,15 +57,16 @@ public:
                 }
                 setMatrixValue(H, j + 1, j, w.L2norm());
                 std::cout << "H(" << j + 1 << ", " << j << "): " << H(j + 1, j) << std::endl;
-                if (H(j + 1, j) < tol) {
-                    std::cout << "Happy breakdown at iteration " << iter + j << std::endl;
-                    break; // Happy breakdown
-                }
+                // if (H(j + 1, j) < tol) {
+                //     std::cout << "Happy breakdown at iteration " << iter + j << std::endl;
+                //     break; // Happy breakdown
+                // }
                 V[j + 1] = w / H(j + 1, j);
 
                 // Apply Givens rotations
                 for (int i = 0; i < j; ++i) {
                     applyMatrixGivensRotation(H, i, j, i + 1, j, cs[i], sn[i]);
+                    applyGivensRotation(e1[i], e1[i + 1], cs[i], sn[i]);
                 }
                 generateGivensRotation(H(j, j), H(j + 1, j), cs[j], sn[j]);
                 applyMatrixGivensRotation(H, j, j, j + 1, j, cs[j], sn[j]);
@@ -84,7 +85,7 @@ public:
             beta = r.L2norm();
             std::cout << "Residual norm after restart: " << beta << " " << x.L2norm() << std::endl;
             if (beta < tol) {
-                std::cout << "Converged after restart at iteration " << iter + KrylovDim << std::endl;
+                std::cout << "Converged after restart at iteration " << iter << std::endl;
                 return; // Converged
             }
             e1 = VectorType(KrylovDim + 1, TNum(0));

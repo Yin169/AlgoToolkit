@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="(empty)"
+	BuildStamp="20250103-0435-Experimental"
+	Name="(empty)"
+	Generator="ctest-3.31.2"
+	CompilerName=""
+	CompilerVersion=""
+	OSName="macOS"
+	Hostname="mac"
+	OSRelease="15.2"
+	OSVersion="24C101"
+	OSPlatform="arm64"
+	Is64Bits="1"
+	VendorString="Apple"
+	VendorID="Apple"
+	FamilyID="0"
+	ModelID="0"
+	ModelName="Apple M2"
+	ProcessorCacheSize="131072"
+	NumberOfLogicalCPU="8"
+	NumberOfPhysicalCPU="8"
+	TotalVirtualMemory="2048"
+	TotalPhysicalMemory="8192"
+	LogicalProcessorsPerPhysical="8"
+	ProcessorClockFrequency="0"
+	>
+	<Testing>
+		<StartDateTime>Jan 03 12:35 +08</StartDateTime>
+		<StartTestTime>1735878950</StartTestTime>
+		<TestList>
+			<Test>./GMRES_test</Test>
+		</TestList>
+		<Test Status="failed">
+			<Name>GMRES_test</Name>
+			<Path>.</Path>
+			<FullName>./GMRES_test</FullName>
+			<FullCommandLine>/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/GMRES_test</FullCommandLine>
+			<Results>
+				<NamedMeasurement type="text/string" name="Exit Code">
+					<Value>Failed</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="text/string" name="Exit Value">
+					<Value>1</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="numeric/double" name="Execution Time">
+					<Value>0.277438</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="numeric/double" name="Processors">
+					<Value>1</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="text/string" name="Completion Status">
+					<Value>Completed</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="text/string" name="Command Line">
+					<Value>/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Release/GMRES_test</Value>
+				</NamedMeasurement>
+				<NamedMeasurement type="text/string" name="Environment">
+					<Value>#CTEST_RESOURCE_GROUP_COUNT=</Value>
+				</NamedMeasurement>
+				<Measurement>
+					<Value encoding="base64" compression="gzip">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</Value>
+				</Measurement>
+			</Results>
+		</Test>
+		<EndDateTime>Jan 03 12:35 +08</EndDateTime>
+		<EndTestTime>1735878950</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>
