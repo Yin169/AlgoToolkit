@@ -30,7 +30,7 @@ TEST_F(DenseObjTest, DefaultConstructor) {
     ASSERT_EQ(testMatrix.getRows(), 2);
     ASSERT_EQ(testMatrix.getCols(), 2);
     for (int i = 0; i < testMatrix.size(); ++i) {
-        EXPECT_EQ(testMatrix[i], 0.0);
+        EXPECT_EQ(testMatrix(i / testMatrix.getCols(), i % testMatrix.getCols()), 0.0);
     }
 }
 
@@ -46,7 +46,7 @@ TEST_F(DenseObjTest, Addition) {
     ASSERT_EQ(result.getRows(), 2);
     ASSERT_EQ(result.getCols(), 3);
     for (int i = 0; i < result.size(); ++i) {
-        EXPECT_EQ(result[i], matrix1[i] + matrix2[i]);
+        EXPECT_EQ(result(i / result.getCols(), i % result.getCols()), matrix1(i / matrix1.getCols(), i % matrix1.getCols()) + matrix2(i / matrix2.getCols(), i % matrix2.getCols()));
     }
 }
 
@@ -56,7 +56,7 @@ TEST_F(DenseObjTest, Subtraction) {
     ASSERT_EQ(result.getRows(), 2);
     ASSERT_EQ(result.getCols(), 3);
     for (int i = 0; i < result.size(); ++i) {
-        EXPECT_EQ(result[i], matrix1[i] - matrix2[i]);
+        EXPECT_EQ(result(i / result.getCols(), i % result.getCols()), matrix1(i / matrix1.getCols(), i % matrix1.getCols()) - matrix2(i / matrix2.getCols(), i % matrix2.getCols()));
     }
 }
 
@@ -113,11 +113,11 @@ TEST_F(DenseObjTest, IncompatibleDimensionsMultiplication) {
 
 // Test for accessing elements
 TEST_F(DenseObjTest, ElementAccess) {
-    ASSERT_EQ(matrix1[0], 0.0);
-    ASSERT_EQ(matrix1[5], 5.0);
+    ASSERT_EQ(matrix1(0, 0), 0.0);
+    ASSERT_EQ(matrix1(1, 2), 5.0);
 
-    EXPECT_THROW(matrix1[-1], std::out_of_range);
-    EXPECT_THROW(matrix1[matrix1.size()], std::out_of_range);
+    EXPECT_THROW(matrix1(0, -1), std::out_of_range);
+    EXPECT_THROW(matrix1(0, matrix1.getCols()), std::out_of_range);
 }
 
 // Test for getting a column as a vector

@@ -1,64 +1,54 @@
 cmake_minimum_required(VERSION 3.10)
 project(FASTSolver)
 
-# 设置C++标准
+# Compiler settings
+# set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-# set(OpenBLAS_DIR "build/Release/generators")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wextra")
+# set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+# set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
-# 添加头文件搜索路径
-include_directories(src)
-include_directories(src/LinearAlgebra/Factorized)
-include_directories(src/LinearAlgebra/Preconditioner)
-include_directories(src/LinearAlgebra/Solver)
-include_directories(src/LinearAlgebra/Krylov)
-include_directories(src/Obj)
+# Include directories
+include_directories(
+    ${PROJECT_SOURCE_DIR}/src
+    ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Factorized
+    ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Preconditioner
+    ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Solver
+    ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Krylov
+    ${PROJECT_SOURCE_DIR}/src/Obj
+)
 
-# 找到所有需要的包
+# Find required packages
 find_package(OpenBLAS REQUIRED)
 find_package(benchmark REQUIRED)
 find_package(GTest REQUIRED)
-# find_package(pybind11 REQUIRED)
 
-# 添加可执行文件：matrix_obj_test
-add_executable(matrix_obj_test main/matrix_obj_test.cpp)
-target_link_libraries(matrix_obj_test PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
-# 添加可执行文件：basic_test
-add_executable(basic_test main/basic_test.cpp)
-target_link_libraries(basic_test PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
+# Define common test dependencies
+set(TEST_DEPENDENCIES
+    GTest::gtest 
+    GTest::gmock 
+    OpenBLAS::OpenBLAS
+)
 
-add_executable(debuglogger main/debuglogger.cpp)
-target_link_libraries(debuglogger PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
-#
-add_executable(itersolver_test main/itersolver_test.cpp)
-target_link_libraries(itersolver_test PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
-#
-add_executable(LU_test main/LU_test.cpp)
-target_link_libraries(LU_test PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
-#
-add_executable(KrylovSubspace_test main/KrylovSubspace_test.cpp)
-target_link_libraries(KrylovSubspace_test PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
-#
-add_executable(ConjugateGradient_test main/ConjugateGradient_test.cpp)
-target_link_libraries(ConjugateGradient_test PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
-#
-add_executable(SparseMatrixCSCTest main/SparseMatrixCSCTest.cpp)
-target_link_libraries(SparseMatrixCSCTest PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
-#
-add_executable(MultiGrid_test main/MultiGrid_test.cpp)
-target_link_libraries(MultiGrid_test PRIVATE GTest::gtest GTest::gmock OpenBLAS::OpenBLAS)
+# Test executables
+set(TEST_SOURCES
+    matrix_obj_test
+    basic_test
+    debuglogger
+    itersolver_test
+    LU_test
+    KrylovSubspace_test
+    ConjugateGradient_test
+    SparseMatrixCSCTest
+)
 
-# add_library(pybind MODULE python/pybind.cpp)
-# target_link_libraries(pybind PRIVATE pybind11::module)
+# Add test executables
+foreach(test_source ${TEST_SOURCES})
+    add_executable(${test_source} main/${test_source}.cpp)
+    target_link_libraries(${test_source} PRIVATE ${TEST_DEPENDENCIES})
+    add_test(NAME ${test_source} COMMAND ${test_source})
+endforeach()
 
-# 添加测试
+# Enable testing
 enable_testing()
-add_test(NAME matrix_obj_test COMMAND matrix_obj_test)
-add_test(NAME SparseMatrixCSCTest COMMAND SparseMatrixCSCTest)
-add_test(NAME basic_test COMMAND basic_test)
-add_test(NAME debuglogger COMMAND debuglogger)
-add_test(NAME itersolver_test COMMAND itersolver_test)
-add_test(NAME LU_test COMMAND LU_test)
-add_test(NAME KrylovSubspace_test COMMAND KrylovSubspace_test)
-add_test(NAME ConjugateGradient_test COMMAND ConjugateGradient_test)
-add_test(NAME MultiGrid_test COMMAND MultiGrid_test)

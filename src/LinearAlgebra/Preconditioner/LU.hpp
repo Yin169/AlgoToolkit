@@ -6,6 +6,25 @@
 #include <cmath>     // For std::abs
 #include <algorithm> // For std::swap
 
+/**
+ * @namespace LU
+ * @brief Namespace containing functions for LU decomposition.
+ */
+
+/**
+ * @brief Performs LU decomposition with partial pivoting on a given matrix.
+ *
+ * This function decomposes a given square matrix A into a lower triangular matrix L and an upper triangular matrix U
+ * such that A = P * L * U, where P is a permutation matrix. The decomposition is done in-place, modifying the input
+ * matrix A and generating a permutation vector P.
+ *
+ * @tparam TNum The numeric type of the matrix elements (e.g., float, double).
+ * @tparam MatrixType The type of the matrix (must support getRows(), getCols(), operator(), and swapRows()).
+ * @param A The input matrix to be decomposed. It must be square (i.e., the number of rows must equal the number of columns).
+ * @param P The permutation vector that will store the row permutations applied during the decomposition.
+ * @throws std::invalid_argument If the input matrix A is not square.
+ * @throws std::runtime_error If the matrix is singular or nearly singular and cannot be decomposed.
+ */
 namespace LU {
 
     template <typename TNum, typename MatrixType>

@@ -9,17 +9,17 @@
 namespace Krylov {
     template<typename TNum, typename MatrixType, typename VectorType>
     void Arnoldi(MatrixType& A, std::vector<VectorType>& Q, MatrixType& H, TNum tol) {
-        size_t m = Q.size();
-        size_t n = A.getRows();  // Assuming A is square, use rows as size
+        int m = Q.size();
+        int n = A.getRows();  // Assuming A is square, use rows as size
         assert(H.getRows() == m && H.getCols() == m - 1);
         assert(Q[0].size() == n);  // Ensure the vectors in Q are of the same size as the matrix rows
 
         // Iterate over the Krylov subspace dimensions
-        for (size_t i = 1; i < m; ++i) {
+        for (int i = 1; i < m; ++i) {
             VectorType Av = A * Q[i - 1];  // A * q_(i-1)
 
             // Orthogonalization
-            for (size_t j = 0; j < i; ++j) {
+            for (int j = 0; j < i; ++j) {
                 TNum h = Q[j] * Av;  // Inner product
                 H(j, i - 1) = h;
                 Av = Av - Q[j] * h;  // Update Av to be orthogonal to Q[j]

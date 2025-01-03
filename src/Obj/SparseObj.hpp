@@ -24,10 +24,11 @@ public:
     std::vector<TObj> values;      // Non-zero values
     std::vector<int> row_indices;  // Row indices of non-zeros
     std::vector<int> col_ptr;      // Column pointers
+    std::vector<int> col_t_ptr;      // Column pointers
 
     // Constructor
     SparseMatrixCSC() = default;
-    SparseMatrixCSC(int rows, int cols) : _n(rows), _m(cols), col_ptr(cols + 1, 0) {}
+    SparseMatrixCSC(int rows, int cols) : _n(rows), _m(cols), col_ptr(cols + 1, 0), col_t_ptr(cols + 1, 0) {}
 
     ~SparseMatrixCSC() = default;
 
@@ -49,12 +50,12 @@ public:
         if (value == TObj()) return; // Skip zero values
         values.push_back(value);
         row_indices.push_back(row);
-        ++col_ptr[col + 1];
+        ++col_t_ptr[col + 1];
     }
 
     // Finalize column pointers after all values are added
     void finalize() {
-        std::partial_sum(col_ptr.begin(), col_ptr.end(), col_ptr.begin());
+        std::partial_sum(col_t_ptr.begin(), col_t_ptr.end(), col_ptr.begin());
     }
 
     inline int getRows() const override { return _n; }

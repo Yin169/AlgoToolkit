@@ -7,7 +7,7 @@
 #include <stdexcept>
 #include <iostream> // For debugging logs
 
-template <typename TNum, typename MatrixType, typename VectorType = VectorObj<TNum>>
+template <typename TNum, typename MatrixType, typename VectorType>
 class ConjugateGrad {
 public:
     VectorType x, r, p;
