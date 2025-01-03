@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm -r build
+rm -rf build
 conan install . --build=missing
 cd build
 cmake --clean-first
@@ -8,5 +8,3 @@ cmake .. -DCMAKE_TOOLCHAIN_FILE=Release/generators/conan_toolchain.cmake -DCMAKE
 cmake --build .
 
 ctest
-
-python ../code/test.py

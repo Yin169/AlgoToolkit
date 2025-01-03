@@ -13,13 +13,13 @@ PYBIND11_MODULE(numerical_solver, m) {
     m.doc() = "Pybind11 interface for numerical solvers and linear algebra tools";
 
     // Basic Operations
-    m.def("power_iter", &basic::powerIter<double>, "Power iteration method",
+    m.def("power_iter", &basic::powerIter<double, DenseObj<double>>, "Power iteration method",
           py::arg("A"), py::arg("b"), py::arg("max_iter"));
-    m.def("rayleigh_quotient", &basic::rayleighQuotient<double>, "Compute Rayleigh quotient",
+    m.def("rayleigh_quotient", &basic::rayleighQuotient<double, DenseObj<double>>, "Compute Rayleigh quotient",
           py::arg("A"), py::arg("b"));
 
     // Krylov Subspace
-    m.def("arnoldi", &Krylov::Arnoldi<double>, "Arnoldi iteration for Krylov subspace",
+    m.def("arnoldi", &Krylov::Arnoldi<double, DenseObj<double>, VectorObj<double>>, "Arnoldi iteration for Krylov subspace",
           py::arg("A"), py::arg("Q"), py::arg("H"), py::arg("tol"));
 
     // Conjugate Gradient Solver
@@ -42,9 +42,4 @@ PYBIND11_MODULE(numerical_solver, m) {
         .def("amgVCycle", &AlgebraicMultiGrid<double, VectorObj<double>>::amgVCycle,
              py::arg("A"), py::arg("b"), py::arg("x"), py::arg("levels"), py::arg("smoothingSteps"), py::arg("theta"));
 
-    // MultiGrid Solver
-    py::class_<MultiGrid<double>>(m, "MultiGrid")
-        .def(py::init<>())
-        .def(py::init<MatrixObj<double>, MatrixObj<double>, VectorObj<double>, int, double>())
-        .def("solve", &MultiGrid<double>::solve, "Solve system using multigrid method");
 }

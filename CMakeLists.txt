@@ -2,9 +2,12 @@ cmake_minimum_required(VERSION 3.10)
 project(FASTSolver)
 
 # Compiler settings
+# set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wextra")
+# set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+# set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
 # Include directories
 include_directories(
@@ -20,7 +23,6 @@ include_directories(
 find_package(OpenBLAS REQUIRED)
 find_package(benchmark REQUIRED)
 find_package(GTest REQUIRED)
-find_package(pybind11 REQUIRED)
 
 # Define common test dependencies
 set(TEST_DEPENDENCIES
@@ -39,6 +41,7 @@ set(TEST_SOURCES
     KrylovSubspace_test
     ConjugateGradient_test
     SparseMatrixCSCTest
+    GMRES_test
 )
 
 # Add test executables
@@ -49,14 +52,4 @@ foreach(test_source ${TEST_SOURCES})
 endforeach()
 
 # Enable testing
-# enable_testing()
-
-# Python bindings
-pybind11_add_module(fastsolver python/pybind.cpp)
-target_link_libraries(fastsolver PRIVATE ${TEST_DEPENDENCIES})
-target_include_directories(fastsolver PRIVATE ${pybind11_INCLUDE_DIRS})
-
-# Installation rules
-install(TARGETS fastsolver 
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+enable_testing()
