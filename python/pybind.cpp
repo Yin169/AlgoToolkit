@@ -5,15 +5,12 @@
 #include "ConjugateGradient.hpp"
 #include "KrylovSubspace.hpp"
 #include "IterSolver.hpp"
+#include "MultiGrid.hpp" // Include the header for AlgebraicMultiGrid
 
 namespace py = pybind11;
 
 PYBIND11_MODULE(numerical_solver, m) {
     m.doc() = "Pybind11 interface for numerical solvers and linear algebra tools";
-
-    // LU Decomposition
-    m.def("pivot_lu", &LU::PivotLU<double>, "Perform LU decomposition with partial pivoting",
-          py::arg("A"), py::arg("P"));
 
     // Basic Operations
     m.def("power_iter", &basic::powerIter<double>, "Power iteration method",
@@ -26,19 +23,28 @@ PYBIND11_MODULE(numerical_solver, m) {
           py::arg("A"), py::arg("Q"), py::arg("H"), py::arg("tol"));
 
     // Conjugate Gradient Solver
-    py::class_<ConjugateGrad<double>>(m, "ConjugateGrad")
-        .def(py::init<>())
-        .def(py::init<MatrixObj<double>, MatrixObj<double>, VectorObj<double>, int, double>())
-        .def("call_update", &ConjugateGrad<double>::callUpdate, "Run the conjugate gradient solver");
+    py::class_<ConjugateGrad<double, SparseMatrixCSC<double>, VectorObj<double>>>(m, "ConjugateGrad")
+        .def(py::init<const SparseMatrixCSC<double>&, const VectorObj<double>&, int, double>())
+        .def("solve", &ConjugateGrad<double, SparseMatrixCSC<double>, VectorObj<double>>::solve);
 
     // Iterative Solvers
-    py::class_<GradientDescent<double>>(m, "GradientDescent")
-        .def(py::init<>())
-        .def(py::init<MatrixObj<double>, MatrixObj<double>, VectorObj<double>, int>())
-        .def("solve", &GradientDescent<double>::solve, "Solve system using gradient descent");
+    py::class_<GradientDescent<double, SparseMatrixCSC<double>, VectorObj<double>>>(m, "GradientDescent")
+        .def(py::init<const SparseMatrixCSC<double>&, const VectorObj<double>&, int, double>())
+        .def("solve", &GradientDescent<double, SparseMatrixCSC<double>, VectorObj<double>>::solve);
 
-    py::class_<StaticIterMethod<double>>(m, "StaticIterMethod")
+    py::class_<StaticIterMethod<double, SparseMatrixCSC<double>, VectorObj<double>>>(m, "StaticIterMethod")
+        .def(py::init<const SparseMatrixCSC<double>&, const VectorObj<double>&, int, double>())
+        .def("solve", &StaticIterMethod<double, SparseMatrixCSC<double>, VectorObj<double>>::solve);
+
+    // MultiGrid Solver
+    py::class_<AlgebraicMultiGrid<double, VectorObj<double>>>(m, "AlgebraicMultiGrid")
         .def(py::init<>())
-        .def(py::init<MatrixObj<double>, MatrixObj<double>, VectorObj<double>, int>())
-        .def("solve", &StaticIterMethod<double>::solve, "Solve system using static iterative method");
+        .def("amgVCycle", &AlgebraicMultiGrid<double, VectorObj<double>>::amgVCycle,
+             py::arg("A"), py::arg("b"), py::arg("x"), py::arg("levels"), py::arg("smoothingSteps"), py::arg("theta"));
+
+    // MultiGrid Solver
+    py::class_<MultiGrid<double>>(m, "MultiGrid")
+        .def(py::init<>())
+        .def(py::init<MatrixObj<double>, MatrixObj<double>, VectorObj<double>, int, double>())
+        .def("solve", &MultiGrid<double>::solve, "Solve system using multigrid method");
 }
