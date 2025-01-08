@@ -60,6 +60,17 @@ TEST_F(SparseMatrixCSCTest, MatrixMultiplication) {
     EXPECT_EQ(result(2, 0), 0); // No interaction
 }
 
+TEST_F(SparseMatrixCSCTest, VectorMultiplication) {
+    VectorObj<int>  vec3(3, 0.0);
+    vec3[0] = 1.0;
+    vec3[1] = 2.0;
+    vec3[2] = 3.0;
+    auto result = matA * vec3;
+    EXPECT_EQ(result[0], 1); // 1 * 1   
+    EXPECT_EQ(result[1], 4); // 2 * 2
+    EXPECT_EQ(result[2], 9); // 3 * 3
+}
+
 // Test: Get column as VectorObj
 TEST_F(SparseMatrixCSCTest, GetColumn) {
     auto col = matA.getColumn(1); // Column 1 of matA

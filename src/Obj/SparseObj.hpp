@@ -127,7 +127,7 @@ public:
         return result;
     }
 
-    VectorObj<TObj> operator*(const VectorObj<TObj>& vector) {
+    VectorObj<TObj> operator*(const VectorObj<TObj>& vector) const {
         // Check dimension compatibility
         if (_m != vector.size()) {
             throw std::invalid_argument("Sparse matrix columns must match vector size.");
@@ -137,14 +137,9 @@ public:
         VectorObj<TObj> result(_n, TObj(0));
 
         // Perform sparse matrix-vector multiplication
-        for (int col = 0; col < _m; ++col) {
-            TObj vector_value = vector[col];
-            if (vector_value == TObj()) continue; // Skip multiplication by zero
-
-            // Iterate over non-zero entries in the column
-            for (int idx = col_ptr[col]; idx < col_ptr[col + 1]; ++idx) {
-                int row = row_indices[idx];
-                result[row] += values[idx] * vector_value;
+        for (int row = 0; row < _n; ++row) {
+            for (int col = 0; col < _m; ++col) {
+                result[row] += (*this)(row, col) * vector[col];
             }
         }
         return result;
