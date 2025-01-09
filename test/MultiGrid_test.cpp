@@ -9,24 +9,26 @@ class MultiGridTest : public ::testing::Test {
 protected:
     void SetUp() override {
         // Define a simple diagonal matrix for testing
-        matrix = SparseMatrixCSC<double>(4, 4);
-        matrix.addValue(0, 0, 4.0);
-        matrix.addValue(1, 1, 3.0);
-        matrix.addValue(2, 2, 2.0);
-        matrix.addValue(3, 3, 1.0);
+        matrix = SparseMatrixCSC<double>(3, 3);
+        matrix.addValue(0, 0, 4);
+        matrix.addValue(1, 0, -1);
+        matrix.addValue(0, 1, -1);
+        matrix.addValue(1, 1, 4);
+        matrix.addValue(2, 1, -1);
+        matrix.addValue(1, 2, -1);
+        matrix.addValue(2, 2, 4);
         matrix.finalize();
 
-        rhs = VectorObj<double>(4);
-        rhs[0] = 8.0;
-        rhs[1] = 9.0;
-        rhs[2] = 4.0;
-        rhs[3] = 1.0;
+        rhs = VectorObj<double>(3);
+        rhs[0] = 1;
+        rhs[1] = 5;
+        rhs[2] = 0;
 
-        expected_solution = VectorObj<double>(4);
-        expected_solution[0] = 2.0; // Corrected indices
-        expected_solution[1] = 3.0;
-        expected_solution[2] = 2.0;
-        expected_solution[3] = 1.0;
+        // Correct expected solution
+        expected_solution = VectorObj<double>(3);
+        expected_solution[0] = 0.625;
+        expected_solution[1] = 1.5;
+        expected_solution[2] = 0.375;
     }
 
     SparseMatrixCSC<double> matrix;

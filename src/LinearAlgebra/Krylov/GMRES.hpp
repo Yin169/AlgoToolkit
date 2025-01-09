@@ -56,7 +56,7 @@ public:
                         KryUpdate = j;
                         break;
                     }
-                    std::cout << "H(" << i << ", " << j << ") = " << w_dot_v << std::endl;
+                    // std::cout << "H(" << i << ", " << j << ") = " << w_dot_v << std::endl;
                     setMatrixValue(H, i, j, w_dot_v);
                     w = w - V[i] * H(i, j);
                 }
@@ -90,13 +90,13 @@ public:
                 }
                 std::cout << std::endl;
             }
-            for(int i = 0; i < x.size(); ++i) {
-                std::cout << x[i] << " ";
-            }
-            std::cout << std::endl;
-            for(int i = 0; i < x.size(); ++i) {
-                std::cout << Ax[i] << " ";
-            }
+            // for(int i = 0; i < x.size(); ++i) {
+            //     std::cout << x[i] << " ";
+            // }
+            // std::cout << std::endl;
+            // for(int i = 0; i < x.size(); ++i) {
+            //     std::cout << Ax[i] << " ";
+            // }
             std::cout << std::endl;
 
             if (beta < tol) {
@@ -126,11 +126,11 @@ private:
     }
 
     void applyMatrixGivensRotation(MatrixType& H, int i, int j, int ii, int jj, TNum cs, TNum sn) {
-        std::cout << "Applying Givens rotation to H(" << i << ", " << j << ") and H(" << ii << ", " << jj << ")" << H(i, j) << " " << H(ii, jj) << std::endl;
+        // std::cout << "Applying Givens rotation to H(" << i << ", " << j << ") and H(" << ii << ", " << jj << ")" << H(i, j) << " " << H(ii, jj) << std::endl;
         TNum temp = H(i, j);
         setMatrixValue(H, i, j,  cs * H(i, j) + sn * H(ii, jj));
         setMatrixValue(H, ii, jj, -sn * temp + cs * H(ii, jj));
-        std::cout << "Applying Givens rotation to H(" << i << ", " << j << ") and H(" << ii << ", " << jj << ")" << H(i, j) << " " << H(ii, jj) << std::endl;
+        // std::cout << "Applying Givens rotation to H(" << i << ", " << j << ") and H(" << ii << ", " << jj << ")" << H(i, j) << " " << H(ii, jj) << std::endl;
     }
 
     void generateGivensRotation(TNum dx, TNum dy, TNum& cs, TNum& sn, TNum& rho) {

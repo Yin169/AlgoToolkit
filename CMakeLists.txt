@@ -16,6 +16,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Preconditioner
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Solver
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Krylov
+    ${PROJECT_SOURCE_DIR}/src/Optimization
     ${PROJECT_SOURCE_DIR}/src/Obj
 )
 

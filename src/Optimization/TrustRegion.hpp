@@ -4,10 +4,10 @@
 #include <cmath>
 #include <limits>
 #include <stdexcept>
-#include "../Obj/SparseObj.hpp"
-#include "../Obj/DenseObj.hpp"
-#include "../Obj/VectorObj.hpp"
-#include "../LinearAlgebra/Krylov/ConjugateGradient.hpp"
+#include "SparseObj.hpp"
+#include "DenseObj.hpp"
+#include "VectorObj.hpp"
+#include "ConjugateGradient.hpp"
 
 template <typename TObj>
 class TrustRegion {

@@ -75,10 +75,29 @@ public:
 
     // Element access with binary search
     TObj operator()(int row, int col) const {
+        // for(int i = 0; i < values.size(); i++){
+        //     std::cout << values[i] << " ";
+        // }
+        // std::cout << std::endl;
+        // for(int i = 0; i < row_indices.size(); i++){
+        //     std::cout << row_indices[i] << " ";
+        // }
+        // std::cout << std::endl;
+        // for(int i = 0; i < col_t_ptr.size(); i++){
+        //     std::cout << col_t_ptr[i] << " ";
+        // }
+        // std::cout << std::endl;
+        // for(int i = 0; i < col_ptr.size(); i++){
+        //     std::cout << col_ptr[i] << " ";
+        // }
+        // std::cout << std::endl;
+        // std::cout << " ----------------- " << std::endl;
         if (row < 0 || row >= _n || col < 0 || col >= _m) throw std::out_of_range("Index out of range.");
         auto start = col_ptr[col];
         auto end = col_ptr[col + 1];
         auto it = std::lower_bound(row_indices.begin() + start, row_indices.begin() + end, row);
+        // std::cout << "Start: " << start << " End: " << end << std::endl;
+        // std::cout << "Row: " << row << " Col: " << col << std::endl;
         if (it != row_indices.begin() + end && *it == row) {
             return values[it - row_indices.begin()];
         }
