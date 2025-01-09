@@ -82,9 +82,20 @@ public:
             updateSolution(x, H, V, e1, KryUpdate);
             r = b - A * x;
             beta = r.L2norm();
+            auto Ax = A * x;
             std::cout << "Residual norm after restart: " << beta << " " << std::endl;
+            for(int i=0; i < A.getRows(); ++i) {
+                for(int j=0; j < A.getCols(); ++j) {
+                    std::cout << A(i, j) << " ";
+                }
+                std::cout << std::endl;
+            }
             for(int i = 0; i < x.size(); ++i) {
                 std::cout << x[i] << " ";
+            }
+            std::cout << std::endl;
+            for(int i = 0; i < x.size(); ++i) {
+                std::cout << Ax[i] << " ";
             }
             std::cout << std::endl;
 
@@ -115,11 +126,11 @@ private:
     }
 
     void applyMatrixGivensRotation(MatrixType& H, int i, int j, int ii, int jj, TNum cs, TNum sn) {
-        // std::cout << "Applying Givens rotation to H(" << i << ", " << j << ") and H(" << ii << ", " << jj << ")" << H(i, j) << " " << H(ii, jj) << std::endl;
+        std::cout << "Applying Givens rotation to H(" << i << ", " << j << ") and H(" << ii << ", " << jj << ")" << H(i, j) << " " << H(ii, jj) << std::endl;
         TNum temp = H(i, j);
         setMatrixValue(H, i, j,  cs * H(i, j) + sn * H(ii, jj));
         setMatrixValue(H, ii, jj, -sn * temp + cs * H(ii, jj));
-        // std::cout << "Applying Givens rotation to H(" << i << ", " << j << ") and H(" << ii << ", " << jj << ")" << H(i, j) << " " << H(ii, jj) << std::endl;
+        std::cout << "Applying Givens rotation to H(" << i << ", " << j << ") and H(" << ii << ", " << jj << ")" << H(i, j) << " " << H(ii, jj) << std::endl;
     }
 
     void generateGivensRotation(TNum dx, TNum dy, TNum& cs, TNum& sn, TNum& rho) {

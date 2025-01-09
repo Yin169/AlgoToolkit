@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include "GMRES.hpp"
 #include "SparseObj.hpp"
+#include "DenseObj.hpp"
 #include "VectorObj.hpp"
 #include <cmath>
 
@@ -8,17 +9,17 @@ class GMRESTest : public ::testing::Test {
 protected:
     void SetUp() override {
         // Create a simple 3x3 test matrix
-        matrix = SparseMatrixCSC<double>(3, 3);
-        matrix.addValue(0, 0, 4.0);
-        matrix.addValue(0, 1, -1.0);
-        matrix.addValue(0, 2, 0.0);
-        matrix.addValue(1, 0, -1.0);
-        matrix.addValue(1, 1, 4.0);
-        matrix.addValue(1, 2, -1.0);
-        matrix.addValue(2, 0, 0.0);
-        matrix.addValue(2, 1, -1.0);
-        matrix.addValue(2, 2, 4.0);
-        matrix.finalize();
+        matrix = DenseObj<double>(3, 3);
+        matrix(0, 0) =  4.0;
+        matrix(0, 1) =  -1.0;
+        matrix(0, 2) = 0.0;
+        matrix(1, 0) = -1.0;
+        matrix(1, 1) = 4.0;
+        matrix(1, 2) =  -1.0;
+        matrix(2, 0) = 0.0;
+        matrix(2, 1) = -1.0;
+        matrix(2, 2) = 4.0;
+        // matrix.finalize();
 
         // Create right-hand side vector b = [1, 5, 0]
         b = VectorObj<double>(3);
@@ -29,17 +30,17 @@ protected:
         // Initial guess x0 = [0, 0, 0]
         x = VectorObj<double>(3, 0.0);
 
-        solver = GMRES<double>();
+        solver = GMRES<double, DenseObj<double>>();
     }
 
-    SparseMatrixCSC<double> matrix;
+    DenseObj<double> matrix;
     VectorObj<double> b;
     VectorObj<double> x;
-    GMRES<double> solver;
+    GMRES<double, DenseObj<double>> solver;
 };
 
 TEST_F(GMRESTest, BasicSolverTest) {
-    double tol = 1e-3;
+    double tol = 1e-6;
     int maxIter = 100;
     int krylovDim = 3;
     
