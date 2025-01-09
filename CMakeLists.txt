@@ -17,6 +17,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Solver
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Krylov
     ${PROJECT_SOURCE_DIR}/src/Optimization
+    ${PROJECT_SOURCE_DIR}/src/ODE
     ${PROJECT_SOURCE_DIR}/src/Obj
 )
 
@@ -43,6 +44,7 @@ set(TEST_SOURCES
     ConjugateGradient_test
     SparseMatrixCSCTest
     GMRES_test
+    RungeKutta_test
 )
 
 # Add test executables

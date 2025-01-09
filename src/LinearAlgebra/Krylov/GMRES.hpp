@@ -84,12 +84,12 @@ public:
             beta = r.L2norm();
             auto Ax = A * x;
             std::cout << "Residual norm after restart: " << beta << " " << std::endl;
-            for(int i=0; i < A.getRows(); ++i) {
-                for(int j=0; j < A.getCols(); ++j) {
-                    std::cout << A(i, j) << " ";
-                }
-                std::cout << std::endl;
-            }
+            // for(int i=0; i < A.getRows(); ++i) {
+            //     for(int j=0; j < A.getCols(); ++j) {
+            //         std::cout << A(i, j) << " ";
+            //     }
+            //     std::cout << std::endl;
+            // }
             // for(int i = 0; i < x.size(); ++i) {
             //     std::cout << x[i] << " ";
             // }
@@ -97,7 +97,7 @@ public:
             // for(int i = 0; i < x.size(); ++i) {
             //     std::cout << Ax[i] << " ";
             // }
-            std::cout << std::endl;
+            // std::cout << std::endl;
 
             if (beta < tol) {
                 std::cout << "Converged after restart at iteration " << iter << std::endl;
