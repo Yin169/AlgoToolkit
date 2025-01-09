@@ -17,11 +17,22 @@ class VectorObj;
 template<typename TObj>
 class MatrixObj;
 
+struct row_col_idx{
+    int row;
+    int col;
+    size_t index;
+
+    bool operator<(const row_col_idx& other) const {
+        return row < other.col;
+    }
+};
+
 template <typename TObj>
 class SparseMatrixCSC : public MatrixObj<TObj> {
 public:
     int _n, _m; // Number of rows and columns
     std::vector<TObj> values;      // Non-zero values
+    std::vector<row_col_idx> row_indices_idx;  // Row indices of non-zeros
     std::vector<int> row_indices;  // Row indices of non-zeros
     std::vector<int> col_ptr;      // Column pointers
     std::vector<int> col_t_ptr;      // Column pointers
@@ -49,12 +60,18 @@ public:
         if (col >= _m || row >= _n) throw std::out_of_range("Row or column index out of range.");
         if (value == TObj()) return; // Skip zero values
         values.push_back(value);
-        row_indices.push_back(row);
+        row_indices_idx.push_back({row, col, values.size() - 1});
         ++col_t_ptr[col + 1];
     }
 
     // Finalize column pointers after all values are added
     void finalize() {
+        std::sort(row_indices_idx.begin(), row_indices_idx.end());
+        std::vector<TObj> temp_values = values;
+        for (int i = 0; i < row_indices_idx.size(); i++){
+            values[i] = temp_values[row_indices_idx[i].index];
+            row_indices.emplace_back(row_indices_idx[i].row);
+        }
         std::partial_sum(col_t_ptr.begin(), col_t_ptr.end(), col_ptr.begin());
     }
 
