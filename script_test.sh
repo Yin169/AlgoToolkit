@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm -r build
+rm -rf build
 conan install . --build=missing
 cd build
 cmake --clean-first

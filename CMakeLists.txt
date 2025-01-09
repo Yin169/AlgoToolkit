@@ -16,6 +16,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Preconditioner
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Solver
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Krylov
+    ${PROJECT_SOURCE_DIR}/src/Optimization
     ${PROJECT_SOURCE_DIR}/src/Obj
 )
 
@@ -41,11 +42,12 @@ set(TEST_SOURCES
     KrylovSubspace_test
     ConjugateGradient_test
     SparseMatrixCSCTest
+    GMRES_test
 )
 
 # Add test executables
 foreach(test_source ${TEST_SOURCES})
-    add_executable(${test_source} main/${test_source}.cpp)
+    add_executable(${test_source} test/${test_source}.cpp)
     target_link_libraries(${test_source} PRIVATE ${TEST_DEPENDENCIES})
     add_test(NAME ${test_source} COMMAND ${test_source})
 endforeach()
