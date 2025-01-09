@@ -1051,5 +1051,4 @@ CMakeFiles/ConjugateGradient_test.dir/test/ConjugateGradient_test.cpp.o: \
   /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/src/Obj/DenseObj.hpp \
   /Users/yincheangng/.conan2/p/b/openbfc9fc49749cd8/p/include/openblas/cblas.h \
   /Users/yincheangng/.conan2/p/b/openbfc9fc49749cd8/p/include/openblas/openblas_config.h \
-  /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/src/Obj/SparseObj.hpp \
-  /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/src/Optimization/TrustRegion.hpp
+  /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/src/Obj/SparseObj.hpp

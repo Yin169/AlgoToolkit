@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include "ConjugateGradient.hpp"
-#include "TrustRegion.hpp"
 #include "SparseObj.hpp"
 #include "VectorObj.hpp"
 
@@ -47,7 +46,6 @@ protected:
             std::cout << std::endl;  
         }
 
-        // rhs = VectorObj<double>(4);
         // rhs[0] = 8.0;
         // rhs[1] = 9.0;
         // rhs[2] = 4.0;
