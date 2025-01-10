@@ -1,5 +1,5 @@
-CMakeFiles/ConjugateGradient_test.dir/test/ConjugateGradient_test.cpp.o: \
-  /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/test/ConjugateGradient_test.cpp \
+CMakeFiles/GaussianQuad_test.dir/test/GaussianQuad_test.cpp.o: \
+  /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/test/GaussianQuad_test.cpp \
   /Users/yincheangng/.conan2/p/b/gtestc5efacfbab3a6/p/include/gtest/gtest.h \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/cstddef \
   /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__assert \
@@ -1031,24 +1031,4 @@ CMakeFiles/ConjugateGradient_test.dir/test/ConjugateGradient_test.cpp.o: \
   /Users/yincheangng/.conan2/p/b/gtestc5efacfbab3a6/p/include/gtest/gtest-typed-test.h \
   /Users/yincheangng/.conan2/p/b/gtestc5efacfbab3a6/p/include/gtest/gtest_pred_impl.h \
   /Users/yincheangng/.conan2/p/b/gtestc5efacfbab3a6/p/include/gtest/gtest_prod.h \
-  /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/src/LinearAlgebra/Krylov/ConjugateGradient.hpp \
-  /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/src/Obj/VectorObj.hpp \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/numeric \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/accumulate.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/adjacent_difference.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/exclusive_scan.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/gcd_lcm.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/inclusive_scan.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/inner_product.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/iota.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/midpoint.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/partial_sum.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/pstl_reduce.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/saturation_arithmetic.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/transform_exclusive_scan.h \
-  /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/c++/v1/__numeric/transform_inclusive_scan.h \
-  /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/src/Obj/MatrixObj.hpp \
-  /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/src/Obj/DenseObj.hpp \
-  /Users/yincheangng/.conan2/p/b/openbfc9fc49749cd8/p/include/openblas/cblas.h \
-  /Users/yincheangng/.conan2/p/b/openbfc9fc49749cd8/p/include/openblas/openblas_config.h \
-  /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/src/Obj/SparseObj.hpp
+  /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/src/Intergal/GaussianQuad.hpp

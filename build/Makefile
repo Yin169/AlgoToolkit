@@ -256,6 +256,19 @@ RungeKutta_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RungeKutta_test.dir/build.make CMakeFiles/RungeKutta_test.dir/build
 .PHONY : RungeKutta_test/fast
 
+#=============================================================================
+# Target rules for targets named GaussianQuad_test
+
+# Build rule for target.
+GaussianQuad_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 GaussianQuad_test
+.PHONY : GaussianQuad_test
+
+# fast build rule for target.
+GaussianQuad_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GaussianQuad_test.dir/build.make CMakeFiles/GaussianQuad_test.dir/build
+.PHONY : GaussianQuad_test/fast
+
 test/ConjugateGradient_test.o: test/ConjugateGradient_test.cpp.o
 .PHONY : test/ConjugateGradient_test.o
 
@@ -303,6 +316,30 @@ test/GMRES_test.s: test/GMRES_test.cpp.s
 test/GMRES_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/GMRES_test.dir/build.make CMakeFiles/GMRES_test.dir/test/GMRES_test.cpp.s
 .PHONY : test/GMRES_test.cpp.s
+
+test/GaussianQuad_test.o: test/GaussianQuad_test.cpp.o
+.PHONY : test/GaussianQuad_test.o
+
+# target to build an object file
+test/GaussianQuad_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GaussianQuad_test.dir/build.make CMakeFiles/GaussianQuad_test.dir/test/GaussianQuad_test.cpp.o
+.PHONY : test/GaussianQuad_test.cpp.o
+
+test/GaussianQuad_test.i: test/GaussianQuad_test.cpp.i
+.PHONY : test/GaussianQuad_test.i
+
+# target to preprocess a source file
+test/GaussianQuad_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GaussianQuad_test.dir/build.make CMakeFiles/GaussianQuad_test.dir/test/GaussianQuad_test.cpp.i
+.PHONY : test/GaussianQuad_test.cpp.i
+
+test/GaussianQuad_test.s: test/GaussianQuad_test.cpp.s
+.PHONY : test/GaussianQuad_test.s
+
+# target to generate assembly for a file
+test/GaussianQuad_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/GaussianQuad_test.dir/build.make CMakeFiles/GaussianQuad_test.dir/test/GaussianQuad_test.cpp.s
+.PHONY : test/GaussianQuad_test.cpp.s
 
 test/KrylovSubspace_test.o: test/KrylovSubspace_test.cpp.o
 .PHONY : test/KrylovSubspace_test.o
@@ -507,6 +544,7 @@ help:
 	@echo "... test"
 	@echo "... ConjugateGradient_test"
 	@echo "... GMRES_test"
+	@echo "... GaussianQuad_test"
 	@echo "... KrylovSubspace_test"
 	@echo "... LU_test"
 	@echo "... RungeKutta_test"
@@ -521,6 +559,9 @@ help:
 	@echo "... test/GMRES_test.o"
 	@echo "... test/GMRES_test.i"
 	@echo "... test/GMRES_test.s"
+	@echo "... test/GaussianQuad_test.o"
+	@echo "... test/GaussianQuad_test.i"
+	@echo "... test/GaussianQuad_test.s"
 	@echo "... test/KrylovSubspace_test.o"
 	@echo "... test/KrylovSubspace_test.i"
 	@echo "... test/KrylovSubspace_test.s"
