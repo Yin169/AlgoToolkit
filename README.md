@@ -9,13 +9,12 @@
 
 ## Key Features:
 
-**Efficient Solvers**: FASTSolver implements a variety of numerical solvers. These solvers are optimized for performance, ensuring fast computations for complex problems.
-
-**Scalability**: The framework is designed to scale effectively on multi-core and multi-processor systems, allowing you to harness the power of parallel computing for even larger-scale problems.
-
-**User-Friendly Interface**: FASTSolver provides a user-friendly interface that simplifies problem setup and solution extraction. This makes it accessible to users with varying levels of programming experience.
-
-**Customizable**: The framework allows for customization through user-defined modules and plugins. This flexibility enables users to tailor FASTSolver to their specific needs.
+FASTSolver is a C++ numerical computing library with Python bindings, featuring:
+- Linear algebra operations
+- Iterative solvers (GMRES, Conjugate Gradient)
+- Multi-grid methods
+- Numerical integration
+- ODE solvers
 
 ## Requirements
 
