@@ -5,7 +5,9 @@
 #include "ConjugateGradient.hpp"
 #include "KrylovSubspace.hpp"
 #include "IterSolver.hpp"
-#include "MultiGrid.hpp" // Include the header for AlgebraicMultiGrid
+#include "MultiGrid.hpp"
+#include "GMRES.hpp"
+#include "RungeKutta.hpp"
 
 namespace py = pybind11;
 
@@ -42,4 +44,27 @@ PYBIND11_MODULE(numerical_solver, m) {
         .def("amgVCycle", &AlgebraicMultiGrid<double, VectorObj<double>>::amgVCycle,
              py::arg("A"), py::arg("b"), py::arg("x"), py::arg("levels"), py::arg("smoothingSteps"), py::arg("theta"));
 
+    // LU Factorization
+    py::class_<LU<double, DenseObj<double>>>(m, "LU")
+        .def(py::init<const DenseObj<double>&>())
+        .def("solve", &LU<double, DenseObj<double>>::solve)
+        .def("det", &LU<double, DenseObj<double>>::det);
+
+    // GMRES Solver
+    py::class_<GMRES<double, SparseMatrixCSC<double>, VectorObj<double>>>(m, "GMRES")
+        .def(py::init<const SparseMatrixCSC<double>&, const VectorObj<double>&, int, double>())
+        .def("solve", &GMRES<double, SparseMatrixCSC<double>, VectorObj<double>>::solve)
+        .def("getResidualNorm", &GMRES<double, SparseMatrixCSC<double>, VectorObj<double>>::getResidualNorm);
+
+    // Runge-Kutta Methods
+    py::class_<RungeKutta4<double>>(m, "RK4")
+        .def(py::init<>())
+        .def("solve", &RungeKutta4<double>::solve,
+             py::arg("f"), py::arg("y0"), py::arg("t0"), py::arg("tf"), py::arg("h"));
+
+    py::class_<AdaptiveRK45<double>>(m, "RK45")
+        .def(py::init<>())
+        .def("solve", &AdaptiveRK45<double>::solve,
+             py::arg("f"), py::arg("y0"), py::arg("t0"), py::arg("tf"), 
+             py::arg("h0"), py::arg("tol"), py::arg("hmin"), py::arg("hmax"));
 }
