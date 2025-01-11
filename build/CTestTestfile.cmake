@@ -26,3 +26,5 @@ add_test(RungeKutta_test "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolk
 set_tests_properties(RungeKutta_test PROPERTIES  _BACKTRACE_TRIPLES "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/CMakeLists.txt;56;add_test;/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/CMakeLists.txt;0;")
 add_test(GaussianQuad_test "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/GaussianQuad_test")
 set_tests_properties(GaussianQuad_test PROPERTIES  _BACKTRACE_TRIPLES "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/CMakeLists.txt;56;add_test;/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/CMakeLists.txt;0;")
+add_test(testfile "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/testfile")
+set_tests_properties(testfile PROPERTIES  _BACKTRACE_TRIPLES "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/CMakeLists.txt;56;add_test;/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/CMakeLists.txt;0;")

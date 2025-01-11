@@ -269,6 +269,19 @@ GaussianQuad_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/GaussianQuad_test.dir/build.make CMakeFiles/GaussianQuad_test.dir/build
 .PHONY : GaussianQuad_test/fast
 
+#=============================================================================
+# Target rules for targets named testfile
+
+# Build rule for target.
+testfile: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 testfile
+.PHONY : testfile
+
+# fast build rule for target.
+testfile/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testfile.dir/build.make CMakeFiles/testfile.dir/build
+.PHONY : testfile/fast
+
 test/ConjugateGradient_test.o: test/ConjugateGradient_test.cpp.o
 .PHONY : test/ConjugateGradient_test.o
 
@@ -533,6 +546,30 @@ test/matrix_obj_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/matrix_obj_test.dir/build.make CMakeFiles/matrix_obj_test.dir/test/matrix_obj_test.cpp.s
 .PHONY : test/matrix_obj_test.cpp.s
 
+test/testfile.o: test/testfile.cpp.o
+.PHONY : test/testfile.o
+
+# target to build an object file
+test/testfile.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testfile.dir/build.make CMakeFiles/testfile.dir/test/testfile.cpp.o
+.PHONY : test/testfile.cpp.o
+
+test/testfile.i: test/testfile.cpp.i
+.PHONY : test/testfile.i
+
+# target to preprocess a source file
+test/testfile.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testfile.dir/build.make CMakeFiles/testfile.dir/test/testfile.cpp.i
+.PHONY : test/testfile.cpp.i
+
+test/testfile.s: test/testfile.cpp.s
+.PHONY : test/testfile.s
+
+# target to generate assembly for a file
+test/testfile.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testfile.dir/build.make CMakeFiles/testfile.dir/test/testfile.cpp.s
+.PHONY : test/testfile.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -553,6 +590,7 @@ help:
 	@echo "... debuglogger"
 	@echo "... itersolver_test"
 	@echo "... matrix_obj_test"
+	@echo "... testfile"
 	@echo "... test/ConjugateGradient_test.o"
 	@echo "... test/ConjugateGradient_test.i"
 	@echo "... test/ConjugateGradient_test.s"
@@ -586,6 +624,9 @@ help:
 	@echo "... test/matrix_obj_test.o"
 	@echo "... test/matrix_obj_test.i"
 	@echo "... test/matrix_obj_test.s"
+	@echo "... test/testfile.o"
+	@echo "... test/testfile.i"
+	@echo "... test/testfile.s"
 .PHONY : help
 
 

@@ -74,6 +74,7 @@ all: CMakeFiles/SparseMatrixCSCTest.dir/all
 all: CMakeFiles/GMRES_test.dir/all
 all: CMakeFiles/RungeKutta_test.dir/all
 all: CMakeFiles/GaussianQuad_test.dir/all
+all: CMakeFiles/testfile.dir/all
 .PHONY : all
 
 # The main recursive "codegen" target.
@@ -88,6 +89,7 @@ codegen: CMakeFiles/SparseMatrixCSCTest.dir/codegen
 codegen: CMakeFiles/GMRES_test.dir/codegen
 codegen: CMakeFiles/RungeKutta_test.dir/codegen
 codegen: CMakeFiles/GaussianQuad_test.dir/codegen
+codegen: CMakeFiles/testfile.dir/codegen
 .PHONY : codegen
 
 # The main recursive "preinstall" target.
@@ -106,6 +108,7 @@ clean: CMakeFiles/SparseMatrixCSCTest.dir/clean
 clean: CMakeFiles/GMRES_test.dir/clean
 clean: CMakeFiles/RungeKutta_test.dir/clean
 clean: CMakeFiles/GaussianQuad_test.dir/clean
+clean: CMakeFiles/testfile.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -448,6 +451,37 @@ CMakeFiles/GaussianQuad_test.dir/codegen:
 CMakeFiles/GaussianQuad_test.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/GaussianQuad_test.dir/build.make CMakeFiles/GaussianQuad_test.dir/clean
 .PHONY : CMakeFiles/GaussianQuad_test.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/testfile.dir
+
+# All Build rule for target.
+CMakeFiles/testfile.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testfile.dir/build.make CMakeFiles/testfile.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testfile.dir/build.make CMakeFiles/testfile.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=23,24 "Built target testfile"
+.PHONY : CMakeFiles/testfile.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/testfile.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/testfile.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles 0
+.PHONY : CMakeFiles/testfile.dir/rule
+
+# Convenience name for target.
+testfile: CMakeFiles/testfile.dir/rule
+.PHONY : testfile
+
+# codegen rule for target.
+CMakeFiles/testfile.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testfile.dir/build.make CMakeFiles/testfile.dir/codegen
+.PHONY : CMakeFiles/testfile.dir/codegen
+
+# clean rule for target.
+CMakeFiles/testfile.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/testfile.dir/build.make CMakeFiles/testfile.dir/clean
+.PHONY : CMakeFiles/testfile.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.
