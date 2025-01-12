@@ -1,0 +1,819 @@
+Start testing: Jan 12 13:17 +08
+----------------------------------------------------------
+1/14 Testing: matrix_obj_test
+1/14 Test: matrix_obj_test
+Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/matrix_obj_test"
+Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
+"matrix_obj_test" start time: Jan 12 13:17 +08
+Output:
+----------------------------------------------------------
+[==========] Running 10 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 10 tests from DenseObjTest
+[ RUN      ] DenseObjTest.DefaultConstructor
+[       OK ] DenseObjTest.DefaultConstructor (0 ms)
+[ RUN      ] DenseObjTest.GetDimensions
+[       OK ] DenseObjTest.GetDimensions (0 ms)
+[ RUN      ] DenseObjTest.Addition
+[       OK ] DenseObjTest.Addition (0 ms)
+[ RUN      ] DenseObjTest.Subtraction
+[       OK ] DenseObjTest.Subtraction (0 ms)
+[ RUN      ] DenseObjTest.ScalarMultiplication
+[       OK ] DenseObjTest.ScalarMultiplication (0 ms)
+[ RUN      ] DenseObjTest.MatrixMultiplication
+[       OK ] DenseObjTest.MatrixMultiplication (0 ms)
+[ RUN      ] DenseObjTest.Transpose
+[       OK ] DenseObjTest.Transpose (0 ms)
+[ RUN      ] DenseObjTest.IncompatibleDimensionsMultiplication
+[       OK ] DenseObjTest.IncompatibleDimensionsMultiplication (0 ms)
+[ RUN      ] DenseObjTest.ElementAccess
+[       OK ] DenseObjTest.ElementAccess (0 ms)
+[ RUN      ] DenseObjTest.GetColumn
+[       OK ] DenseObjTest.GetColumn (0 ms)
+[----------] 10 tests from DenseObjTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 10 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 10 tests.
+<end of output>
+Test time =   0.23 sec
+----------------------------------------------------------
+Test Passed.
+"matrix_obj_test" end time: Jan 12 13:17 +08
+"matrix_obj_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/14 Testing: basic_test
+2/14 Test: basic_test
+Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/basic_test"
+Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
+"basic_test" start time: Jan 12 13:17 +08
+Output:
+----------------------------------------------------------
+[==========] Running 8 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 8 tests from MyTest
+[ RUN      ] MyTest.RayleighQuotientTest
+[       OK ] MyTest.RayleighQuotientTest (0 ms)
+[ RUN      ] MyTest.PowerIterTest
+[       OK ] MyTest.PowerIterTest (0 ms)
+[ RUN      ] MyTest.GramSchmidtTest
+[       OK ] MyTest.GramSchmidtTest (0 ms)
+[ RUN      ] MyTest.GenUnitVecTest
+[       OK ] MyTest.GenUnitVecTest (0 ms)
+[ RUN      ] MyTest.GenUnitMatTest
+[       OK ] MyTest.GenUnitMatTest (0 ms)
+[ RUN      ] MyTest.SignTest
+[       OK ] MyTest.SignTest (0 ms)
+[ RUN      ] MyTest.HouseholderTransformTest
+[       OK ] MyTest.HouseholderTransformTest (0 ms)
+[ RUN      ] MyTest.QrFactorizationTest
+[       OK ] MyTest.QrFactorizationTest (0 ms)
+[----------] 8 tests from MyTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 8 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 8 tests.
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"basic_test" end time: Jan 12 13:17 +08
+"basic_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+3/14 Testing: debuglogger
+3/14 Test: debuglogger
+Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/debuglogger"
+Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
+"debuglogger" start time: Jan 12 13:17 +08
+Output:
+----------------------------------------------------------
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from Solver
+[ RUN      ] Solver.DebuggingIntermediateSteps
+Iteration 0:
+  Residual norm: 2.56474
+  Alpha: 0.304511
+  Solution: [2.43609, 2.7406, 1.21805, 0.304511]
+Iteration 1:
+  Residual norm: 0.756683
+  Alpha: 0.355828
+  Solution: [1.93098, 3.14754, 1.83232, 0.566434]
+Iteration 2:
+  Residual norm: 0.245748
+  Alpha: 0.491293
+  Solution: [2.00591, 2.97899, 2.0709, 0.81092]
+Iteration 3:
+  Residual norm: 3.64688e-16
+  Alpha: 0.782717
+  Solution: [2, 3, 2, 1]
+[       OK ] Solver.DebuggingIntermediateSteps (0 ms)
+[----------] 1 test from Solver (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"debuglogger" end time: Jan 12 13:17 +08
+"debuglogger" time elapsed: 00:00:00
+----------------------------------------------------------
+
+4/14 Testing: itersolver_test
+4/14 Test: itersolver_test
+Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/itersolver_test"
+Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
+"itersolver_test" start time: Jan 12 13:17 +08
+Output:
+----------------------------------------------------------
+[==========] Running 3 tests from 2 test suites.
+[----------] Global test environment set-up.
+[----------] 2 tests from GradientDescentSolverTest
+[ RUN      ] GradientDescentSolverTest.SimpleTestWithPreconditioner
+[       OK ] GradientDescentSolverTest.SimpleTestWithPreconditioner (0 ms)
+[ RUN      ] GradientDescentSolverTest.ConvergenceCheckEarlyStopping
+[       OK ] GradientDescentSolverTest.ConvergenceCheckEarlyStopping (0 ms)
+[----------] 2 tests from GradientDescentSolverTest (0 ms total)
+
+[----------] 1 test from StaticIterMethodTest
+[ RUN      ] StaticIterMethodTest.JacobiMethodConvergence
+[       OK ] StaticIterMethodTest.JacobiMethodConvergence (0 ms)
+[----------] 1 test from StaticIterMethodTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 2 test suites ran. (0 ms total)
+[  PASSED  ] 3 tests.
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"itersolver_test" end time: Jan 12 13:17 +08
+"itersolver_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+5/14 Testing: LU_test
+5/14 Test: LU_test
+Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/LU_test"
+Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
+"LU_test" start time: Jan 12 13:17 +08
+Output:
+----------------------------------------------------------
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from LUDecomposition
+[ RUN      ] LUDecomposition.SquareMatrix
+[       OK ] LUDecomposition.SquareMatrix (0 ms)
+[----------] 1 test from LUDecomposition (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (0 ms total)
+[  PASSED  ] 1 test.
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"LU_test" end time: Jan 12 13:17 +08
+"LU_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+6/14 Testing: KrylovSubspace_test
+6/14 Test: KrylovSubspace_test
+Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/KrylovSubspace_test"
+Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
+"KrylovSubspace_test" start time: Jan 12 13:17 +08
+Output:
+----------------------------------------------------------
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from ArnoldiTest
+[ RUN      ] ArnoldiTest.OrthogonalityCheck
+Breakdown: Norm below tolerance at iteration 1
+[       OK ] ArnoldiTest.OrthogonalityCheck (0 ms)
+[ RUN      ] ArnoldiTest.HessenbergStructure
+Breakdown: Norm below tolerance at iteration 1
+[       OK ] ArnoldiTest.HessenbergStructure (0 ms)
+[ RUN      ] ArnoldiTest.BreakdownTolerance
+Breakdown: Norm below tolerance at iteration 1
+[       OK ] ArnoldiTest.BreakdownTolerance (0 ms)
+[ RUN      ] ArnoldiTest.KnownExample
+Breakdown: Norm below tolerance at iteration 4
+[       OK ] ArnoldiTest.KnownExample (0 ms)
+[----------] 4 tests from ArnoldiTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 4 tests.
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"KrylovSubspace_test" end time: Jan 12 13:17 +08
+"KrylovSubspace_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+7/14 Testing: ConjugateGradient_test
+7/14 Test: ConjugateGradient_test
+Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/ConjugateGradient_test"
+Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
+"ConjugateGradient_test" start time: Jan 12 13:17 +08
+Output:
+----------------------------------------------------------
+[==========] Running 3 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 3 tests from ConjugateGradientTest
+[ RUN      ] ConjugateGradientTest.SolvesSPDMatrix
+4 -1 0 
+-1 4 -1 
+0 -1 4 
+Iteration 0:
+  Residual norm: 1.89935
+  Alpha: 0.276596
+  Solution: [0.276596, 1.38298, 0]
+Iteration 1:
+  Residual norm: 0.0998952
+  Alpha: 0.258076
+  Solution: [0.641863, 1.49613, 0.356914]
+Iteration 2:
+  Residual norm: 9.81308e-17
+  Alpha: 0.25016
+  Solution: [0.625, 1.5, 0.375]
+[       OK ] ConjugateGradientTest.SolvesSPDMatrix (0 ms)
+[ RUN      ] ConjugateGradientTest.ZeroRHS
+4 -1 0 
+-1 4 -1 
+0 -1 4 
+[       OK ] ConjugateGradientTest.ZeroRHS (0 ms)
+[ RUN      ] ConjugateGradientTest.SingleIteration
+4 -1 0 
+-1 4 -1 
+0 -1 4 
+Iteration 0:
+  Residual norm: 1.89935
+  Alpha: 0.276596
+  Solution: [0.276596, 1.38298, 0]
+[       OK ] ConjugateGradientTest.SingleIteration (0 ms)
+[----------] 3 tests from ConjugateGradientTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 3 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 3 tests.
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"ConjugateGradient_test" end time: Jan 12 13:17 +08
+"ConjugateGradient_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+8/14 Testing: SparseMatrixCSCTest
+8/14 Test: SparseMatrixCSCTest
+Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/SparseMatrixCSCTest"
+Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
+"SparseMatrixCSCTest" start time: Jan 12 13:17 +08
+Output:
+----------------------------------------------------------
+[==========] Running 8 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 8 tests from SparseMatrixCSCTest
+[ RUN      ] SparseMatrixCSCTest.ElementAccess
+[       OK ] SparseMatrixCSCTest.ElementAccess (0 ms)
+[ RUN      ] SparseMatrixCSCTest.MatrixAddition
+[       OK ] SparseMatrixCSCTest.MatrixAddition (0 ms)
+[ RUN      ] SparseMatrixCSCTest.MatrixMultiplication
+[       OK ] SparseMatrixCSCTest.MatrixMultiplication (0 ms)
+[ RUN      ] SparseMatrixCSCTest.VectorMultiplication
+[       OK ] SparseMatrixCSCTest.VectorMultiplication (0 ms)
+[ RUN      ] SparseMatrixCSCTest.GetColumn
+[       OK ] SparseMatrixCSCTest.GetColumn (0 ms)
+[ RUN      ] SparseMatrixCSCTest.OutOfBoundsAccess
+[       OK ] SparseMatrixCSCTest.OutOfBoundsAccess (0 ms)
+[ RUN      ] SparseMatrixCSCTest.IncompatibleMatrixAddition
+[       OK ] SparseMatrixCSCTest.IncompatibleMatrixAddition (0 ms)
+[ RUN      ] SparseMatrixCSCTest.IncompatibleMatrixMultiplication
+[       OK ] SparseMatrixCSCTest.IncompatibleMatrixMultiplication (0 ms)
+[----------] 8 tests from SparseMatrixCSCTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 8 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 8 tests.
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"SparseMatrixCSCTest" end time: Jan 12 13:17 +08
+"SparseMatrixCSCTest" time elapsed: 00:00:00
+----------------------------------------------------------
+
+9/14 Testing: GMRES_test
+9/14 Test: GMRES_test
+Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/GMRES_test"
+Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
+"GMRES_test" start time: Jan 12 13:17 +08
+Output:
+----------------------------------------------------------
+[==========] Running 5 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 5 tests from GMRESTest
+[ RUN      ] GMRESTest.BasicSolverTest
+Initial residual norm: 5.09902
+Happy breakdown at iteration 0
+Residual norm after restart: 1.42015 
+Happy breakdown at iteration 1
+Residual norm after restart: 0.397771 
+Happy breakdown at iteration 2
+Residual norm after restart: 0.112189 
+Happy breakdown at iteration 3
+Residual norm after restart: 0.0315802 
+Happy breakdown at iteration 4
+Residual norm after restart: 0.00889835 
+Happy breakdown at iteration 5
+Residual norm after restart: 0.00250629 
+Happy breakdown at iteration 6
+Residual norm after restart: 0.00086658 
+Happy breakdown at iteration 7
+Residual norm after restart: 0.00029963 
+Happy breakdown at iteration 8
+Residual norm after restart: 0.0001036 
+Happy breakdown at iteration 9
+Residual norm after restart: 3.5821e-05 
+Happy breakdown at iteration 10
+Residual norm after restart: 1.23855e-05 
+Happy breakdown at iteration 11
+Residual norm after restart: 4.28244e-06 
+Happy breakdown at iteration 12
+Residual norm after restart: 1.4807e-06 
+Happy breakdown at iteration 13
+Residual norm after restart: 5.1197e-07 
+Converged after restart at iteration 13
+[       OK ] GMRESTest.BasicSolverTest (0 ms)
+[ RUN      ] GMRESTest.ZeroRHSTest
+Initial residual norm: 0
+Initial guess is good enough.
+[       OK ] GMRESTest.ZeroRHSTest (0 ms)
+[ RUN      ] GMRESTest.ConvergenceTest
+Initial residual norm: 5.09902
+Happy breakdown at iteration 0
+Residual norm after restart: 1.42015 
+Happy breakdown at iteration 1
+Residual norm after restart: 0.397771 
+Happy breakdown at iteration 2
+Residual norm after restart: 0.112189 
+Happy breakdown at iteration 3
+Residual norm after restart: 0.0315802 
+Happy breakdown at iteration 4
+Residual norm after restart: 0.00889835 
+Happy breakdown at iteration 5
+Residual norm after restart: 0.00250629 
+Happy breakdown at iteration 6
+Residual norm after restart: 0.00086658 
+Happy breakdown at iteration 7
+Residual norm after restart: 0.00029963 
+Happy breakdown at iteration 8
+Residual norm after restart: 0.0001036 
+Happy breakdown at iteration 9
+Residual norm after restart: 3.5821e-05 
+Happy breakdown at iteration 10
+Residual norm after restart: 1.23855e-05 
+Happy breakdown at iteration 11
+Residual norm after restart: 4.28244e-06 
+Happy breakdown at iteration 12
+Residual norm after restart: 1.4807e-06 
+Happy breakdown at iteration 13
+Residual norm after restart: 5.1197e-07 
+Converged after restart at iteration 13
+[       OK ] GMRESTest.ConvergenceTest (0 ms)
+[ RUN      ] GMRESTest.DimensionMismatchTest
+[       OK ] GMRESTest.DimensionMismatchTest (0 ms)
+[ RUN      ] GMRESTest.KrylovDimensionTest
+Initial residual norm: 5.09902
+Residual norm after restart: 1.77988 
+Residual norm after restart: 0.627433 
+Residual norm after restart: 0.221194 
+Residual norm after restart: 0.0779794 
+Residual norm after restart: 0.0274907 
+Residual norm after restart: 0.00969153 
+Residual norm after restart: 0.00341663 
+Residual norm after restart: 0.00120449 
+Residual norm after restart: 0.00042463 
+Residual norm after restart: 0.000149698 
+Residual norm after restart: 5.27744e-05 
+Residual norm after restart: 1.8605e-05 
+Residual norm after restart: 6.55896e-06 
+Residual norm after restart: 2.31229e-06 
+Residual norm after restart: 8.15169e-07 
+Converged after restart at iteration 14
+Initial residual norm: 5.09902
+Residual norm after restart: 1.42015 
+Residual norm after restart: 0.397771 
+Residual norm after restart: 0.112189 
+Residual norm after restart: 0.0315802 
+Residual norm after restart: 0.00889835 
+Residual norm after restart: 0.00250629 
+Happy breakdown at iteration 6
+Residual norm after restart: 0.00086658 
+Happy breakdown at iteration 7
+Residual norm after restart: 0.00029963 
+Happy breakdown at iteration 8
+Residual norm after restart: 0.0001036 
+Happy breakdown at iteration 9
+Residual norm after restart: 3.5821e-05 
+Happy breakdown at iteration 10
+Residual norm after restart: 1.23855e-05 
+Happy breakdown at iteration 11
+Residual norm after restart: 4.28244e-06 
+Happy breakdown at iteration 12
+Residual norm after restart: 1.4807e-06 
+Happy breakdown at iteration 13
+Residual norm after restart: 5.1197e-07 
+Converged after restart at iteration 13
+Initial residual norm: 5.09902
+Happy breakdown at iteration 0
+Residual norm after restart: 1.42015 
+Happy breakdown at iteration 1
+Residual norm after restart: 0.397771 
+Happy breakdown at iteration 2
+Residual norm after restart: 0.112189 
+Happy breakdown at iteration 3
+Residual norm after restart: 0.0315802 
+Happy breakdown at iteration 4
+Residual norm after restart: 0.00889835 
+Happy breakdown at iteration 5
+Residual norm after restart: 0.00250629 
+Happy breakdown at iteration 6
+Residual norm after restart: 0.00086658 
+Happy breakdown at iteration 7
+Residual norm after restart: 0.00029963 
+Happy breakdown at iteration 8
+Residual norm after restart: 0.0001036 
+Happy breakdown at iteration 9
+Residual norm after restart: 3.5821e-05 
+Happy breakdown at iteration 10
+Residual norm after restart: 1.23855e-05 
+Happy breakdown at iteration 11
+Residual norm after restart: 4.28244e-06 
+Happy breakdown at iteration 12
+Residual norm after restart: 1.4807e-06 
+Happy breakdown at iteration 13
+Residual norm after restart: 5.1197e-07 
+Converged after restart at iteration 13
+[       OK ] GMRESTest.KrylovDimensionTest (0 ms)
+[----------] 5 tests from GMRESTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 5 tests.
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"GMRES_test" end time: Jan 12 13:17 +08
+"GMRES_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+10/14 Testing: RungeKutta_test
+10/14 Test: RungeKutta_test
+Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/RungeKutta_test"
+Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
+"RungeKutta_test" start time: Jan 12 13:17 +08
+Output:
+----------------------------------------------------------
+[==========] Running 7 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 7 tests from RungeKuttaTest
+[ RUN      ] RungeKuttaTest.ExponentialGrowthTest
+[       OK ] RungeKuttaTest.ExponentialGrowthTest (0 ms)
+[ RUN      ] RungeKuttaTest.HarmonicOscillatorTest
+[       OK ] RungeKuttaTest.HarmonicOscillatorTest (10 ms)
+[ RUN      ] RungeKuttaTest.EnergyConservationTest
+[       OK ] RungeKuttaTest.EnergyConservationTest (0 ms)
+[ RUN      ] RungeKuttaTest.InvalidParametersTest
+[       OK ] RungeKuttaTest.InvalidParametersTest (0 ms)
+[ RUN      ] RungeKuttaTest.CallbackTest
+[       OK ] RungeKuttaTest.CallbackTest (0 ms)
+[ RUN      ] RungeKuttaTest.ConvergenceOrderTest
+[       OK ] RungeKuttaTest.ConvergenceOrderTest (0 ms)
+[ RUN      ] RungeKuttaTest.MultipleTimeScalesTest
+Step: 0 y[0]: 0.606543 current_h: 0.01 error: 0.000375913
+Step: 0 y[0]: 0.892657 current_h: 0.00227106 error: 1.62656e-07
+Step: 1 y[0]: 0.758178 current_h: 0.00326568 error: 1.04382e-06
+Step: 1 y[0]: 0.759499 current_h: 0.00323086 error: 9.87852e-07
+Step: 2 y[0]: 0.645949 current_h: 0.00323877 error: 1.00034e-06
+Step: 2 y[0]: 0.645958 current_h: 0.00323849 error: 9.99903e-07
+Step: 3 y[0]: 0.549389 current_h: 0.00323855 error: 1e-06
+Step: 3 y[0]: 0.549389 current_h: 0.00323855 error: 9.99999e-07
+Step: 4 y[0]: 0.467257 current_h: 0.00323855 error: 1e-06
+Step: 4 y[0]: 0.467257 current_h: 0.00323855 error: 1e-06
+Step: 5 y[0]: 0.397404 current_h: 0.00323855 error: 1e-06
+Step: 5 y[0]: 0.397404 current_h: 0.00323855 error: 1e-06
+Step: 5 y[0]: 0.397404 current_h: 0.00323855 error: 1e-06
+Step: 6 y[0]: 0.337993 current_h: 0.00323855 error: 1e-06
+Step: 6 y[0]: 0.337993 current_h: 0.00323855 error: 1e-06
+Step: 7 y[0]: 0.287464 current_h: 0.00323855 error: 1e-06
+Step: 8 y[0]: 0.244489 current_h: 0.00323855 error: 1e-06
+Step: 8 y[0]: 0.244489 current_h: 0.00323855 error: 1e-06
+Step: 9 y[0]: 0.207938 current_h: 0.00323855 error: 1e-06
+Step: 9 y[0]: 0.207938 current_h: 0.00323855 error: 1e-06
+Step: 9 y[0]: 0.207938 current_h: 0.00323855 error: 1e-06
+Step: 10 y[0]: 0.176852 current_h: 0.00323855 error: 1e-06
+Step: 10 y[0]: 0.176852 current_h: 0.00323855 error: 1e-06
+Step: 10 y[0]: 0.176852 current_h: 0.00323855 error: 1e-06
+Step: 11 y[0]: 0.150413 current_h: 0.00323855 error: 1e-06
+Step: 11 y[0]: 0.150413 current_h: 0.00323855 error: 1e-06
+Step: 11 y[0]: 0.150413 current_h: 0.00323855 error: 1e-06
+Step: 11 y[0]: 0.150413 current_h: 0.00323855 error: 1e-06
+Step: 11 y[0]: 0.150413 current_h: 0.00323855 error: 1e-06
+Step: 12 y[0]: 0.127927 current_h: 0.00323855 error: 1e-06
+Step: 12 y[0]: 0.127927 current_h: 0.00323855 error: 1e-06
+Step: 13 y[0]: 0.108802 current_h: 0.00323855 error: 1e-06
+Step: 14 y[0]: 0.0925366 current_h: 0.00323855 error: 1e-06
+Step: 14 y[0]: 0.0925366 current_h: 0.00323855 error: 1e-06
+Step: 14 y[0]: 0.0925366 current_h: 0.00323855 error: 1e-06
+Step: 15 y[0]: 0.0787027 current_h: 0.00323855 error: 1e-06
+Step: 15 y[0]: 0.0787027 current_h: 0.00323855 error: 1e-06
+Step: 16 y[0]: 0.0669368 current_h: 0.00323855 error: 1e-06
+Step: 16 y[0]: 0.0669368 current_h: 0.00323855 error: 1e-06
+Step: 17 y[0]: 0.05693 current_h: 0.00323855 error: 1e-06
+Step: 17 y[0]: 0.05693 current_h: 0.00323855 error: 1e-06
+Step: 17 y[0]: 0.05693 current_h: 0.00323855 error: 1e-06
+Step: 17 y[0]: 0.05693 current_h: 0.00323855 error: 1e-06
+Step: 17 y[0]: 0.05693 current_h: 0.00323855 error: 1e-06
+Step: 18 y[0]: 0.0484191 current_h: 0.00323855 error: 1e-06
+Step: 18 y[0]: 0.0484191 current_h: 0.00323855 error: 1e-06
+Step: 18 y[0]: 0.0484191 current_h: 0.00323855 error: 1e-06
+Step: 18 y[0]: 0.0484191 current_h: 0.00323855 error: 1e-06
+Step: 19 y[0]: 0.0411806 current_h: 0.00323855 error: 1e-06
+Step: 19 y[0]: 0.0411806 current_h: 0.00323855 error: 1e-06
+Step: 20 y[0]: 0.0350242 current_h: 0.00323855 error: 1e-06
+Step: 21 y[0]: 0.0297882 current_h: 0.00323855 error: 1e-06
+Step: 21 y[0]: 0.0297882 current_h: 0.00323855 error: 1e-06
+Step: 22 y[0]: 0.0253349 current_h: 0.00323855 error: 1e-06
+Step: 23 y[0]: 0.0215474 current_h: 0.00323855 error: 1e-06
+Step: 23 y[0]: 0.0215474 current_h: 0.00323855 error: 1e-06
+Step: 23 y[0]: 0.0215474 current_h: 0.00323855 error: 1e-06
+Step: 24 y[0]: 0.0183262 current_h: 0.00323855 error: 1e-06
+Step: 24 y[0]: 0.0183262 current_h: 0.00323855 error: 1e-06
+Step: 25 y[0]: 0.0155864 current_h: 0.00323855 error: 1e-06
+Step: 25 y[0]: 0.0155864 current_h: 0.00323855 error: 1e-06
+Step: 25 y[0]: 0.0155864 current_h: 0.00323855 error: 1e-06
+Step: 26 y[0]: 0.0132563 current_h: 0.00323855 error: 1e-06
+Step: 26 y[0]: 0.0132563 current_h: 0.00323855 error: 1e-06
+Step: 27 y[0]: 0.0112745 current_h: 0.00323855 error: 1e-06
+Step: 27 y[0]: 0.0112745 current_h: 0.00323855 error: 1e-06
+Step: 28 y[0]: 0.00958902 current_h: 0.00323855 error: 1e-06
+Step: 29 y[0]: 0.00815549 current_h: 0.00323855 error: 1e-06
+Step: 29 y[0]: 0.00815549 current_h: 0.00323855 error: 1e-06
+Step: 29 y[0]: 0.00815549 current_h: 0.00323855 error: 1e-06
+Step: 30 y[0]: 0.00693627 current_h: 0.00323855 error: 1e-06
+Step: 30 y[0]: 0.00693627 current_h: 0.00323855 error: 1e-06
+Step: 30 y[0]: 0.00693627 current_h: 0.00323855 error: 1e-06
+Step: 31 y[0]: 0.00589932 current_h: 0.00323855 error: 1e-06
+Step: 32 y[0]: 0.00501739 current_h: 0.00323855 error: 1e-06
+Step: 33 y[0]: 0.0042673 current_h: 0.00323855 error: 1e-06
+Step: 33 y[0]: 0.0042673 current_h: 0.00323855 error: 1e-06
+Step: 33 y[0]: 0.0042673 current_h: 0.00323855 error: 1e-06
+Step: 33 y[0]: 0.0042673 current_h: 0.00323855 error: 1e-06
+Step: 33 y[0]: 0.0042673 current_h: 0.00323855 error: 1e-06
+Step: 33 y[0]: 0.0042673 current_h: 0.00323855 error: 1e-06
+Step: 34 y[0]: 0.00362935 current_h: 0.00323855 error: 1e-06
+Step: 34 y[0]: 0.00362935 current_h: 0.00323855 error: 1e-06
+Step: 35 y[0]: 0.00308677 current_h: 0.00323855 error: 1e-06
+Step: 35 y[0]: 0.00308677 current_h: 0.00323855 error: 1e-06
+Step: 36 y[0]: 0.00262531 current_h: 0.00323855 error: 1e-06
+Step: 36 y[0]: 0.00262531 current_h: 0.00323855 error: 1e-06
+Step: 37 y[0]: 0.00223283 current_h: 0.00323855 error: 1e-06
+Step: 37 y[0]: 0.00223283 current_h: 0.00323855 error: 1e-06
+Step: 37 y[0]: 0.00223283 current_h: 0.00323855 error: 1e-06
+Step: 38 y[0]: 0.00189903 current_h: 0.00323855 error: 1e-06
+Step: 39 y[0]: 0.00161513 current_h: 0.00323855 error: 1e-06
+Step: 39 y[0]: 0.00161513 current_h: 0.00323855 error: 1e-06
+Step: 40 y[0]: 0.00137367 current_h: 0.00323855 error: 1e-06
+Step: 40 y[0]: 0.00137367 current_h: 0.00323855 error: 1e-06
+Step: 41 y[0]: 0.00116831 current_h: 0.00323855 error: 1e-06
+Step: 41 y[0]: 0.00116831 current_h: 0.00323855 error: 1e-06
+Step: 42 y[0]: 0.000993654 current_h: 0.00323855 error: 1e-06
+Step: 42 y[0]: 0.000993654 current_h: 0.00323855 error: 1e-06
+Step: 43 y[0]: 0.000845105 current_h: 0.00323855 error: 1e-06
+Step: 43 y[0]: 0.000845105 current_h: 0.00323855 error: 1e-06
+Step: 44 y[0]: 0.000718765 current_h: 0.00323855 error: 1e-06
+Step: 45 y[0]: 0.000611311 current_h: 0.00323855 error: 1e-06
+Step: 46 y[0]: 0.000519922 current_h: 0.00323855 error: 1e-06
+Step: 46 y[0]: 0.000519922 current_h: 0.00323855 error: 1e-06
+Step: 47 y[0]: 0.000442195 current_h: 0.00323855 error: 1e-06
+Step: 48 y[0]: 0.000376088 current_h: 0.00323855 error: 1e-06
+Step: 48 y[0]: 0.000376088 current_h: 0.00323855 error: 1e-06
+Step: 49 y[0]: 0.000319864 current_h: 0.00323855 error: 1e-06
+Step: 50 y[0]: 0.000272045 current_h: 0.00323855 error: 1e-06
+Step: 50 y[0]: 0.000272045 current_h: 0.00323855 error: 1e-06
+Step: 51 y[0]: 0.000231375 current_h: 0.00323855 error: 1e-06
+Step: 51 y[0]: 0.000231375 current_h: 0.00323855 error: 1e-06
+Step: 52 y[0]: 0.000196785 current_h: 0.00323855 error: 1e-06
+Step: 52 y[0]: 0.000196785 current_h: 0.00323855 error: 1e-06
+Step: 53 y[0]: 0.000167367 current_h: 0.00323855 error: 1e-06
+Step: 53 y[0]: 0.000167367 current_h: 0.00323855 error: 1e-06
+Step: 54 y[0]: 0.000142346 current_h: 0.00323855 error: 1e-06
+Step: 54 y[0]: 0.000142346 current_h: 0.00323855 error: 1e-06
+Step: 54 y[0]: 0.000142346 current_h: 0.00323855 error: 1e-06
+Step: 55 y[0]: 0.000121065 current_h: 0.00323855 error: 1e-06
+Step: 55 y[0]: 0.000121065 current_h: 0.00323855 error: 1e-06
+Step: 56 y[0]: 0.000102966 current_h: 0.00323855 error: 1e-06
+Step: 56 y[0]: 0.000102966 current_h: 0.00323855 error: 1e-06
+Step: 57 y[0]: 8.75733e-05 current_h: 0.00323855 error: 1e-06
+Step: 57 y[0]: 8.75733e-05 current_h: 0.00323855 error: 1e-06
+Step: 57 y[0]: 8.75733e-05 current_h: 0.00323855 error: 1e-06
+Step: 58 y[0]: 7.44813e-05 current_h: 0.00323855 error: 1e-06
+Step: 59 y[0]: 6.33466e-05 current_h: 0.00323855 error: 1e-06
+Step: 60 y[0]: 5.38764e-05 current_h: 0.00323855 error: 1e-06
+Step: 60 y[0]: 5.38764e-05 current_h: 0.00323855 error: 1e-06
+Step: 61 y[0]: 4.58221e-05 current_h: 0.00323855 error: 1e-06
+Step: 62 y[0]: 3.89718e-05 current_h: 0.00323855 error: 1e-06
+Step: 62 y[0]: 3.89718e-05 current_h: 0.00323855 error: 1e-06
+Step: 62 y[0]: 3.89718e-05 current_h: 0.00323855 error: 1e-06
+Step: 62 y[0]: 3.89718e-05 current_h: 0.00323855 error: 1e-06
+Step: 63 y[0]: 3.31456e-05 current_h: 0.00323855 error: 1e-06
+Step: 63 y[0]: 3.31456e-05 current_h: 0.00323855 error: 1e-06
+Step: 64 y[0]: 2.81904e-05 current_h: 0.00323855 error: 1e-06
+Step: 64 y[0]: 2.81904e-05 current_h: 0.00323855 error: 1e-06
+Step: 65 y[0]: 2.39761e-05 current_h: 0.00323855 error: 1e-06
+Step: 66 y[0]: 2.03917e-05 current_h: 0.00323855 error: 1e-06
+Step: 67 y[0]: 1.73432e-05 current_h: 0.00323855 error: 1e-06
+Step: 67 y[0]: 1.73432e-05 current_h: 0.00323855 error: 1e-06
+Step: 68 y[0]: 1.47504e-05 current_h: 0.00323855 error: 1e-06
+Step: 69 y[0]: 1.25453e-05 current_h: 0.00323855 error: 1e-06
+Step: 69 y[0]: 1.25453e-05 current_h: 0.00323855 error: 1e-06
+Step: 70 y[0]: 1.06698e-05 current_h: 0.00323855 error: 1e-06
+Step: 70 y[0]: 1.06698e-05 current_h: 0.00323855 error: 1e-06
+Step: 71 y[0]: 9.0747e-06 current_h: 0.00323855 error: 1e-06
+Step: 72 y[0]: 7.71806e-06 current_h: 0.00323855 error: 1e-06
+Step: 73 y[0]: 6.56423e-06 current_h: 0.00323855 error: 1e-06
+Step: 73 y[0]: 6.56423e-06 current_h: 0.00323855 error: 1e-06
+Step: 73 y[0]: 6.56423e-06 current_h: 0.00323855 error: 1e-06
+Step: 74 y[0]: 5.5829e-06 current_h: 0.00323855 error: 1e-06
+Step: 74 y[0]: 5.5829e-06 current_h: 0.00323855 error: 1e-06
+Step: 74 y[0]: 5.5829e-06 current_h: 0.00323855 error: 1e-06
+Step: 75 y[0]: 4.74827e-06 current_h: 0.00323855 error: 1e-06
+Step: 75 y[0]: 4.74827e-06 current_h: 0.00323855 error: 1e-06
+Step: 76 y[0]: 4.03842e-06 current_h: 0.00323855 error: 1e-06
+Step: 76 y[0]: 4.03842e-06 current_h: 0.00323855 error: 1e-06
+Step: 77 y[0]: 3.43468e-06 current_h: 0.00323855 error: 1e-06
+Step: 78 y[0]: 2.92121e-06 current_h: 0.00323855 error: 1e-06
+Step: 78 y[0]: 2.92121e-06 current_h: 0.00323855 error: 1e-06
+Step: 79 y[0]: 2.4845e-06 current_h: 0.00323855 error: 1e-06
+Step: 80 y[0]: 2.11307e-06 current_h: 0.00323855 error: 1e-06
+Step: 80 y[0]: 2.11307e-06 current_h: 0.00323855 error: 1e-06
+Step: 80 y[0]: 2.11307e-06 current_h: 0.00323855 error: 1e-06
+Step: 80 y[0]: 2.11307e-06 current_h: 0.00323855 error: 1e-06
+Step: 80 y[0]: 2.11307e-06 current_h: 0.00323855 error: 1e-06
+Step: 81 y[0]: 1.79717e-06 current_h: 0.00323855 error: 1e-06
+Step: 81 y[0]: 1.79717e-06 current_h: 0.00323855 error: 1e-06
+Step: 82 y[0]: 1.5285e-06 current_h: 0.00323855 error: 1e-06
+Step: 83 y[0]: 1.29999e-06 current_h: 0.00323855 error: 1e-06
+Step: 84 y[0]: 1.10565e-06 current_h: 0.00323855 error: 1e-06
+Step: 85 y[0]: 9.40358e-07 current_h: 0.00323855 error: 1e-06
+Step: 85 y[0]: 9.40358e-07 current_h: 0.00323855 error: 1e-06
+Step: 85 y[0]: 9.40358e-07 current_h: 0.00323855 error: 1e-06
+Step: 86 y[0]: 7.99777e-07 current_h: 0.00323855 error: 1e-06
+Step: 86 y[0]: 7.99777e-07 current_h: 0.00323855 error: 1e-06
+Step: 86 y[0]: 7.99777e-07 current_h: 0.00323855 error: 1e-06
+Step: 87 y[0]: 6.80212e-07 current_h: 0.00323855 error: 1e-06
+Step: 88 y[0]: 5.78523e-07 current_h: 0.00323855 error: 1e-06
+Step: 88 y[0]: 5.78523e-07 current_h: 0.00323855 error: 1e-06
+Step: 88 y[0]: 5.78523e-07 current_h: 0.00323855 error: 1e-06
+Step: 88 y[0]: 5.78523e-07 current_h: 0.00323855 error: 1e-06
+Step: 88 y[0]: 5.78523e-07 current_h: 0.00323855 error: 1e-06
+Step: 89 y[0]: 4.92035e-07 current_h: 0.00323855 error: 1e-06
+Step: 89 y[0]: 4.92035e-07 current_h: 0.00323855 error: 1e-06
+Step: 90 y[0]: 4.18477e-07 current_h: 0.00323855 error: 1e-06
+Step: 90 y[0]: 4.18477e-07 current_h: 0.00323855 error: 1e-06
+Step: 91 y[0]: 3.55916e-07 current_h: 0.00323855 error: 1e-06
+Step: 92 y[0]: 3.02708e-07 current_h: 0.00323855 error: 1e-06
+Step: 92 y[0]: 3.02708e-07 current_h: 0.00323855 error: 1e-06
+Step: 92 y[0]: 3.02708e-07 current_h: 0.00323855 error: 1e-06
+Step: 93 y[0]: 2.57454e-07 current_h: 0.00323855 error: 1e-06
+Step: 93 y[0]: 2.57454e-07 current_h: 0.00323855 error: 1e-06
+Step: 94 y[0]: 2.18965e-07 current_h: 0.00323855 error: 1e-06
+Step: 95 y[0]: 1.8623e-07 current_h: 0.00323855 error: 1e-06
+Step: 95 y[0]: 1.8623e-07 current_h: 0.00323855 error: 1e-06
+Step: 96 y[0]: 1.5839e-07 current_h: 0.00323855 error: 1e-06
+Step: 96 y[0]: 1.5839e-07 current_h: 0.00323855 error: 1e-06
+Step: 97 y[0]: 1.34711e-07 current_h: 0.00323855 error: 1e-06
+Step: 97 y[0]: 1.34711e-07 current_h: 0.00323855 error: 1e-06
+Step: 98 y[0]: 1.14572e-07 current_h: 0.00323855 error: 1e-06
+Step: 98 y[0]: 1.14572e-07 current_h: 0.00323855 error: 1e-06
+Step: 99 y[0]: 9.74437e-08 current_h: 0.00323855 error: 1e-06
+[       OK ] RungeKuttaTest.MultipleTimeScalesTest (3 ms)
+[----------] 7 tests from RungeKuttaTest (15 ms total)
+
+[----------] Global test environment tear-down
+[==========] 7 tests from 1 test suite ran. (15 ms total)
+[  PASSED  ] 7 tests.
+<end of output>
+Test time =   0.14 sec
+----------------------------------------------------------
+Test Passed.
+"RungeKutta_test" end time: Jan 12 13:17 +08
+"RungeKutta_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+11/14 Testing: GaussianQuad_test
+11/14 Test: GaussianQuad_test
+Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/GaussianQuad_test"
+Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
+"GaussianQuad_test" start time: Jan 12 13:17 +08
+Output:
+----------------------------------------------------------
+[==========] Running 5 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 5 tests from GuassianQuadTest
+[ RUN      ] GuassianQuadTest.ConstructorTest
+[       OK ] GuassianQuadTest.ConstructorTest (0 ms)
+[ RUN      ] GuassianQuadTest.PointsSymmetryTest
+[       OK ] GuassianQuadTest.PointsSymmetryTest (0 ms)
+[ RUN      ] GuassianQuadTest.PolynomialIntegrationTest
+[       OK ] GuassianQuadTest.PolynomialIntegrationTest (0 ms)
+[ RUN      ] GuassianQuadTest.TrigonometricIntegrationTest
+[       OK ] GuassianQuadTest.TrigonometricIntegrationTest (0 ms)
+[ RUN      ] GuassianQuadTest.AccuracyTest
+[       OK ] GuassianQuadTest.AccuracyTest (0 ms)
+[----------] 5 tests from GuassianQuadTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 5 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 5 tests.
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"GaussianQuad_test" end time: Jan 12 13:17 +08
+"GaussianQuad_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+12/14 Testing: MeshObj_test
+12/14 Test: MeshObj_test
+Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/MeshObj_test"
+Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
+"MeshObj_test" start time: Jan 12 13:17 +08
+Output:
+----------------------------------------------------------
+[==========] Running 4 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 4 tests from MeshObjTest
+[ RUN      ] MeshObjTest.Initialize2D
+[       OK ] MeshObjTest.Initialize2D (0 ms)
+[ RUN      ] MeshObjTest.Initialize3D
+[       OK ] MeshObjTest.Initialize3D (0 ms)
+[ RUN      ] MeshObjTest.NeighborConnectivity2D
+[       OK ] MeshObjTest.NeighborConnectivity2D (0 ms)
+[ RUN      ] MeshObjTest.NeighborConnectivity3D
+[       OK ] MeshObjTest.NeighborConnectivity3D (0 ms)
+[----------] 4 tests from MeshObjTest (0 ms total)
+
+[----------] Global test environment tear-down
+[==========] 4 tests from 1 test suite ran. (0 ms total)
+[  PASSED  ] 4 tests.
+<end of output>
+Test time =   0.13 sec
+----------------------------------------------------------
+Test Passed.
+"MeshObj_test" end time: Jan 12 13:17 +08
+"MeshObj_test" time elapsed: 00:00:00
+----------------------------------------------------------
+
+13/14 Testing: Visual_test
+13/14 Test: Visual_test
+Command: "/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/Visual_test"
+Directory: /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build
+"Visual_test" start time: Jan 12 13:17 +08
+Output:
+----------------------------------------------------------
+[==========] Running 6 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 6 tests from VisualTest
+[ RUN      ] VisualTest.HeaderFormat
+[       OK ] VisualTest.HeaderFormat (11 ms)
+[ RUN      ] VisualTest.CellData2D
+[       OK ] VisualTest.CellData2D (8 ms)
+[ RUN      ] VisualTest.ScalarData
+[       OK ] VisualTest.ScalarData (6 ms)
+[ RUN      ] VisualTest.FileSize
+[       OK ] VisualTest.FileSize (5 ms)
+[ RUN      ] VisualTest.CellTypes
+[       OK ] VisualTest.CellTypes (5 ms)
+[ RUN      ] VisualTest.DataFields
+[       OK ] VisualTest.DataFields (4 ms)
+[----------] 6 tests from VisualTest (41 ms total)
+
+[----------] Global test environment tear-down
+[==========] 6 tests from 1 test suite ran. (41 ms total)
+[  PASSED  ] 6 tests.
+<end of output>
+Test time =   0.17 sec
+----------------------------------------------------------
+Test Passed.
+"Visual_test" end time: Jan 12 13:17 +08
+"Visual_test" time elapsed: 00:00:00
+----------------------------------------------------------
+

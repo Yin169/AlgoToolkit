@@ -37,7 +37,9 @@ struct LBMNode {
     std::array<T, LatticeTraits<D>::Q> distributions;
     size_t level;
     bool isActive;
+    bool isBoundary;  // New: track boundary nodes
     std::vector<size_t> neighbors;
+    std::vector<size_t> boundaryNeighbors;  // New: track boundary neighbors
 };
 
 template<typename T, size_t D>
@@ -48,6 +50,7 @@ private:
     T dx;
     T refinementThreshold;
     size_t maxLevel;
+    std::vector<size_t> boundaryNodes;  // New: store boundary node indices
     
 public:
     MeshObj(const std::array<size_t, D>& dims, T dx_, T threshold = 0.1) 
@@ -64,6 +67,10 @@ public:
         initializeGridRecursive(indices, 0);
     }
 
+	std::vector<LBMNode<T,D>>& getNodes() {
+		return nodes;
+	}
+
 	const std::vector<LBMNode<T,D>>& getNodes() const {
 		return nodes;
 	}
@@ -71,6 +78,20 @@ public:
 	const std::vector<size_t> getNeighbors(size_t idx) const {
 		return nodes[idx].neighbors;
 	}
+
+    void setBoundaryNode(size_t idx) {
+        nodes[idx].isBoundary = true;
+        boundaryNodes.push_back(idx);
+        // Update neighbors for surrounding nodes
+        for(const auto& neighbor : nodes[idx].neighbors) {
+            setNeighbors(neighbor);
+        }
+    }
+
+    // New: Get boundary nodes
+    const std::vector<size_t>& getBoundaryNodes() const {
+        return boundaryNodes;
+    }
 
     void adaptGrid(const VectorObj<T>& macroscopic) {
         std::vector<size_t> refineList;
@@ -136,9 +157,11 @@ private:
         return pos;
     }
 
+    // New: Enhanced neighbor finding for boundary nodes
     void setNeighbors(size_t idx) {
         std::array<size_t, D> indices = unflattenIndex(idx);
         nodes[idx].neighbors.clear();
+        nodes[idx].boundaryNeighbors.clear();
         
         for(const auto& dir : LatticeTraits<D>::directions) {
             bool valid = true;
@@ -154,7 +177,12 @@ private:
             }
             
             if(valid) {
-                nodes[idx].neighbors.push_back(flattenIndex(neighborIndices));
+                size_t neighborIdx = flattenIndex(neighborIndices);
+                if(nodes[neighborIdx].isBoundary) {
+                    nodes[idx].boundaryNeighbors.push_back(neighborIdx);
+                } else {
+                    nodes[idx].neighbors.push_back(neighborIdx);
+                }
             }
         }
     }
@@ -190,28 +218,36 @@ private:
         return maxGrad;
     }
 
+    // Modified: Grid refinement considering boundaries
     void refineCell(size_t idx) {
         if(nodes[idx].level >= maxLevel) return;
 
-        // Create new nodes at half spacing
         T newDx = dx / (1 << (nodes[idx].level + 1));
         std::array<T, D> basePos = nodes[idx].position;
 
-        // Add 4 new nodes (2x2 refinement)
-        for(int j = 0; j < 2; j++) {
-            for(int i = 0; i < 2; i++) {
-                LBMNode<T, D> newNode;
-                newNode.position = {
-                    basePos[0] + i * newDx,
-                    basePos[1] + j * newDx
-                };
-                newNode.level = nodes[idx].level + 1;
-                newNode.isActive = true;
-                nodes.push_back(newNode);
+        // Store boundary status
+        bool wasBoundary = nodes[idx].isBoundary;
+
+        // Create refined nodes
+        for(size_t i = 0; i < (1 << D); i++) {
+            LBMNode<T, D> newNode;
+            std::array<T, D> offset;
+            for(size_t d = 0; d < D; d++) {
+                offset[d] = ((i >> d) & 1) * newDx;
+                newNode.position[d] = basePos[d] + offset[d];
+            }
+            newNode.level = nodes[idx].level + 1;
+            newNode.isActive = true;
+            newNode.isBoundary = wasBoundary;
+            nodes.push_back(newNode);
+            
+            if(wasBoundary) {
+                boundaryNodes.push_back(nodes.size() - 1);
             }
         }
 
         nodes[idx].isActive = false;
+        updateConnectivity();
     }
 
     void coarsenCell(size_t idx) {
@@ -245,6 +281,7 @@ private:
             }
         }
     }
+
 };
 
 #endif // MESH_OBJ_HPP

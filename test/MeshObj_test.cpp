@@ -27,13 +27,15 @@ public:
 
 // Grid Initialization Tests
 TEST_F(MeshObjTest, Initialize2D) {
-    EXPECT_EQ(mesh2D->getNodes().size(), 16);
+    auto size = mesh2D->getNodes().size();
+    EXPECT_EQ(size, 16);
     auto pos = mesh2D->getNodes()[0].position;
     EXPECT_TRUE(validateNodePosition(pos, 0.0, 0.0));
 }
 
 TEST_F(MeshObjTest, Initialize3D) {
-    EXPECT_EQ(mesh3D->getNodes().size(), 64);
+    auto size = mesh3D->getNodes().size();
+    EXPECT_EQ(size, 64);
     auto pos = mesh3D->getNodes()[0].position;
     EXPECT_TRUE(validateNodePosition(pos, 0.0, 0.0, 0.0));
 }

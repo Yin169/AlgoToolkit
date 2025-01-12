@@ -295,6 +295,43 @@ Visual_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visual_test.dir/build.make CMakeFiles/Visual_test.dir/build
 .PHONY : Visual_test/fast
 
+#=============================================================================
+# Target rules for targets named CylinderFlow
+
+# Build rule for target.
+CylinderFlow: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CylinderFlow
+.PHONY : CylinderFlow
+
+# fast build rule for target.
+CylinderFlow/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CylinderFlow.dir/build.make CMakeFiles/CylinderFlow.dir/build
+.PHONY : CylinderFlow/fast
+
+examples/CylinderFlow.o: examples/CylinderFlow.cpp.o
+.PHONY : examples/CylinderFlow.o
+
+# target to build an object file
+examples/CylinderFlow.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CylinderFlow.dir/build.make CMakeFiles/CylinderFlow.dir/examples/CylinderFlow.cpp.o
+.PHONY : examples/CylinderFlow.cpp.o
+
+examples/CylinderFlow.i: examples/CylinderFlow.cpp.i
+.PHONY : examples/CylinderFlow.i
+
+# target to preprocess a source file
+examples/CylinderFlow.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CylinderFlow.dir/build.make CMakeFiles/CylinderFlow.dir/examples/CylinderFlow.cpp.i
+.PHONY : examples/CylinderFlow.cpp.i
+
+examples/CylinderFlow.s: examples/CylinderFlow.cpp.s
+.PHONY : examples/CylinderFlow.s
+
+# target to generate assembly for a file
+examples/CylinderFlow.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/CylinderFlow.dir/build.make CMakeFiles/CylinderFlow.dir/examples/CylinderFlow.cpp.s
+.PHONY : examples/CylinderFlow.cpp.s
+
 test/ConjugateGradient_test.o: test/ConjugateGradient_test.cpp.o
 .PHONY : test/ConjugateGradient_test.o
 
@@ -617,6 +654,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... ConjugateGradient_test"
+	@echo "... CylinderFlow"
 	@echo "... GMRES_test"
 	@echo "... GaussianQuad_test"
 	@echo "... KrylovSubspace_test"
@@ -629,6 +667,9 @@ help:
 	@echo "... debuglogger"
 	@echo "... itersolver_test"
 	@echo "... matrix_obj_test"
+	@echo "... examples/CylinderFlow.o"
+	@echo "... examples/CylinderFlow.i"
+	@echo "... examples/CylinderFlow.s"
 	@echo "... test/ConjugateGradient_test.o"
 	@echo "... test/ConjugateGradient_test.i"
 	@echo "... test/ConjugateGradient_test.s"
