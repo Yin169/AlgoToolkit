@@ -269,6 +269,32 @@ GaussianQuad_test/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/GaussianQuad_test.dir/build.make CMakeFiles/GaussianQuad_test.dir/build
 .PHONY : GaussianQuad_test/fast
 
+#=============================================================================
+# Target rules for targets named MeshObj_test
+
+# Build rule for target.
+MeshObj_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 MeshObj_test
+.PHONY : MeshObj_test
+
+# fast build rule for target.
+MeshObj_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MeshObj_test.dir/build.make CMakeFiles/MeshObj_test.dir/build
+.PHONY : MeshObj_test/fast
+
+#=============================================================================
+# Target rules for targets named Visual_test
+
+# Build rule for target.
+Visual_test: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 Visual_test
+.PHONY : Visual_test
+
+# fast build rule for target.
+Visual_test/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visual_test.dir/build.make CMakeFiles/Visual_test.dir/build
+.PHONY : Visual_test/fast
+
 test/ConjugateGradient_test.o: test/ConjugateGradient_test.cpp.o
 .PHONY : test/ConjugateGradient_test.o
 
@@ -389,6 +415,30 @@ test/LU_test.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/LU_test.dir/build.make CMakeFiles/LU_test.dir/test/LU_test.cpp.s
 .PHONY : test/LU_test.cpp.s
 
+test/MeshObj_test.o: test/MeshObj_test.cpp.o
+.PHONY : test/MeshObj_test.o
+
+# target to build an object file
+test/MeshObj_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MeshObj_test.dir/build.make CMakeFiles/MeshObj_test.dir/test/MeshObj_test.cpp.o
+.PHONY : test/MeshObj_test.cpp.o
+
+test/MeshObj_test.i: test/MeshObj_test.cpp.i
+.PHONY : test/MeshObj_test.i
+
+# target to preprocess a source file
+test/MeshObj_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MeshObj_test.dir/build.make CMakeFiles/MeshObj_test.dir/test/MeshObj_test.cpp.i
+.PHONY : test/MeshObj_test.cpp.i
+
+test/MeshObj_test.s: test/MeshObj_test.cpp.s
+.PHONY : test/MeshObj_test.s
+
+# target to generate assembly for a file
+test/MeshObj_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MeshObj_test.dir/build.make CMakeFiles/MeshObj_test.dir/test/MeshObj_test.cpp.s
+.PHONY : test/MeshObj_test.cpp.s
+
 test/RungeKutta_test.o: test/RungeKutta_test.cpp.o
 .PHONY : test/RungeKutta_test.o
 
@@ -436,6 +486,30 @@ test/SparseMatrixCSCTest.s: test/SparseMatrixCSCTest.cpp.s
 test/SparseMatrixCSCTest.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SparseMatrixCSCTest.dir/build.make CMakeFiles/SparseMatrixCSCTest.dir/test/SparseMatrixCSCTest.cpp.s
 .PHONY : test/SparseMatrixCSCTest.cpp.s
+
+test/Visual_test.o: test/Visual_test.cpp.o
+.PHONY : test/Visual_test.o
+
+# target to build an object file
+test/Visual_test.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visual_test.dir/build.make CMakeFiles/Visual_test.dir/test/Visual_test.cpp.o
+.PHONY : test/Visual_test.cpp.o
+
+test/Visual_test.i: test/Visual_test.cpp.i
+.PHONY : test/Visual_test.i
+
+# target to preprocess a source file
+test/Visual_test.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visual_test.dir/build.make CMakeFiles/Visual_test.dir/test/Visual_test.cpp.i
+.PHONY : test/Visual_test.cpp.i
+
+test/Visual_test.s: test/Visual_test.cpp.s
+.PHONY : test/Visual_test.s
+
+# target to generate assembly for a file
+test/Visual_test.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visual_test.dir/build.make CMakeFiles/Visual_test.dir/test/Visual_test.cpp.s
+.PHONY : test/Visual_test.cpp.s
 
 test/basic_test.o: test/basic_test.cpp.o
 .PHONY : test/basic_test.o
@@ -547,8 +621,10 @@ help:
 	@echo "... GaussianQuad_test"
 	@echo "... KrylovSubspace_test"
 	@echo "... LU_test"
+	@echo "... MeshObj_test"
 	@echo "... RungeKutta_test"
 	@echo "... SparseMatrixCSCTest"
+	@echo "... Visual_test"
 	@echo "... basic_test"
 	@echo "... debuglogger"
 	@echo "... itersolver_test"
@@ -568,12 +644,18 @@ help:
 	@echo "... test/LU_test.o"
 	@echo "... test/LU_test.i"
 	@echo "... test/LU_test.s"
+	@echo "... test/MeshObj_test.o"
+	@echo "... test/MeshObj_test.i"
+	@echo "... test/MeshObj_test.s"
 	@echo "... test/RungeKutta_test.o"
 	@echo "... test/RungeKutta_test.i"
 	@echo "... test/RungeKutta_test.s"
 	@echo "... test/SparseMatrixCSCTest.o"
 	@echo "... test/SparseMatrixCSCTest.i"
 	@echo "... test/SparseMatrixCSCTest.s"
+	@echo "... test/Visual_test.o"
+	@echo "... test/Visual_test.i"
+	@echo "... test/Visual_test.s"
 	@echo "... test/basic_test.o"
 	@echo "... test/basic_test.i"
 	@echo "... test/basic_test.s"

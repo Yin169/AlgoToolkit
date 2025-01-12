@@ -167,4 +167,6 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/GMRES_test.dir/DependInfo.cmake"
   "CMakeFiles/RungeKutta_test.dir/DependInfo.cmake"
   "CMakeFiles/GaussianQuad_test.dir/DependInfo.cmake"
+  "CMakeFiles/MeshObj_test.dir/DependInfo.cmake"
+  "CMakeFiles/Visual_test.dir/DependInfo.cmake"
   )

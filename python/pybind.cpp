@@ -52,19 +52,52 @@ PYBIND11_MODULE(numerical_solver, m) {
 
     // GMRES Solver
     py::class_<GMRES<double, SparseMatrixCSC<double>, VectorObj<double>>>(m, "GMRES")
-        .def(py::init<const SparseMatrixCSC<double>&, const VectorObj<double>&, int, double>())
-        .def("solve", &GMRES<double, SparseMatrixCSC<double>, VectorObj<double>>::solve)
-        .def("getResidualNorm", &GMRES<double, SparseMatrixCSC<double>, VectorObj<double>>::getResidualNorm);
-
-    // Runge-Kutta Methods
-    py::class_<RungeKutta4<double>>(m, "RK4")
         .def(py::init<>())
-        .def("solve", &RungeKutta4<double>::solve,
-             py::arg("f"), py::arg("y0"), py::arg("t0"), py::arg("tf"), py::arg("h"));
+        .def("solve", &GMRES<double, SparseMatrixCSC<double>, VectorObj<double>>::solve,
+             py::arg("A"), py::arg("b"), py::arg("x"), py::arg("maxIter"), 
+             py::arg("KrylovDim"), py::arg("tol"));
 
-    py::class_<AdaptiveRK45<double>>(m, "RK45")
+    // Numerical Integration
+    py::class_<Quadrature::GaussianQuadrature<double>>(m, "GaussQuadrature")
+        .def(py::init<int>())
+        .def("integrate", &Quadrature::GaussianQuadrature<double>::integrate)
+        .def("getPoints", &Quadrature::GaussianQuadrature<double>::getPoints)
+        .def("getWeights", &Quadrature::GaussianQuadrature<double>::getWeights);
+
+    // ODE Solvers
+    py::class_<RungeKutta::RK4<double>>(m, "RK4")
         .def(py::init<>())
-        .def("solve", &AdaptiveRK45<double>::solve,
-             py::arg("f"), py::arg("y0"), py::arg("t0"), py::arg("tf"), 
-             py::arg("h0"), py::arg("tol"), py::arg("hmin"), py::arg("hmax"));
+        .def("solve", &RungeKutta::RK4<double>::solve,
+             py::arg("f"), py::arg("t0"), py::arg("y0"), 
+             py::arg("t_end"), py::arg("h"));
+
+    // LU Decomposition
+    m.def("lu_decompose", &LU::luDecomposition<double, DenseObj<double>>, 
+          "LU decomposition of matrix",
+          py::arg("A"), py::arg("L"), py::arg("U"));
+
+    m.def("lu_solve", &LU::luSolve<double, DenseObj<double>>, 
+          "Solve using LU decomposition",
+          py::arg("L"), py::arg("U"), py::arg("b"));
+
+    // Matrix/Vector Operations
+    py::class_<VectorObj<double>>(m, "Vector")
+        .def(py::init<int>())
+        .def("__getitem__", &VectorObj<double>::operator[])
+        .def("__setitem__", [](VectorObj<double>& v, size_t i, double val) { v[i] = val; })
+        .def("size", &VectorObj<double>::size)
+        .def("norm", &VectorObj<double>::L2norm);
+
+    py::class_<DenseObj<double>>(m, "DenseMatrix")
+        .def(py::init<int, int>())
+        .def("__call__", &DenseObj<double>::operator())
+        .def("rows", &DenseObj<double>::getRows)
+        .def("cols", &DenseObj<double>::getCols);
+
+    py::class_<SparseMatrixCSC<double>>(m, "SparseMatrix")
+        .def(py::init<int, int>())
+        .def("addValue", &SparseMatrixCSC<double>::addValue)
+        .def("finalize", &SparseMatrixCSC<double>::finalize)
+        .def("rows", &SparseMatrixCSC<double>::getRows)
+        .def("cols", &SparseMatrixCSC<double>::getCols);
 }

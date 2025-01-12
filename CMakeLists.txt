@@ -19,13 +19,15 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/ODE
     ${PROJECT_SOURCE_DIR}/src/Intergal
     ${PROJECT_SOURCE_DIR}/src/Obj
+    ${PROJECT_SOURCE_DIR}/application
+    ${PROJECT_SOURCE_DIR}/application/Mesh
+    ${PROJECT_SOURCE_DIR}/application/PostProcess
 )
 
 # Find required packages
 find_package(OpenBLAS REQUIRED)
 find_package(benchmark REQUIRED)
 find_package(GTest REQUIRED)
-# find_package(pybind11 REQUIRED)
 
 # Define common test dependencies
 set(TEST_DEPENDENCIES
@@ -47,22 +49,17 @@ set(TEST_SOURCES
     GMRES_test
     RungeKutta_test
     GaussianQuad_test
+    MeshObj_test
+    Visual_test
 )
 
-# Add test executables
+# # Add test executables
 foreach(test_source ${TEST_SOURCES})
     add_executable(${test_source} test/${test_source}.cpp)
     target_link_libraries(${test_source} PRIVATE ${TEST_DEPENDENCIES})
     add_test(NAME ${test_source} COMMAND ${test_source})
 endforeach()
 
-# # Python module
-# pybind11_add_module(fastsolver python/pybind.cpp)
-# target_link_libraries(fastsolver PRIVATE ${TEST_DEPENDENCIES})
-# target_include_directories(fastsolver PRIVATE ${PROJECT_SOURCE_DIR}/src)
-
-# # Installation
-# install(TARGETS fastsolver DESTINATION .)
 
 # Enable testing
 enable_testing()

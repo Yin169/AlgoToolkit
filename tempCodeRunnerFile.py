@@ -1,1 +1,0 @@
-openblas_path

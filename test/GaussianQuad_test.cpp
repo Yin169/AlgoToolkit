@@ -49,9 +49,6 @@ TEST_F(GuassianQuadTest, TrigonometricIntegrationTest) {
     Quadrature::GaussianQuadrature<double> quad(10);
     std::vector<double> points = quad.getPoints();
     std::vector<double> weights = quad.getWeights();
-    for(int i=0; i<points.size(); i++) {
-        std::cout << points[i] << " " << weights[i] << std::endl;
-    }
     // Integrate sin(x) from 0 to pi
     auto f1 = [](double x) { return std::sin(x); };
     EXPECT_NEAR(quad.integrate(f1, 0.0, M_PI), 2.0, eps);
