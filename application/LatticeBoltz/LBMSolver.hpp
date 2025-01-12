@@ -186,11 +186,12 @@ private:
         return velocity;
     }
 
-    std::array<T, LatticeTraits<D>::Q> computeEquilibrium(T rho, 
-                                                         const std::array<T,D>& u) {
+    std::array<T, LatticeTraits<D>::Q> computeEquilibrium(T rho, const std::array<T,D>& u) {
         std::array<T, LatticeTraits<D>::Q> feq;
         T usqr = 0;
-        for(size_t d = 0; d < D; d++) usqr += u[d] * u[d];
+        for(size_t d = 0; d < D; d++) {
+            usqr += u[d] * u[d];
+        }
         
         for(size_t i = 0; i < LatticeTraits<D>::Q; i++) {
             T cu = 0;
@@ -207,7 +208,7 @@ public:
         : mesh(mesh_), deltaX(dx), deltaT(dt) {
         cs2 = 1.0/3.0;
         T tau = viscosity/cs2 + 0.5;
-        omega = 1.0/tau;
+        omega = 1.0/(tau + 1.0);
         initializeWeights();
     }
 

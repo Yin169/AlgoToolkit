@@ -10,8 +10,8 @@ private:
     static constexpr size_t D = 2;
     static constexpr size_t Nx = 400;
     static constexpr size_t Ny = 100;
-    static constexpr T Re = 600;     // Reynolds number
-    static constexpr T U0 = 40.0;     // Inlet velocity
+    static constexpr T Re = 10;     // Reynolds number
+    static constexpr T U0 = 6.0;     // Inlet velocity
     static constexpr T R = 10.0;     // Cylinder radius
     static constexpr T CX = Nx/4.0;  // Cylinder center x
     static constexpr T CY = Ny/2.0;  // Cylinder center y
@@ -24,7 +24,7 @@ private:
 public:
     CylinderFlow() : dims({Nx, Ny}) {
         T dx = 1;
-        T deltaT = 0.8;
+        T deltaT = 1;
         T viscosity = U0 * (2*R) / Re;
         
         mesh = std::make_unique<MeshObj<T,D>>(dims, dx);
@@ -127,6 +127,6 @@ public:
 
 int main() {
     CylinderFlow<double> simulation;
-    simulation.run(10000, 10);  // Run for 100k steps, save every 1000 steps
+    simulation.run(10000, 100);  // Run for 100k steps, save every 1000 steps
     return 0;
 }

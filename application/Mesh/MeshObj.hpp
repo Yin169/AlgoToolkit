@@ -54,7 +54,7 @@ private:
     
 public:
     MeshObj(const std::array<size_t, D>& dims, T dx_, T threshold = 0.1) 
-        : dimensions(dims), dx(dx_), refinementThreshold(threshold), maxLevel(1) {
+        : dimensions(dims), dx(dx_), refinementThreshold(threshold), maxLevel(3) {
         initializeGrid();
     }
 
