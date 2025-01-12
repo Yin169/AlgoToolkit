@@ -2,16 +2,19 @@
 #include "../application/PostProcess/Visual.hpp"
 #include <cmath>
 #include <fstream>
+#include <iomanip>
 
 template<typename T>
 class CylinderFlow {
 private:
-    static constexpr size_t D = 2;  // 2D simulation
+    static constexpr size_t D = 2;
     static constexpr size_t Nx = 400;
     static constexpr size_t Ny = 100;
-    static constexpr T Re = 100;     // Lower Reynolds number for stability
-    static constexpr T U0 = 0.1;     // Lower inlet velocity for stability
+    static constexpr T Re = 600;     // Reynolds number
+    static constexpr T U0 = 40.0;     // Inlet velocity
     static constexpr T R = 10.0;     // Cylinder radius
+    static constexpr T CX = Nx/4.0;  // Cylinder center x
+    static constexpr T CY = Ny/2.0;  // Cylinder center y
     
     std::array<size_t, D> dims;
     std::unique_ptr<MeshObj<T,D>> mesh;
@@ -20,14 +23,16 @@ private:
     
 public:
     CylinderFlow() : dims({Nx, Ny}) {
-        T dx = 1.0;
+        T dx = 1;
+        T deltaT = 0.8;
         T viscosity = U0 * (2*R) / Re;
         
-        // Initialize mesh and solver
         mesh = std::make_unique<MeshObj<T,D>>(dims, dx);
-        solver = std::make_unique<LBMSolver<T,D>>(*mesh, viscosity);
+        solver = std::make_unique<LBMSolver<T,D>>(*mesh, viscosity, dx, deltaT);
         
         forceLog.open("cylinder_forces.txt");
+        forceLog << std::scientific << std::setprecision(6);
+        
         setupBoundaries();
         addCylinder();
     }
@@ -35,7 +40,8 @@ public:
     ~CylinderFlow() {
         if(forceLog.is_open()) forceLog.close();
     }
-    
+
+private:
     void setupBoundaries() {
         // Inlet (left boundary)
         for(size_t j = 0; j < Ny; j++) {
@@ -58,54 +64,46 @@ public:
         }
     }
     
-private:
     void addCylinder() {
-        // Center of cylinder
-        T cx = Nx/4.0;
-        T cy = Ny/2.0;
-        
-        // Add IBM nodes around cylinder surface
         size_t nPoints = 100;
         for(size_t i = 0; i < nPoints; i++) {
             T theta = 2.0 * M_PI * i / nPoints;
             
             IBMNode<T,D> node;
             node.position = {
-                cx + R * std::cos(theta),
-                cy + R * std::sin(theta)
+                CX + R * std::cos(theta),
+                CY + R * std::sin(theta)
             };
-            node.velocity = {0.0, 0.0};  // Stationary cylinder
+            node.velocity = {0.0, 0.0};
             node.force = {0.0, 0.0};
             
             // Find nearby fluid nodes
             const auto& meshNodes = mesh->getNodes();
             for(size_t j = 0; j < meshNodes.size(); j++) {
-                std::array<T,D> r;
-                for(size_t d = 0; d < D; d++) {
-                    r[d] = meshNodes[j].position[d] - node.position[d];
-                }
-                T weight = solver->deltaFunction(r);
-                if(weight > 0) {
+                T dx = meshNodes[j].position[0] - node.position[0];
+                T dy = meshNodes[j].position[1] - node.position[1];
+                T dist = std::sqrt(dx*dx + dy*dy);
+                
+                if(dist <= 2.0) {
                     node.nearNodes.push_back(j);
-                    node.weights.push_back(weight);
+                    node.weights.push_back((1 + std::cos(M_PI*dist/2))/2);
                 }
             }
             
             solver->addIBMNode(node);
         }
     }
-
+    
 public:
     void run(size_t nSteps, size_t saveInterval) {
-        // Initialize flow field
         solver->initialize(1.0, {U0, 0.0});
         
-        // Time stepping
         for(size_t step = 0; step < nSteps; step++) {
             solver->collideAndStream();
             
             if(step % saveInterval == 0) {
-                std::string filename = "cylinder_" + std::to_string(step);
+                // Save flow field
+                std::string filename = "cylinder_" + std::to_string(step/saveInterval);
                 Visual<T,D>::writeVTK(*mesh, filename);
                 
                 // Log forces
@@ -115,7 +113,13 @@ public:
                     fx += node.force[0];
                     fy += node.force[1];
                 }
-                forceLog << step << " " << fx << " " << fy << "\n";
+                
+                // Compute coefficients
+                T rho = 1.0;
+                T cd = 2*fx/(rho*U0*U0*2*R);
+                T cl = 2*fy/(rho*U0*U0*2*R);
+                
+                forceLog << step << " " << cd << " " << cl << "\n";
             }
         }
     }
@@ -123,6 +127,6 @@ public:
 
 int main() {
     CylinderFlow<double> simulation;
-    simulation.run(100000, 1000);  // Run for 10000 steps, save every 100 steps
+    simulation.run(10000, 10);  // Run for 100k steps, save every 1000 steps
     return 0;
 }

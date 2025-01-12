@@ -42,56 +42,71 @@ private:
 
     static void writeCells(std::ofstream& file, const MeshObj<T,D>& mesh) {
         const auto& nodes = mesh.getNodes();
-        std::vector<size_t> activeNodes;
+        size_t numActiveCells = 0;
+        
+        // Count active nodes
+        for(const auto& node : nodes) {
+            if(node.isActive) numActiveCells++;
+        }
+        
+        // Write cell connectivity
+        file << "CELLS " << numActiveCells << " " 
+             << numActiveCells * (D == 2 ? 4 : 5) << "\n";
         
         for(size_t i = 0; i < nodes.size(); i++) {
-            if(nodes[i].isActive) activeNodes.push_back(i);
-        }
-
-        // VTK cell types: 10=tetra, 5=triangle
-        const int cellType = (D == 2) ? 5 : 10;
-        const size_t pointsPerCell = (D == 2) ? 3 : 4;
-        
-        file << "\nCELLS " << activeNodes.size() << " " 
-             << activeNodes.size() * (pointsPerCell + 1) << "\n";
-        
-        for(size_t idx : activeNodes) {
-            file << pointsPerCell << " " << idx;
-            for(size_t i = 1; i <= D; i++) {
-                if(i < nodes[idx].neighbors.size()) {
-                    file << " " << nodes[idx].neighbors[i];
+            if(!nodes[i].isActive) continue;
+            
+            if(D == 2) {
+                file << "3 " << i << " ";
+                if(nodes[i].neighbors.size() >= 2) {
+                    file << nodes[i].neighbors[0] << " " 
+                         << nodes[i].neighbors[1];
+                } else {
+                    file << i << " " << i;  // Degenerate case
+                }
+            } else {
+                file << "4 " << i << " ";
+                if(nodes[i].neighbors.size() >= 3) {
+                    file << nodes[i].neighbors[0] << " "
+                         << nodes[i].neighbors[1] << " "
+                         << nodes[i].neighbors[2];
+                } else {
+                    file << i << " " << i << " " << i;  // Degenerate case
                 }
             }
             file << "\n";
         }
-
-        file << "\nCELL_TYPES " << activeNodes.size() << "\n";
-        for(size_t i = 0; i < activeNodes.size(); i++) {
-            file << cellType << "\n";
+        
+        // Write cell types
+        file << "CELL_TYPES " << numActiveCells << "\n";
+        for(const auto& node : nodes) {
+            if(!node.isActive) continue;
+            file << (D == 2 ? 5 : 10) << "\n";  // 5=triangle, 10=tetra
         }
     }
 
     static void writeData(std::ofstream& file, const MeshObj<T,D>& mesh) {
         const auto& nodes = mesh.getNodes();
+        size_t numActive = 0;
+        for(const auto& node : nodes) {
+            if(node.isActive) numActive++;
+        }
         
         file << "\nPOINT_DATA " << nodes.size() << "\n";
-        
-        // Level data
-        file << "SCALARS Level double 1\n";
+        writeScalarData(file, "Density", nodes);
+        writeVectorData(file, "Velocity", nodes);
+    }
+
+    static void writeScalarData(std::ofstream& file, const std::string& name, const std::vector<LBMNode<T,D>>& nodes) {
+        file << "SCALARS " << name << " double 1\n";
         file << "LOOKUP_TABLE default\n";
         for(const auto& node : nodes) {
             file << static_cast<double>(node.level) << "\n";
         }
+    }
 
-        // Active status
-        file << "\nSCALARS Active double 1\n";
-        file << "LOOKUP_TABLE default\n";
-        for(const auto& node : nodes) {
-            file << (node.isActive ? 1.0 : 0.0) << "\n";
-        }
-
-        // Velocity distributions
-        file << "\nVECTORS Velocity double\n";
+    static void writeVectorData(std::ofstream& file, const std::string& name, const std::vector<LBMNode<T,D>>& nodes) {
+        file << "\nVECTORS " << name << " double\n";
         for(const auto& node : nodes) {
             double vx = 0.0, vy = 0.0, vz = 0.0;
             for(size_t i = 0; i < node.distributions.size(); i++) {

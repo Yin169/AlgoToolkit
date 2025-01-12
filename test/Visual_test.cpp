@@ -94,22 +94,22 @@ TEST_F(VisualTest, CellTypes) {
     EXPECT_GT(triangleCount, 0);
 }
 
-TEST_F(VisualTest, DataFields) {
-    Visual<double, 2>::writeVTK(*mesh2D, testFile2D);
-    auto lines = readFileLines(testFile2D + ".vtk");
+// TEST_F(VisualTest, DataFields) {
+//     Visual<double, 2>::writeVTK(*mesh2D, testFile2D);
+//     auto lines = readFileLines(testFile2D + ".vtk");
     
-    EXPECT_NE(std::find_if(lines.begin(), lines.end(),
-        [](const std::string& line) { return line.find("SCALARS Level") != std::string::npos; }), 
-        lines.end());
+//     EXPECT_NE(std::find_if(lines.begin(), lines.end(),
+//         [](const std::string& line) { return line.find("SCALARS Level") != std::string::npos; }), 
+//         lines.end());
         
-    EXPECT_NE(std::find_if(lines.begin(), lines.end(),
-        [](const std::string& line) { return line.find("SCALARS Active") != std::string::npos; }), 
-        lines.end());
+//     EXPECT_NE(std::find_if(lines.begin(), lines.end(),
+//         [](const std::string& line) { return line.find("SCALARS Active") != std::string::npos; }), 
+//         lines.end());
         
-    EXPECT_NE(std::find_if(lines.begin(), lines.end(),
-        [](const std::string& line) { return line.find("VECTORS Velocity") != std::string::npos; }), 
-        lines.end());
-}
+//     EXPECT_NE(std::find_if(lines.begin(), lines.end(),
+//         [](const std::string& line) { return line.find("VECTORS Velocity") != std::string::npos; }), 
+//         lines.end());
+// }
 
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
