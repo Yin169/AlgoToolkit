@@ -19,6 +19,9 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/ODE
     ${PROJECT_SOURCE_DIR}/src/Intergal
     ${PROJECT_SOURCE_DIR}/src/Obj
+    ${PROJECT_SOURCE_DIR}/application
+    ${PROJECT_SOURCE_DIR}/application/Mesh
+    ${PROJECT_SOURCE_DIR}/application/PostProcess
 )
 
 # Find required packages
@@ -46,7 +49,8 @@ set(TEST_SOURCES
     GMRES_test
     RungeKutta_test
     GaussianQuad_test
-    testfile
+    MeshObj_test
+    Visual_test
 )
 
 # # Add test executables

@@ -74,7 +74,8 @@ all: CMakeFiles/SparseMatrixCSCTest.dir/all
 all: CMakeFiles/GMRES_test.dir/all
 all: CMakeFiles/RungeKutta_test.dir/all
 all: CMakeFiles/GaussianQuad_test.dir/all
-all: CMakeFiles/testfile.dir/all
+all: CMakeFiles/MeshObj_test.dir/all
+all: CMakeFiles/Visual_test.dir/all
 .PHONY : all
 
 # The main recursive "codegen" target.
@@ -89,7 +90,8 @@ codegen: CMakeFiles/SparseMatrixCSCTest.dir/codegen
 codegen: CMakeFiles/GMRES_test.dir/codegen
 codegen: CMakeFiles/RungeKutta_test.dir/codegen
 codegen: CMakeFiles/GaussianQuad_test.dir/codegen
-codegen: CMakeFiles/testfile.dir/codegen
+codegen: CMakeFiles/MeshObj_test.dir/codegen
+codegen: CMakeFiles/Visual_test.dir/codegen
 .PHONY : codegen
 
 # The main recursive "preinstall" target.
@@ -108,7 +110,8 @@ clean: CMakeFiles/SparseMatrixCSCTest.dir/clean
 clean: CMakeFiles/GMRES_test.dir/clean
 clean: CMakeFiles/RungeKutta_test.dir/clean
 clean: CMakeFiles/GaussianQuad_test.dir/clean
-clean: CMakeFiles/testfile.dir/clean
+clean: CMakeFiles/MeshObj_test.dir/clean
+clean: CMakeFiles/Visual_test.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -118,7 +121,7 @@ clean: CMakeFiles/testfile.dir/clean
 CMakeFiles/matrix_obj_test.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/matrix_obj_test.dir/build.make CMakeFiles/matrix_obj_test.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/matrix_obj_test.dir/build.make CMakeFiles/matrix_obj_test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=21,22 "Built target matrix_obj_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=25,26 "Built target matrix_obj_test"
 .PHONY : CMakeFiles/matrix_obj_test.dir/all
 
 # Build rule for subdir invocation for target.
@@ -149,7 +152,7 @@ CMakeFiles/matrix_obj_test.dir/clean:
 CMakeFiles/basic_test.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/basic_test.dir/build.make CMakeFiles/basic_test.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/basic_test.dir/build.make CMakeFiles/basic_test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=15,16 "Built target basic_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=19,20 "Built target basic_test"
 .PHONY : CMakeFiles/basic_test.dir/all
 
 # Build rule for subdir invocation for target.
@@ -180,7 +183,7 @@ CMakeFiles/basic_test.dir/clean:
 CMakeFiles/debuglogger.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/debuglogger.dir/build.make CMakeFiles/debuglogger.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/debuglogger.dir/build.make CMakeFiles/debuglogger.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=17,18 "Built target debuglogger"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=21,22 "Built target debuglogger"
 .PHONY : CMakeFiles/debuglogger.dir/all
 
 # Build rule for subdir invocation for target.
@@ -211,7 +214,7 @@ CMakeFiles/debuglogger.dir/clean:
 CMakeFiles/itersolver_test.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/itersolver_test.dir/build.make CMakeFiles/itersolver_test.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/itersolver_test.dir/build.make CMakeFiles/itersolver_test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=19,20 "Built target itersolver_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=23,24 "Built target itersolver_test"
 .PHONY : CMakeFiles/itersolver_test.dir/all
 
 # Build rule for subdir invocation for target.
@@ -335,7 +338,7 @@ CMakeFiles/ConjugateGradient_test.dir/clean:
 CMakeFiles/SparseMatrixCSCTest.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SparseMatrixCSCTest.dir/build.make CMakeFiles/SparseMatrixCSCTest.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SparseMatrixCSCTest.dir/build.make CMakeFiles/SparseMatrixCSCTest.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=13,14 "Built target SparseMatrixCSCTest"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=15,16 "Built target SparseMatrixCSCTest"
 .PHONY : CMakeFiles/SparseMatrixCSCTest.dir/all
 
 # Build rule for subdir invocation for target.
@@ -397,7 +400,7 @@ CMakeFiles/GMRES_test.dir/clean:
 CMakeFiles/RungeKutta_test.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RungeKutta_test.dir/build.make CMakeFiles/RungeKutta_test.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RungeKutta_test.dir/build.make CMakeFiles/RungeKutta_test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=11,12 "Built target RungeKutta_test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=13,14 "Built target RungeKutta_test"
 .PHONY : CMakeFiles/RungeKutta_test.dir/all
 
 # Build rule for subdir invocation for target.
@@ -453,35 +456,66 @@ CMakeFiles/GaussianQuad_test.dir/clean:
 .PHONY : CMakeFiles/GaussianQuad_test.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/testfile.dir
+# Target rules for target CMakeFiles/MeshObj_test.dir
 
 # All Build rule for target.
-CMakeFiles/testfile.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/testfile.dir/build.make CMakeFiles/testfile.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/testfile.dir/build.make CMakeFiles/testfile.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=23,24 "Built target testfile"
-.PHONY : CMakeFiles/testfile.dir/all
+CMakeFiles/MeshObj_test.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MeshObj_test.dir/build.make CMakeFiles/MeshObj_test.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MeshObj_test.dir/build.make CMakeFiles/MeshObj_test.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=11,12 "Built target MeshObj_test"
+.PHONY : CMakeFiles/MeshObj_test.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/testfile.dir/rule: cmake_check_build_system
+CMakeFiles/MeshObj_test.dir/rule: cmake_check_build_system
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles 2
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/testfile.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/MeshObj_test.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles 0
-.PHONY : CMakeFiles/testfile.dir/rule
+.PHONY : CMakeFiles/MeshObj_test.dir/rule
 
 # Convenience name for target.
-testfile: CMakeFiles/testfile.dir/rule
-.PHONY : testfile
+MeshObj_test: CMakeFiles/MeshObj_test.dir/rule
+.PHONY : MeshObj_test
 
 # codegen rule for target.
-CMakeFiles/testfile.dir/codegen:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/testfile.dir/build.make CMakeFiles/testfile.dir/codegen
-.PHONY : CMakeFiles/testfile.dir/codegen
+CMakeFiles/MeshObj_test.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MeshObj_test.dir/build.make CMakeFiles/MeshObj_test.dir/codegen
+.PHONY : CMakeFiles/MeshObj_test.dir/codegen
 
 # clean rule for target.
-CMakeFiles/testfile.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/testfile.dir/build.make CMakeFiles/testfile.dir/clean
-.PHONY : CMakeFiles/testfile.dir/clean
+CMakeFiles/MeshObj_test.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/MeshObj_test.dir/build.make CMakeFiles/MeshObj_test.dir/clean
+.PHONY : CMakeFiles/MeshObj_test.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/Visual_test.dir
+
+# All Build rule for target.
+CMakeFiles/Visual_test.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visual_test.dir/build.make CMakeFiles/Visual_test.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visual_test.dir/build.make CMakeFiles/Visual_test.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles --progress-num=17,18 "Built target Visual_test"
+.PHONY : CMakeFiles/Visual_test.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/Visual_test.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/Visual_test.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/yincheangng/worksapce/Github/MyAlgorithmicToolkit/build/CMakeFiles 0
+.PHONY : CMakeFiles/Visual_test.dir/rule
+
+# Convenience name for target.
+Visual_test: CMakeFiles/Visual_test.dir/rule
+.PHONY : Visual_test
+
+# codegen rule for target.
+CMakeFiles/Visual_test.dir/codegen:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visual_test.dir/build.make CMakeFiles/Visual_test.dir/codegen
+.PHONY : CMakeFiles/Visual_test.dir/codegen
+
+# clean rule for target.
+CMakeFiles/Visual_test.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Visual_test.dir/build.make CMakeFiles/Visual_test.dir/clean
+.PHONY : CMakeFiles/Visual_test.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

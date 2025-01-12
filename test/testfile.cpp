@@ -1,15 +1,16 @@
 #include <iostream>
 #include "utils.hpp"
 #include "DenseObj.hpp"
+#include "SparseObj.hpp"
 #include "VectorObj.hpp"
 #include "GMRES.hpp"
 
 int main() {
 	// Declare a matrix:
-	DenseObj<double> A;
-	DenseObj<double> bm;
+	SparseMatrixCSC<double> A;
+	SparseMatrixCSC<double> bm;
 	
-	readfile("../data/poisson3Db/poisson3Db.mtx", A);
+	utils::readfile<double, SparseMatrixCSC<double>>("../data/poisson3Db/poisson3Db.mtx", A);
 	// readfile("../data/poisson3Db/poisson3Db_b.mtx", bm);
 
 	std::cout << " A Row: " << A.getRows() << " A Col" << A.getCols() << std::endl;
