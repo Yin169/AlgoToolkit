@@ -10,10 +10,10 @@ private:
     static constexpr size_t D = 2;
     static constexpr size_t Nx = 400;
     static constexpr size_t Ny = 100;
-    static constexpr T Re = 10;     // Reynolds number
-    static constexpr T U0 = 6.0;     // Inlet velocity
+    static constexpr T Re = 1.0;     // More stable Reynolds number
+    static constexpr T U0 = 20.0;     // Lower inlet velocity for stability
     static constexpr T R = 10.0;     // Cylinder radius
-    static constexpr T CX = Nx/4.0;  // Cylinder center x
+    static constexpr T CX = Nx/4.0;  // Place cylinder further from inlet
     static constexpr T CY = Ny/2.0;  // Cylinder center y
     
     std::array<size_t, D> dims;
@@ -57,17 +57,21 @@ private:
             solver->setOutletPressure(idx, 1.0);
         }
         
-        // Top and bottom walls
+        // Top and bottom walls - include corners
         for(size_t i = 0; i < Nx; i++) {
+            // Bottom wall
             solver->setBoundary(i, BoundaryType::NoSlip);
-            solver->setBoundary(i + (Ny-1)*Nx, BoundaryType::NoSlip);
+            // Top wall
+            solver->setBoundary((Ny-1)*Nx + i, BoundaryType::NoSlip);
         }
     }
     
     void addCylinder() {
-        size_t nPoints = 100;
+        size_t nPoints = 200;  // Increase resolution
+        T dtheta = 2.0 * M_PI / nPoints;
+        
         for(size_t i = 0; i < nPoints; i++) {
-            T theta = 2.0 * M_PI * i / nPoints;
+            T theta = i * dtheta;
             
             IBMNode<T,D> node;
             node.position = {
@@ -77,17 +81,28 @@ private:
             node.velocity = {0.0, 0.0};
             node.force = {0.0, 0.0};
             
-            // Find nearby fluid nodes
+            // Improved nearby node detection
             const auto& meshNodes = mesh->getNodes();
+            T support = 3.0;  // Increased support radius
+            
             for(size_t j = 0; j < meshNodes.size(); j++) {
                 T dx = meshNodes[j].position[0] - node.position[0];
                 T dy = meshNodes[j].position[1] - node.position[1];
                 T dist = std::sqrt(dx*dx + dy*dy);
                 
-                if(dist <= 2.0) {
+                if(dist <= support) {
                     node.nearNodes.push_back(j);
-                    node.weights.push_back((1 + std::cos(M_PI*dist/2))/2);
+                    // Smoother weight function
+                    T w = (1.0 + std::cos(M_PI * dist/support))/2.0;
+                    node.weights.push_back(w);
                 }
+            }
+            
+            // Normalize weights
+            T totalWeight = std::accumulate(node.weights.begin(), 
+                                          node.weights.end(), 0.0);
+            for(auto& w : node.weights) {
+                w /= totalWeight;
             }
             
             solver->addIBMNode(node);
