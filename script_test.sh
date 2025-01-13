@@ -1,5 +1,3 @@
-#!/bin/bash
-
 rm -rf build
 conan install . --build=missing
 cd build
