@@ -12,7 +12,7 @@
 template <typename TObj>
 class VectorObj {
 private: 
-    int _size;
+    size_t _size;
     std::vector<TObj> data;
 
 public:
@@ -46,7 +46,7 @@ public:
     }
 
     inline const TObj* element() const { return data.data(); }
-    inline int size() const { return _size; }
+    inline size_t size() const { return _size; }
 
     // L2 Norm
     double L2norm() const {
@@ -105,6 +105,11 @@ public:
     TObj operator*(const VectorObj& other) const {
         if (_size != other._size) throw std::invalid_argument("Vector dimensions do not match for dot product.");
         return std::inner_product(data.begin(), data.end(), other.data.begin(), TObj(0));
+    }
+
+    void resize(size_t n) {
+        _size = n;
+        data.resize(n);
     }
 };
 

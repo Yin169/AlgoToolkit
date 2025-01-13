@@ -57,7 +57,7 @@ public:
         
         // Solve using GMRES
         GMRES<T, MatrixType> solver;
-        solver.solve(global_matrix, global_vector, solution, 1000, 30, 1e-10);
+        solver.solve(global_matrix, global_vector, solution, 1000, std::min(global_matrix.getRows(), global_matrix.getCols()), 1e-10);
     }
 
 private:
@@ -205,13 +205,65 @@ private:
     }
 
     T evaluateBasis(size_t index, const std::vector<T>& x) {
-        // Implement basis function evaluation
-        return 1.0; // Placeholder
+        T result = 1.0;
+        size_t nodes_per_dim = polynomial_order + 1;
+        
+        // Decompose global index into per-dimension indices
+        std::vector<size_t> indices(num_dimensions);
+        size_t remaining = index;
+        for(size_t d = 0; d < num_dimensions; ++d) {
+            indices[d] = remaining % nodes_per_dim;
+            remaining /= nodes_per_dim;
+        }
+        
+        // Compute basis as product of Legendre polynomials
+        for(size_t d = 0; d < num_dimensions; ++d) {
+            // Map x to [-1,1] interval
+            T xi = 2.0 * (x[d] - domain_bounds[2*d]) / 
+                  (domain_bounds[2*d + 1] - domain_bounds[2*d]) - 1.0;
+            
+            // Evaluate Legendre polynomial of order indices[d]
+            if(indices[d] == 0) {
+                result *= 1.0;
+            } else if(indices[d] == 1) {
+                result *= xi;
+            } else {
+                T p0 = 1.0;
+                T p1 = xi;
+                T pn;
+                
+                for(size_t n = 2; n <= indices[d]; ++n) {
+                    pn = ((2*n - 1) * xi * p1 - (n - 1) * p0) / n;
+                    p0 = p1;
+                    p1 = pn;
+                }
+                result *= p1;
+            }
+        }
+        
+        return result;
     }
 
+
     bool isOnBoundary(size_t node_index) {
-        // Implement boundary check
-        return false; // Placeholder
+        size_t nodes_per_dim = polynomial_order + 1;
+        size_t total_nodes_per_element = std::pow(nodes_per_dim, num_dimensions);
+        size_t element_index = node_index / total_nodes_per_element;
+        size_t local_index = node_index % total_nodes_per_element;
+
+        // Check if element is on domain boundary
+        if(element_index == 0 || element_index == num_elements - 1) {
+            return true;
+        }
+
+        // Check if local node is on element boundary
+        for(size_t d = 0; d < num_dimensions; ++d) {
+            size_t pos = (local_index / static_cast<size_t>(std::pow(nodes_per_dim, d))) % nodes_per_dim;
+            if(pos == 0 || pos == polynomial_order) {
+                return true;
+            }
+        }
+        return false;
     }
 };
 
