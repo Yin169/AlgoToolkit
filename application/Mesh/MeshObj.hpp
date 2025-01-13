@@ -122,7 +122,20 @@ public:
         updateConnectivity();
     }
 
-private:
+    const std::array<size_t, D>& getDimensions() const {
+        return dimensions;
+    }
+    
+    size_t getNeighborIndex(size_t nodeIdx, size_t dirIdx) {
+        auto indices = unflattenIndex(nodeIdx);
+        const auto& dir = LatticeTraits<D>::directions[dirIdx];
+        
+        for(size_t d = 0; d < D; d++) {
+            indices[d] += dir[d];
+        }
+        return flattenIndex(indices);
+    }
+
     void initializeGridRecursive(std::array<size_t, D>& indices, size_t depth) {
         if(depth == D) {
             size_t idx = flattenIndex(indices);

@@ -101,25 +101,29 @@ private:
         file << "SCALARS " << name << " double 1\n";
         file << "LOOKUP_TABLE default\n";
         for(const auto& node : nodes) {
-            file << static_cast<double>(node.level) << "\n";
+            T density = std::accumulate(node.distributions.begin(), node.distributions.end(), T(0));
+            file << density << "\n";
         }
     }
 
     static void writeVectorData(std::ofstream& file, const std::string& name, const std::vector<LBMNode<T,D>>& nodes) {
         file << "\nVECTORS " << name << " double\n";
         for(const auto& node : nodes) {
-            double vx = 0.0, vy = 0.0, vz = 0.0;
-            for(size_t i = 0; i < node.distributions.size(); i++) {
-                if(D == 2) {
-                    vx += node.distributions[i] * LatticeTraits<2>::directions[i][0];
-                    vy += node.distributions[i] * LatticeTraits<2>::directions[i][1];
-                } else {
-                    vx += node.distributions[i] * LatticeTraits<3>::directions[i][0];
-                    vy += node.distributions[i] * LatticeTraits<3>::directions[i][1];
-                    vz += node.distributions[i] * LatticeTraits<3>::directions[i][2];
+            std::array<T,D> velocity = {};
+            T density = std::accumulate(node.distributions.begin(), node.distributions.end(), T(0));
+
+            for(size_t i = 0; i < LatticeTraits<D>::Q; i++) {
+                for(size_t d = 0; d < D; d++) {
+                    velocity[d] += node.distributions[i] * LatticeTraits<D>::directions[i][d];
                 }
             }
-            file << vx << " " << vy << " " << (D == 2 ? 0.0 : vz) << "\n";
+
+            for(size_t d = 0; d < D; d++) {
+                velocity[d] /= density;
+                file << velocity[d] << " ";
+            }
+            if(D == 2) file << "0.0";
+            file << "\n";
         }
     }
 };
