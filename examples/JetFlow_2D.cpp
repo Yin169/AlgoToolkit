@@ -9,9 +9,9 @@ class JetFlow {
 private:
     static constexpr size_t D = 2;
     static constexpr size_t Nx = 400;  // Length
-    static constexpr size_t Ny = 200;  // Height
-    static constexpr T Re = 300;       // Reynolds number
-    static constexpr T U0 = 0.1;       // Jet velocity
+    static constexpr size_t Ny = 400;  // Height
+    static constexpr T Re = 60;       // Reynolds number
+    static constexpr T U0 = 1.0;       // Jet velocity
     static constexpr T JetWidth = 20;  // Jet inlet width
     
     std::array<size_t, D> dims;
@@ -21,8 +21,8 @@ private:
     
 public:
     JetFlow() : dims({Nx, Ny}) {
-        T dx = 1.0;
-        T deltaT = 1.0;
+        T dx = 0.01;
+        T deltaT = 0.01;
         T viscosity = U0 * JetWidth / Re;
         
         mesh = std::make_unique<MeshObj<T,D>>(dims, dx);
