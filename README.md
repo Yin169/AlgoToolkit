@@ -94,28 +94,41 @@ solver.solve(x)
 │   └── pybind.cpp
 ├── script_test.sh
 ├── setup.py
-└── src
-    ├──  Optimization
-    │   ├── Adjoint.hpp
-    │   └── TrustRegion.hpp
-    ├── LinearAlgebra
-    │   ├── Factorized
-    │   │   └── basic.hpp
-    │   ├── Krylov
-    │   │   ├── ConjugateGradient.hpp
-    │   │   ├── GMRES.hpp
-    │   │   └── KrylovSubspace.hpp
-    │   ├── Preconditioner
-    │   │   ├── LU.hpp
-    │   │   └── MultiGrid.hpp
-    │   └── Solver
-    │       ├── IterSolver.hpp
-    │       └── SolverBase.hpp
-    ├── MixedPrecision
-    └── Obj
-        ├── MatrixObj.hpp
-        ├── SparseObj.hpp
-        └── VectorObj.hpp
+├── src
+│   ├──  Optimization
+│   │   ├── Adjoint.hpp
+│   │   └── TrustRegion.hpp
+│   ├── LinearAlgebra
+│   │   ├── Factorized
+│   │   │   └── basic.hpp
+│   │   ├── Krylov
+│   │   │   ├── ConjugateGradient.hpp
+│   │   │   ├── GMRES.hpp
+│   │   │   └── KrylovSubspace.hpp
+│   │   ├── Preconditioner
+│   │   │   ├── LU.hpp
+│   │   │   └── MultiGrid.hpp
+│   │   └── Solver
+│   │       ├── IterSolver.hpp
+│   │       └── SolverBase.hpp
+│   ├── MixedPrecision
+│   └── Obj
+│       ├── MatrixObj.hpp
+│       ├── SparseObj.hpp
+│       └── VectorObj.hpp
+├── application
+│   ├── LatticeBoltz/
+│   ├── LinearAlgebra/
+│   └── PostProcess/
+├── examples
+│   ├── CylinderFlow.cpp
+│   ├── JetFlow.cpp
+│   └── JetFlow_3D.cpp
+├── src
+│   ├── Mesh/
+│   ├── Optimization/
+│   └── Solver/
+└── tests/
 ```
 
 ---
@@ -142,4 +155,19 @@ This project is licensed under the MIT License.
 
 - Pybind11 for seamless C++ and Python integration
 - Community contributions to numerical methods and solvers
+
+---
+
+## Citation
+
+If you use FASTSolver in your research, please cite it as follows:
+
+```markdown
+@software{FASTSolver2024,
+  author = {NG YIN CHEANG},
+  title = {FASTSolver: High-Performance Scientific Computing Framework},
+  year = {2024},
+  url = {https://github.com/Yin169/FASTSolver}
+}
+```
 
