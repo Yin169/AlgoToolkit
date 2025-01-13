@@ -31,6 +31,8 @@ FASTSolver is a comprehensive scientific computing framework focused on:
 - Real-time flow visualization
 - Performance metrics logging
 
+![JetFlow](https://github.com/Yin169/FASTSolver/blob/dev/doc/pic_1.png)
+
 ## Requirements
 - C++17 or higher
 - CMake 3.15+

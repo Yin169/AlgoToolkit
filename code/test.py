@@ -1,32 +1,65 @@
-import fastsolver
+import vtk
+import os
 
-# Example usage of power_iter function
-A = [[4, 1], [2, 3]]  # Example matrix
-b = [1, 0]            # Example vector
-max_iter = 1000
+# 设置文件路径和文件名格式
+file_path = '../build/'
+file_pattern = 'jet_{d}.vtk'
+num_frames = 100  # 假设有100个文件
 
-# Call the power_iter function
-eigenvalue, eigenvector = fastsolver.power_iter(A, b, max_iter)
-print(f"Eigenvalue: {eigenvalue}")
-print(f"Eigenvector: {eigenvector}")
+# 创建渲染器
+renderer = vtk.vtkRenderer()
+renderer.SetBackground(0.1, 0.2, 0.3)  # 设置背景颜色
 
-# Example usage of ConjugateGrad class
-A = fastsolver.SparseMatrixCSC(2, 2)
-A.addValue(0, 0, 4)
-A.addValue(0, 1, 1)
-A.addValue(1, 0, 2)
-A.addValue(1, 1, 3)
-A.finalize()
+# 创建渲染窗口
+renderWindow = vtk.vtkRenderWindow()
+renderWindow.AddRenderer(renderer)
+renderWindow.SetSize(800, 600)
 
-b = fastsolver.VectorObj(2, 1.0)
-x = fastsolver.VectorObj(2, 0.0)
+# 创建交互器
+renderWindowInteractor = vtk.vtkRenderWindowInteractor()
+renderWindowInteractor.SetRenderWindow(renderWindow)
 
-cg_solver = fastsolver.ConjugateGrad(A, b, 1000, 1e-6)
-cg_solver.solve(x)
-print(f"Solution: {x}")
+# 创建一个读取器
+reader = vtk.vtkUnstructuredGridReader()
 
-# Example usage of AlgebraicMultiGrid class
-amg_solver = fastsolver.AlgebraicMultiGrid()
-x = fastsolver.VectorObj(2, 0.0)
-amg_solver.amgVCycle(A, b, x, levels=2, smoothingSteps=3, theta=0.25)
-print(f"AMG Solution: {x}")
+# 创建一个映射器
+mapper = vtk.vtkDataSetMapper()
+mapper.SetInputConnection(reader.GetOutputPort())
+
+# 创建一个演员
+actor = vtk.vtkActor()
+actor.SetMapper(mapper)
+
+# 将演员添加到渲染器
+renderer.AddActor(actor)
+
+# 创建一个动画场景
+animationScene = vtk.vtkAnimationScene()
+animationScene.SetLoopMode(vtk.vtkAnimationScene.LOOP)
+animationScene.SetMaximumFrameRate(30)  # 设置最大帧率
+animationScene.SetEndFrame(num_frames - 1)  # 设置结束帧
+
+# 创建一个动画提示
+animationCue = vtk.vtkAnimationCue()
+animationCue.SetStartFrame(0)
+animationCue.SetEndFrame(num_frames - 1)
+
+# 设置动画提示的回调函数
+def update_scene(caller, event):
+    frame = caller.GetFrame()
+    file_name = os.path.join(file_path, file_pattern.format(frame))
+    reader.SetFileName(file_name)
+    reader.Update()
+    renderWindow.Render()
+
+animationCue.AddObserver(vtk.vtkCommand.AnimateCueEvent, update_scene)
+
+# 将动画提示添加到动画场景
+animationScene.AddCue(animationCue)
+
+# 开始动画
+renderWindow.Render()
+animationScene.Play()
+
+# 启动交互器
+renderWindowInteractor.Start()
