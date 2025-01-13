@@ -1,48 +1,47 @@
-# FASTSolver: A High-Performance Numerical Solution Framework
+# FASTSolver: High-Performance Scientific Computing Framework
 
-## Author(s)
+## Author
 `NG YIN CHEANG`
 
-## Description:
-
- FASTSolver is a versatile numerical solution framework designed to efficiently tackle a wide range of scientific and engineering problems. It leverages high-performance computing techniques to provide fast and accurate solutions, making it ideal for researchers and practitioners who require robust computational tools.
-
-## Key Features:
-
-FASTSolver is a C++ numerical computing library with Python bindings, featuring:
+## Overview
+FASTSolver is a comprehensive scientific computing framework focused on:
+- High-performance numerical solutions
+- Computational Fluid Dynamics (CFD)
 - Linear algebra operations
-- Iterative solvers (GMRES, Conjugate Gradient)
+- Scientific visualization
+
+## Key Features
+
+### Numerical Methods
+- Linear algebra operations
+- Iterative solvers (GMRES, CG)
 - Multi-grid methods
-- Numerical integration
 - ODE solvers
 
+### CFD Capabilities
+- Lattice Boltzmann Method (LBM)
+  - D2Q9 and D3Q19 models
+  - Various boundary conditions
+  - Immersed Boundary Method (IBM)
+- Flow visualization
+- Performance monitoring
+
+### Tools
+- VTK output generation
+- Real-time flow visualization
+- Performance metrics logging
+
 ## Requirements
-
-- **C++17 or higher**
-- **Python 3.6+**
-- **Pybind11**
-- **CMake** (optional for build automation)
-
----
+- C++17 or higher
+- CMake 3.15+
+- Python 3.6+ (optional)
+- VTK 9.0+ (for visualization)
 
 ## Installation
 
-### 1. Clone the Repository
 ```bash
 git clone https://github.com/Yin169/FASTSolver.git
 cd FASTSolver
-```
-
-### 2. Build the Module
-
-#### With `setup.py`:
-```bash
-pip install pybind11 setuptools
-python setup.py build_ext --inplace
-```
-
-#### With CMake (Optional):
-```bash
 mkdir build && cd build
 cmake ..
 make
