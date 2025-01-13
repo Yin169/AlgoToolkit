@@ -55,7 +55,7 @@ set(TEST_SOURCES
 )
 
 set(EXM_SOURCES
-    JetFlow
+    JetFlow_2D
 )
 
 # # Add test executables
