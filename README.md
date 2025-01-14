@@ -26,6 +26,15 @@ FASTSolver is a comprehensive scientific computing framework focused on:
 - Flow visualization
 - Performance monitoring
 
+### Spectral Element Method (SEM)
+
+The Spectral Element Method (SEM) is a high-order numerical technique for solving partial differential equations (PDEs). It combines the flexibility of finite element methods with the accuracy of spectral methods. The implementation in FASTSolver supports:
+
+- High-order polynomial approximations
+- Multi-dimensional problems (1D, 2D, and 3D)
+- Customizable PDE operators and boundary conditions
+- Integration with iterative solvers like GMRES
+
 ### Tools
 - VTK output generation
 - Real-time flow visualization
@@ -75,30 +84,35 @@ solver.solve(x)
 ## Project Structure
 
 ```
-.
-├── CMakeLists.txt
+FASTSolver
 ├── Doxyfile
 ├── LICENSE
 ├── README.md
+├── application
+│   ├── LatticeBoltz
+│   │   └── LBMSolver.hpp
+│   ├── Mesh
+│   │   └── MeshObj.hpp
+│   └── PostProcess
+│       └── Visual.hpp
+├── code
+│   ├── test.ipynb
+│   └── test.py
 ├── conanfile.txt
-├── main
-│   ├── ConjugateGradient_test.cpp
-│   ├── KrylovSubspace_test.cpp
-│   ├── LU_test.cpp
-│   ├── SparseMatrixCSCTest.cpp
-│   ├── basic_test.cpp
-│   ├── demo.cpp
-│   ├── itersolver_test.cpp
-│   ├── matrix_obj_test.cpp
-│   └── test.cpp
+├── data
+│   ├── Chem97ZtZ
+│   │   └── Chem97ZtZ.mtx
+│   └── Chem97ZtZ.tar
+├── examples
+│   ├── CylinderFlow.cpp
+│   ├── JetFlow_2D.cpp
+│   └── JetFlow_3D.cpp
 ├── python
 │   └── pybind.cpp
 ├── script_test.sh
-├── setup.py
 ├── src
-│   ├──  Optimization
-│   │   ├── Adjoint.hpp
-│   │   └── TrustRegion.hpp
+│   ├── Intergal
+│   │   └── GaussianQuad.hpp
 │   ├── LinearAlgebra
 │   │   ├── Factorized
 │   │   │   └── basic.hpp
@@ -110,26 +124,37 @@ solver.solve(x)
 │   │   │   ├── LU.hpp
 │   │   │   └── MultiGrid.hpp
 │   │   └── Solver
-│   │       ├── IterSolver.hpp
-│   │       └── SolverBase.hpp
-│   ├── MixedPrecision
-│   └── Obj
-│       ├── MatrixObj.hpp
-│       ├── SparseObj.hpp
-│       └── VectorObj.hpp
-├── application
-│   ├── LatticeBoltz/
-│   ├── LinearAlgebra/
-│   └── PostProcess/
-├── examples
-│   ├── CylinderFlow.cpp
-│   ├── JetFlow.cpp
-│   └── JetFlow_3D.cpp
-├── src
-│   ├── Mesh/
-│   ├── Optimization/
-│   └── Solver/
-└── tests/
+│   │       └── IterSolver.hpp
+│   ├── ODE
+│   │   └── RungeKutta.hpp
+│   ├── Obj
+│   │   ├── DenseObj.hpp
+│   │   ├── MatrixObj.hpp
+│   │   ├── SparseObj.hpp
+│   │   └── VectorObj.hpp
+│   ├── PDEs
+│   │   └── SpectralElementMethod.hpp
+│   └── utils.hpp
+└── test
+    ├── ConjugateGradient_test.cpp
+    ├── GMRES_test.cpp
+    ├── GaussianQuad_test.cpp
+    ├── KrylovSubspace_test.cpp
+    ├── LBMSolver_test.cpp
+    ├── LU_test.cpp
+    ├── MeshObj_test.cpp
+    ├── MultiGrid_test.cpp
+    ├── RungeKutta_test.cpp
+    ├── SparseMatrixCSCTest.cpp
+    ├── SpectralElementMethod_test.cpp
+    ├── Visual_test.cpp
+    ├── basic_test.cpp
+    ├── debuglogger.cpp
+    ├── demo.cpp
+    ├── itersolver_test.cpp
+    ├── matrix_obj_test.cpp
+    ├── test.cpp
+    └── testfile.cpp
 ```
 
 ---
