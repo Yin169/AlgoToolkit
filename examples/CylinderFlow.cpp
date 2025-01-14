@@ -6,14 +6,15 @@
 #include <chrono>
 
 // Simulation parameters
-constexpr double Re = 60;            // Reynolds number
-constexpr double Ma = 0.1;            // Mach number
+constexpr double scale = 1.0;
+constexpr double Re = 20;            // Reynolds number
+constexpr double Ma = 0.01;            // Mach number
 const double U0 = Ma * std::sqrt(1.0/3.0); // Inlet velocity (Ma * cs)
-constexpr double D = 40;              // Cylinder diameter in lattice units
+constexpr double D = 30 * scale;              // Cylinder diameter in lattice units
 const double nu = U0 * D / Re;    // Kinematic viscosity
-constexpr size_t Nx = 1600;            // Domain size in x
-constexpr size_t Ny = 800;            // Domain size in y
-constexpr double cx = Nx/4;           // Cylinder center x
+constexpr size_t Nx = 800 * scale;            // Domain size in x
+constexpr size_t Ny = 300 * scale;            // Domain size in y
+constexpr double cx = Nx/2;           // Cylinder center x
 constexpr double cy = Ny/2;           // Cylinder center y
 
 // Function to check if a point is inside the cylinder
@@ -29,7 +30,7 @@ int main() {
     
     // Create mesh
     std::array<size_t, 2> dims = {Nx, Ny};
-    MeshObj<double, 2> mesh(dims, 1.0);
+    MeshObj<double, 2> mesh(dims, 400.0);
     
     // Initialize solver
     LBMSolver<double, 2> solver(mesh, nu);
