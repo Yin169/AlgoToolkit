@@ -11,7 +11,7 @@ private:
     static constexpr size_t Nx = 400;  // Length
     static constexpr size_t Ny = 400;  // Height
     static constexpr T Re = 80;       // Reynolds number
-    static constexpr T U0 = 1.0;       // Jet velocity
+    static constexpr T U0 = 0.0001;       // Jet velocity
     static constexpr T JetWidth = 20;  // Jet inlet width
     
     std::array<size_t, D> dims;

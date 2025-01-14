@@ -61,17 +61,17 @@ set(EXM_SOURCES
 )
 
 # Add test executables
-# foreach(test_source ${TEST_SOURCES})
-#     add_executable(${test_source} test/${test_source}.cpp)
-#     target_link_libraries(${test_source} PRIVATE ${TEST_DEPENDENCIES})
-#     add_test(NAME ${test_source} COMMAND ${test_source})
-# endforeach()
-
-foreach(exm_source ${EXM_SOURCES})
-    add_executable(${exm_source} examples/${exm_source}.cpp)
-    target_link_libraries(${exm_source} PRIVATE ${TEST_DEPENDENCIES})
-    add_test(NAME ${exm_source} COMMAND ${exm_source})
+foreach(test_source ${TEST_SOURCES})
+    add_executable(${test_source} test/${test_source}.cpp)
+    target_link_libraries(${test_source} PRIVATE ${TEST_DEPENDENCIES})
+    add_test(NAME ${test_source} COMMAND ${test_source})
 endforeach()
+
+# foreach(exm_source ${EXM_SOURCES})
+#     add_executable(${exm_source} examples/${exm_source}.cpp)
+#     target_link_libraries(${exm_source} PRIVATE ${TEST_DEPENDENCIES})
+#     add_test(NAME ${exm_source} COMMAND ${exm_source})
+# endforeach()
 
 # Enable testing
 enable_testing()

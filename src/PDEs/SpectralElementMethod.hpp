@@ -57,7 +57,7 @@ public:
         
         // Solve using GMRES
         GMRES<T, MatrixType> solver;
-        solver.solve(global_matrix, global_vector, solution, 1000, std::min(global_matrix.getRows(), global_matrix.getCols()), 1e-10);
+        solver.solve(global_matrix, global_vector, solution, 1000, std::min(global_matrix.getRows(), global_matrix.getCols()), 1e-8);
     }
 
 private:
@@ -95,7 +95,7 @@ private:
         
         // Compute basis function values and derivatives
         for(size_t i = 0; i < element_matrix.getRows(); ++i) {
-            for(size_t j = 0; i < element_matrix.getCols(); ++j) {
+            for(size_t j = 0; j < element_matrix.getCols(); ++j) {
                 element_matrix(i,j) = computeElementIntegral(i, j, element_bounds);
             }
         }
