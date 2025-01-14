@@ -17,6 +17,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Solver
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Krylov
     ${PROJECT_SOURCE_DIR}/src/ODE
+    ${PROJECT_SOURCE_DIR}/src/PDEs
     ${PROJECT_SOURCE_DIR}/src/Intergal
     ${PROJECT_SOURCE_DIR}/src/Obj
     ${PROJECT_SOURCE_DIR}/application
@@ -52,24 +53,25 @@ set(TEST_SOURCES
     GaussianQuad_test
     MeshObj_test
     Visual_test
+    SpectralElementMethod_test
 )
 
 set(EXM_SOURCES
     JetFlow_2D
 )
 
-# # Add test executables
-# foreach(test_source ${TEST_SOURCES})
-#     add_executable(${test_source} test/${test_source}.cpp)
-#     target_link_libraries(${test_source} PRIVATE ${TEST_DEPENDENCIES})
-#     add_test(NAME ${test_source} COMMAND ${test_source})
-# endforeach()
-
-foreach(exm_source ${EXM_SOURCES})
-    add_executable(${exm_source} examples/${exm_source}.cpp)
-    target_link_libraries(${exm_source} PRIVATE ${TEST_DEPENDENCIES})
-    add_test(NAME ${exm_source} COMMAND ${exm_source})
+# Add test executables
+foreach(test_source ${TEST_SOURCES})
+    add_executable(${test_source} test/${test_source}.cpp)
+    target_link_libraries(${test_source} PRIVATE ${TEST_DEPENDENCIES})
+    add_test(NAME ${test_source} COMMAND ${test_source})
 endforeach()
+
+# foreach(exm_source ${EXM_SOURCES})
+#     add_executable(${exm_source} examples/${exm_source}.cpp)
+#     target_link_libraries(${exm_source} PRIVATE ${TEST_DEPENDENCIES})
+#     add_test(NAME ${exm_source} COMMAND ${exm_source})
+# endforeach()
 
 # Enable testing
 enable_testing()

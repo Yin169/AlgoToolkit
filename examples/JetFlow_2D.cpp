@@ -10,8 +10,8 @@ private:
     static constexpr size_t D = 2;
     static constexpr size_t Nx = 400;  // Length
     static constexpr size_t Ny = 400;  // Height
-    static constexpr T Re = 60;       // Reynolds number
-    static constexpr T U0 = 1.0;       // Jet velocity
+    static constexpr T Re = 80;       // Reynolds number
+    static constexpr T U0 = 0.0001;       // Jet velocity
     static constexpr T JetWidth = 20;  // Jet inlet width
     
     std::array<size_t, D> dims;
@@ -57,14 +57,25 @@ private:
         // Outlet (right boundary)
         for(size_t j = 0; j < Ny; j++) {
             size_t idx = j * Nx + (Nx-1);
-            solver->setBoundary(idx, BoundaryType::PressureOutlet);
-            solver->setOutletPressure(idx, 1.0);
+            // solver->setBoundary(idx, BoundaryType::PressureOutlet);
+            // solver->setOutletPressure(idx, 1.0)
+            if(j >= jetStart && j < jetEnd) {
+                solver->setBoundary(idx, BoundaryType::VelocityInlet);
+                solver->setInletVelocity(idx, {-U0, 0.0});
+            } else {
+                solver->setBoundary(idx, BoundaryType::NoSlip);
+            }
+        
         }
         
         // Top and bottom walls
         for(size_t i = 0; i < Nx; i++) {
-            solver->setBoundary(i, BoundaryType::NoSlip);
-            solver->setBoundary((Ny-1)*Nx + i, BoundaryType::NoSlip);
+            // solver->setBoundary(i, BoundaryType::NoSlip);
+            // solver->setBoundary((Ny-1)*Nx + i, BoundaryType::NoSlip);
+            solver->setBoundary(i, BoundaryType::PressureOutlet);
+            solver->setOutletPressure(i, 1.0);
+            solver->setBoundary((Ny-1)*Nx + i, BoundaryType::PressureOutlet);
+            solver->setOutletPressure((Ny-1)*Nx + i, 1.0);
         }
     }
     
@@ -108,6 +119,6 @@ public:
 
 int main() {
     JetFlow<double> simulation;
-    simulation.run(1000, 6);  // Run for 50k steps, save every 500 steps
+    simulation.run(10000, 50);  // Run for 50k steps, save every 500 steps
     return 0;
 }
