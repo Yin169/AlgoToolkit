@@ -10,9 +10,9 @@ private:
     static constexpr size_t D = 2;
     static constexpr size_t Nx = 400;  // Length
     static constexpr size_t Ny = 400;  // Height
-    static constexpr T Re = 20;       // Reynolds number
-    static constexpr T U0 = 0.1;       // Jet velocity
-    static constexpr T JetWidth = 10;  // Jet inlet width
+    static constexpr T Re = 80;       // Reynolds number
+    static constexpr T U0 = 1.0;       // Jet velocity
+    static constexpr T JetWidth = 20;  // Jet inlet width
     
     std::array<size_t, D> dims;
     std::unique_ptr<MeshObj<T,D>> mesh;
@@ -57,8 +57,15 @@ private:
         // Outlet (right boundary)
         for(size_t j = 0; j < Ny; j++) {
             size_t idx = j * Nx + (Nx-1);
-            solver->setBoundary(idx, BoundaryType::PressureOutlet);
-            solver->setOutletPressure(idx, 1.0);
+            // solver->setBoundary(idx, BoundaryType::PressureOutlet);
+            // solver->setOutletPressure(idx, 1.0)
+            if(j >= jetStart && j < jetEnd) {
+                solver->setBoundary(idx, BoundaryType::VelocityInlet);
+                solver->setInletVelocity(idx, {-U0, 0.0});
+            } else {
+                solver->setBoundary(idx, BoundaryType::NoSlip);
+            }
+        
         }
         
         // Top and bottom walls
