@@ -5,7 +5,7 @@
 #include <array>
 #include <functional>
 #include "GaussianQuad.hpp"
-#include "GMRES.hpp"
+#include "ConjugateGradient.hpp"
 #include "DenseObj.hpp"
 #include "VectorObj.hpp"
 #include "SU2Mesh.hpp"
@@ -63,8 +63,8 @@ public:
         assembleSystem();
         
         // Solve using GMRES
-        GMRES<T, MatrixType> solver;
-        solver.solve(global_matrix, global_vector, solution, 1000, std::min(global_matrix.getRows(), global_matrix.getCols()), 1e-8);
+        ConjugateGrad<T, MatrixType, VectorObj<T>> solver(global_matrix, global_vector, 1000, 1e-8);
+        solver.solve(solution);
     }
 
 private:
@@ -214,7 +214,7 @@ private:
                 for(size_t j = 0; j < global_matrix.getCols(); ++j) {
                     global_matrix(i,j) = (i == j) ? 1.0 : 0.0;
                 }
-                global_vector[i] = boundary_condition(mapToPhysical(static_cast<T>(i), domain_bounds));
+                global_vector[i] = boundary_condition({static_cast<T>(i)});
             }
         }
     }
