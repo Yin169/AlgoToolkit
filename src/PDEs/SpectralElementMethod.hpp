@@ -54,7 +54,9 @@ public:
         source_term(source) {
         
         initialize();
-        initializeFromSU2Mesh(mesh_file);
+        if (mesh_file.size() > 0){
+            initializeFromSU2Mesh(mesh_file);
+        }
     }
 
     void solve(VectorObj<T>& solution) {
