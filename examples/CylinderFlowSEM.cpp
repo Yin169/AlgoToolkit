@@ -10,7 +10,7 @@ class CylinderFlowSEM {
 private:
     static constexpr size_t D = 2;
     static constexpr T Re = 100;        // Reynolds number
-    static constexpr T U0 = 0.1;        // Inlet velocity
+    static constexpr T U0 = 1.0;        // Inlet velocity
     static constexpr T R = 0.5;         // Cylinder radius
     static constexpr T L = 10.0;        // Domain length
     static constexpr T H = 5.0;         // Domain height
@@ -20,7 +20,7 @@ private:
     SpectralElementMethod<T> velocity_x;
     SpectralElementMethod<T> velocity_y;
     SpectralElementMethod<T> pressure;
-    RungeKutta<T, VectorObj<T>> time_stepper;
+    RungeKutta<T, VectorObj<T>, VectorObj<T>> time_stepper;
     
     // State vectors for the time-dependent solution
     VectorObj<T> u_current;
@@ -80,7 +80,6 @@ public:
             state, 
             system_function,
             initial_dt,
-            tolerance,
             max_steps
         );
         
@@ -98,7 +97,7 @@ private:
     void initializeFlow() {
         // Set initial conditions
         for(size_t i = 0; i < u_current.size(); ++i) {
-            u_current[i] = U0;  // Uniform flow
+            u_current[i] = 0.0;  // Uniform flow
             v_current[i] = 0.0;
             p_current[i] = 0.0;
         }
@@ -167,11 +166,47 @@ private:
             v[i] = state[i + n];
         }
     }
-
+    
     void saveVTK(const VectorObj<T>& u, const VectorObj<T>& v, 
-                 const VectorObj<T>& p, const std::string& filename) {
-        // Same implementation as before...
+             const VectorObj<T>& p, const std::string& filename) {
+        std::ofstream vtkFile(filename + ".vtk");
+        vtkFile << "# vtk DataFile Version 3.0\n";
+        vtkFile << "Cylinder Flow Simulation Data\n";
+        vtkFile << "ASCII\n";
+        vtkFile << "DATASET STRUCTURED_GRID\n";
+
+        // Assuming structured grid dimensions
+        size_t nx = 20; // Number of elements in x
+        size_t ny = 20; // Number of elements in y
+        size_t nz = 1;  // 2D case
+
+        vtkFile << "DIMENSIONS " << nx << " " << ny << " " << nz << "\n";
+
+        // Write grid points
+        vtkFile << "POINTS " << nx * ny * nz << " float\n";
+        for (size_t j = 0; j < ny; ++j) {
+            for (size_t i = 0; i < nx; ++i) {
+                vtkFile << i << " " << j << " 0\n";  // Replace with real coordinates if mapped
+            }
+        }
+
+        // Write velocity field
+        vtkFile << "POINT_DATA " << nx * ny * nz << "\n";
+        vtkFile << "VECTORS velocity float\n";
+        for (size_t i = 0; i < u.size(); ++i) {
+            vtkFile << u[i] << " " << v[i] << " 0.0\n";
+        }
+
+        // Write pressure field
+        vtkFile << "SCALARS pressure float 1\n";
+        vtkFile << "LOOKUP_TABLE default\n";
+        for (size_t i = 0; i < p.size(); ++i) {
+            vtkFile << p[i] << "\n";
+        }
+
+        vtkFile.close();
     }
+
 };
 
 int main() {

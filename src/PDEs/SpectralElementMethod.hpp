@@ -4,10 +4,11 @@
 #include <vector>
 #include <array>
 #include <functional>
-#include "../Intergal/GaussianQuad.hpp"
-#include "../LinearAlgebra/Krylov/GMRES.hpp"
-#include "../Obj/DenseObj.hpp"
-#include "../Obj/VectorObj.hpp"
+#include "GaussianQuad.hpp"
+#include "GMRES.hpp"
+#include "DenseObj.hpp"
+#include "VectorObj.hpp"
+#include "SU2Mesh.hpp"
 
 template<typename T, typename MatrixType = DenseObj<T>>
 class SpectralElementMethod {
@@ -32,12 +33,15 @@ private:
     std::vector<MatrixType> element_matrices;
     std::vector<VectorObj<T>> element_vectors;
 
+    SU2Mesh mesh;
+
 public:
     SpectralElementMethod(
         size_t elements,
         size_t order,
         size_t dims,
         const std::vector<T>& bounds,
+        const std::string mesh_file;
         std::function<T(const std::vector<T>&)> op,
         std::function<T(const std::vector<T>&)> bc,
         std::function<T(const std::vector<T>&)> source
@@ -50,6 +54,7 @@ public:
         source_term(source) {
         
         initialize();
+        initializeFromSU2Mesh(mesh_file);
     }
 
     void solve(VectorObj<T>& solution) {
@@ -76,6 +81,42 @@ private:
         size_t total_dof = num_elements * dof_per_element;
         global_matrix.resize(total_dof, total_dof);
         global_vector.resize(total_dof);
+    }
+
+    void initializeFromSU2Mesh(const std::string& filename) {
+        // Load the SU2 mesh
+        mesh.loadMesh(filename);
+        mesh.printSummary();
+
+        // Set dimensionality
+        num_dimensions = mesh.dimensionality;
+
+        // Set number of elements
+        num_elements = mesh.elements.size();
+
+        // Populate domain bounds (assumes a rectangular domain for simplicity)
+        domain_bounds.resize(num_dimensions * 2);
+        for (size_t d = 0; d < num_dimensions; ++d) {
+            domain_bounds[d * 2] = std::numeric_limits<T>::max();
+            domain_bounds[d * 2 + 1] = std::numeric_limits<T>::lowest();
+            for (const auto& node : mesh.nodes) {
+                domain_bounds[d * 2] = std::min(domain_bounds[d * 2], node.coordinates[d]);
+                domain_bounds[d * 2 + 1] = std::max(domain_bounds[d * 2 + 1], node.coordinates[d]);
+            }
+        }
+
+        // Initialize element matrices and vectors based on the SU2 mesh
+        element_matrices.resize(num_elements);
+        element_vectors.resize(num_elements);
+
+        for (size_t i = 0; i < num_elements; ++i) {
+            const auto& element = mesh.elements[i];
+            size_t num_nodes_in_element = element.connectivity.size();
+
+            // Example: Initialize element matrix and vector sizes
+            element_matrices[i].resize(num_nodes_in_element, num_nodes_in_element);
+            element_vectors[i].resize(num_nodes_in_element);
+        }
     }
 
     void assembleSystem() {
