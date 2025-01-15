@@ -41,7 +41,7 @@ public:
         size_t order,
         size_t dims,
         const std::vector<T>& bounds,
-        const std::string mesh_file;
+        const std::string mesh_file,
         std::function<T(const std::vector<T>&)> op,
         std::function<T(const std::vector<T>&)> bc,
         std::function<T(const std::vector<T>&)> source
