@@ -212,7 +212,7 @@ private:
                 for(size_t j = 0; j < global_matrix.getCols(); ++j) {
                     global_matrix(i,j) = (i == j) ? 1.0 : 0.0;
                 }
-                global_vector[i] = boundary_condition({static_cast<T>(i)});
+                global_vector[i] = boundary_condition(mapToPhysical(static_cast<T>(i), domain_bounds));
             }
         }
     }
