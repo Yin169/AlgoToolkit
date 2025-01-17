@@ -7,14 +7,14 @@ class SpectralElementMethodTest : public ::testing::Test {
 protected:
     void SetUp() override {
         // Define the problem parameters
-        num_elements = 1;
+        num_elements = 2;
         polynomial_order = 3;
         num_dimensions = 1;
         domain_bounds = {0.0, 1.0};
 
         // Define the PDE operator, boundary condition, and source term
         pde_operator = [](const std::vector<double>& x) -> double {
-            return 1.0; // -d^2u/dx^2
+            return -1.0; // -d^2u/dx^2
         };
 
         boundary_condition = [](const std::vector<double>& x) -> double {
@@ -67,7 +67,7 @@ TEST_F(SpectralElementMethodTest, SolvesPoissonEquation) {
     // Check the solution at some interior points
     for (size_t i = 1; i < solution.size() - 1; ++i) {
         double x = static_cast<double>(i) / (num_elements * polynomial_order);
-        double exact_solution = x*(x-1)/2; // Exact solution for f(x) = 1
+        double exact_solution = 0.5 * x * (1-x); // Exact solution for f(x) = 1
         EXPECT_NEAR(solution[i], exact_solution, 1e-4);
     }
 }
@@ -80,6 +80,13 @@ TEST_F(SpectralElementMethodTest, AssemblesGlobalMatrix) {
     size_t total_dof = sem->computeTotalDOF();
     EXPECT_EQ(sem->global_matrix.getRows(), total_dof);
     EXPECT_EQ(sem->global_matrix.getCols(), total_dof);
+
+    for(size_t i = 0; i<sem->global_matrix.getRows(); i++){
+        for(size_t j = 0; j<sem->global_matrix.getCols(); j++){
+            printf("%0.4f ", sem->global_matrix(i,j));
+        }
+        std::cout << std::endl;
+    }
 
     // Check that the global matrix is symmetric
     for (size_t i = 0; i < total_dof; ++i) {
