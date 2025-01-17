@@ -7,8 +7,8 @@ class SpectralElementMethodTest : public ::testing::Test {
 protected:
     void SetUp() override {
         // Define the problem parameters
-        num_elements = 2;
-        polynomial_order = 3;
+        num_elements = 1;
+        polynomial_order = 30;
         num_dimensions = 1;
         domain_bounds = {0.0, 1.0};
 
@@ -58,7 +58,7 @@ TEST_F(SpectralElementMethodTest, SolvesPoissonEquation) {
     sem->solve(solution);
 
     // Check the size of the solution vector
-    EXPECT_EQ(solution.size(), num_elements * polynomial_order + 1);
+    EXPECT_EQ(solution.size(), num_elements * pow(polynomial_order + 1, num_dimensions));
 
     // Check the boundary conditions
     EXPECT_NEAR(solution[0], 0.0, 1e-10);

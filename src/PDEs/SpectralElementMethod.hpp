@@ -9,7 +9,6 @@
 #include "ConjugateGradient.hpp"
 #include "DenseObj.hpp"
 #include "VectorObj.hpp"
-#include "SU2Mesh.hpp"
 
 template<typename T, typename MatrixType = DenseObj<T>>
 class SpectralElementMethod {
@@ -42,8 +41,6 @@ private:
     std::vector<MatrixType> element_matrices;
     std::vector<VectorObj<T>> element_vectors;
     std::vector<std::vector<T>> basis_nodes; // Store GLL nodes for basis functions
-    
-    SU2Mesh mesh;
 
 public:
     SpectralElementMethod(
@@ -64,9 +61,6 @@ public:
         source_term(source) {
         
         initialize();
-        // if (!mesh_file.empty()) {
-        //     initializeFromSU2Mesh(mesh_file);
-        // }
     }
 
     void solve(VectorObj<T>& solution) {
@@ -414,7 +408,7 @@ public:
     }
 
     size_t computeTotalDOF() {
-        return std::pow(num_elements * polynomial_order + 1, num_dimensions);
+        return num_elements * std::pow(polynomial_order + 1, num_dimensions);
     }
 
     void assembleSystem() {
@@ -429,72 +423,75 @@ public:
         applyBoundaryConditions();
     }
 
-    void assembleElementMatrix(size_t element_index) {
-        auto& element_matrix = element_matrices[element_index];
-        element_matrix.zero();
+void assembleElementMatrix(size_t element_index) {
+    auto& element_matrix = element_matrices[element_index];
+    element_matrix.zero();
+    
+    std::vector<T> element_bounds = getElementBounds(element_index);
+    
+    // Get quadrature points and weights
+    std::vector<std::vector<T>> quad_points(num_dimensions);
+    std::vector<std::vector<T>> quad_weights(num_dimensions);
+    for (size_t d = 0; d < num_dimensions; ++d) {
+        quad_points[d] = quadratures[d].getPoints();
+        quad_weights[d] = quadratures[d].getWeights();
+    }
+    
+    // Nested quadrature loop
+    std::vector<size_t> quad_indices(num_dimensions, 0);
+    bool done = false;
+    
+    while (!done) {
+        // Compute quadrature point coordinates and weights
+        T weight = 1.0;
+        std::vector<T> quad_coords(num_dimensions);
         
-        std::vector<T> element_bounds = getElementBounds(element_index);
-        
-        // Get quadrature points and weights
-        std::vector<std::vector<T>> quad_points(num_dimensions);
-        std::vector<std::vector<T>> quad_weights(num_dimensions);
         for (size_t d = 0; d < num_dimensions; ++d) {
-            quad_points[d] = quadratures[d].getPoints();
-            quad_weights[d] = quadratures[d].getWeights();
+            quad_coords[d] = quad_points[d][quad_indices[d]];
+            weight *= quad_weights[d][quad_indices[d]];
         }
         
-        // Nested quadrature loop
-        std::vector<size_t> quad_indices(num_dimensions, 0);
-        bool done = false;
+        // Map to physical space
+        std::vector<T> phys_coords = mapToPhysical(quad_coords, element_bounds);
         
-        while (!done) {
-            // Compute quadrature point coordinates and weights
-            T weight = 1.0;
-            std::vector<T> quad_coords(num_dimensions);
-            
-            for (size_t d = 0; d < num_dimensions; ++d) {
-                quad_coords[d] = quad_points[d][quad_indices[d]];
-                weight *= quad_weights[d][quad_indices[d]];
-            }
-            
-            // Map to physical space
-            std::vector<T> phys_coords = mapToPhysical(quad_coords, element_bounds);
-            
-            // Evaluate basis functions and their gradients at quadrature point
-            std::vector<T> basis_values = computeBasisFunctions(quad_coords);
-            std::vector<std::vector<T>> basis_gradients(basis_values.size());
-            for (size_t i = 0; i < basis_values.size(); ++i) {
-                basis_gradients[i] = evaluateBasisGradient(i, quad_coords);
-            }
-            
-            // Compute Jacobian determinant and inverse Jacobian
-            T jacobian_det = computeJacobianDeterminant(element_bounds);
-            std::vector<T> inverse_jacobian = computeInverseJacobian(element_bounds);
-            
-            // Compute the element matrix contribution
-            for (size_t i = 0; i < basis_values.size(); ++i) {
-                for (size_t j = 0; j < basis_values.size(); ++j) {
-                    T stiffness = 0.0;
-                    for (size_t d = 0; d < num_dimensions; ++d) {
-                        stiffness += basis_gradients[i][d] * basis_gradients[j][d];
+        // Evaluate basis functions and their gradients at quadrature point
+        std::vector<T> basis_values = computeBasisFunctions(quad_coords);
+        std::vector<std::vector<T>> basis_gradients(basis_values.size());
+        for (size_t i = 0; i < basis_values.size(); ++i) {
+            basis_gradients[i] = evaluateBasisGradient(i, quad_coords);
+        }
+        
+        // Compute Jacobian determinant and inverse Jacobian
+        T jacobian_det = computeJacobianDeterminant(element_bounds);
+        std::vector<T> inverse_jacobian = computeInverseJacobian(element_bounds);
+        
+        // Compute the element matrix contribution
+        for (size_t i = 0; i < basis_values.size(); ++i) {
+            for (size_t j = 0; j < basis_values.size(); ++j) {
+                T stiffness = 0.0;
+                for (size_t d1 = 0; d1 < num_dimensions; ++d1) {
+                    for (size_t d2 = 0; d2 < num_dimensions; ++d2) {
+                        stiffness += basis_gradients[i][d1] * inverse_jacobian[d1 * num_dimensions + d2] *
+                                     basis_gradients[j][d2] * inverse_jacobian[d1 * num_dimensions + d2];
                     }
-                    element_matrix(i, j) += weight * stiffness * jacobian_det;
                 }
+                element_matrix(i, j) += weight * stiffness * jacobian_det;
             }
-            
-            // Update quadrature indices
-            for (int d = num_dimensions - 1; d >= 0; --d) {
-                quad_indices[d]++;
-                if (quad_indices[d] < quad_points[d].size()) {
-                    break;
-                }
-                quad_indices[d] = 0;
-                if (d == 0) {
-                    done = true;
-                }
+        }
+        
+        // Update quadrature indices
+        for (int d = num_dimensions - 1; d >= 0; --d) {
+            quad_indices[d]++;
+            if (quad_indices[d] < quad_points[d].size()) {
+                break;
+            }
+            quad_indices[d] = 0;
+            if (d == 0) {
+                done = true;
             }
         }
     }
+}
 
     std::vector<T> computeBasisFunctions(const std::vector<T>& xi) {
         std::vector<T> basis_values(std::pow(polynomial_order + 1, num_dimensions));
