@@ -107,6 +107,11 @@ public:
         return std::inner_product(data.begin(), data.end(), other.data.begin(), TObj(0));
     }
 
+    void zero(){
+        data.clear();
+        data.resize(_size);
+    }
+
     void resize(size_t n) {
         _size = n;
         data.resize(n);

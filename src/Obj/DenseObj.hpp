@@ -196,7 +196,11 @@ public:
     }
 
     inline int size(){ return arr.size(); }
-    
+
+    void zero(){
+        arr.clear();
+        arr.resize(_n*_m);
+    }    
 
     // Resize matrix
     void resize(int n, int m) {
