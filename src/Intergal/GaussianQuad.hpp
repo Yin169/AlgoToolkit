@@ -13,7 +13,7 @@ class GaussianQuadrature {
 private:
     std::vector<T> points;
     std::vector<T> weights;
-    
+        
     void computeLegendrePolynomial(int n, T x, T& Pn, T& Pn_minus_1) const {
         Pn = x;
         Pn_minus_1 = 1;
@@ -24,7 +24,6 @@ private:
             Pn = ((2.0 * k - 1.0) * x * Pn_minus_1 - (k - 1.0) * Pn_minus_2) / k;
         }
     }
-    
     void generatePointsAndWeights(int n) {
         points.resize(n);
         weights.resize(n);

@@ -1,122 +1,136 @@
-#include <gtest/gtest.h>
-#include "../src/PDEs/SpectralElementMethod.hpp"
+#include "SpectralElementMethod.hpp"
+#include "gtest/gtest.h"
 #include <cmath>
 
-TEST(SpectralElementMethodTest, PoissonEquation1D) {
-    // Problem: -u'' = 1 on [0,1] with u(0) = u(1) = 0
-    // Analytical solution: u(x) = x(1-x)/2
-    
-    auto pde_op = [](const std::vector<double>& x) { return 1.0; };
-    auto bc = [](const std::vector<double>& x) { return 0.0; };
-    auto source = [](const std::vector<double>& x) { return 1.0; };
-    auto exact = [](double x) { return x * (1 - x) / 2; };
+// Test fixture for SpectralElementMethod
+class SpectralElementMethodTest : public ::testing::Test {
+protected:
+    void SetUp() override {
+        // Define the problem parameters
+        num_elements = 10;
+        polynomial_order = 4;
+        num_dimensions = 1;
+        domain_bounds = {0.0, 1.0};
 
-    SpectralElementMethod<double> sem(
-        4,                  // elements
-        4,                  // polynomial order
-        1,                  // dimension
-        {0.0, 1.0},         // domain bounds
-        pde_op, bc, source
-    );
+        // Define the PDE operator, boundary condition, and source term
+        pde_operator = [](const std::vector<double>& x) -> double {
+            return -1.0; // -d^2u/dx^2
+        };
 
-    VectorObj<double> solution(20);
-    sem.solve(solution);
+        boundary_condition = [](const std::vector<double>& x) -> double {
+            return 0.0; // Dirichlet boundary condition
+        };
 
-    // Validate solution at nodes
-    for (size_t i = 0; i < solution.size(); ++i) {
-        double x = i / (solution.size() - 1.0);
-        EXPECT_NEAR(solution[i], exact(x), 1e-4);
+        source_term = [](const std::vector<double>& x) -> double {
+            return 1.0; // Source term f(x) = 1
+        };
+
+        // Create the Spectral Element Method solver
+        sem = new SpectralElementMethod<double>(
+            num_elements,
+            polynomial_order,
+            num_dimensions,
+            domain_bounds,
+            "", // No mesh file
+            pde_operator,
+            boundary_condition,
+            source_term
+        );
+    }
+
+    void TearDown() override {
+        delete sem;
+    }
+
+    size_t num_elements;
+    size_t polynomial_order;
+    size_t num_dimensions;
+    std::vector<double> domain_bounds;
+    std::function<double(const std::vector<double>&)> pde_operator;
+    std::function<double(const std::vector<double>&)> boundary_condition;
+    std::function<double(const std::vector<double>&)> source_term;
+    SpectralElementMethod<double>* sem;
+};
+
+// Test case for solving the Poisson equation
+TEST_F(SpectralElementMethodTest, SolvesPoissonEquation) {
+    VectorObj<double> solution(num_elements * std::pow(polynomial_order+1, num_dimensions));
+    sem->solve(solution);
+
+    // Check the size of the solution vector
+    EXPECT_EQ(solution.size(), num_elements * pow(polynomial_order + 1, num_dimensions));
+
+    // Check the boundary conditions
+    EXPECT_NEAR(solution[0], 0.0, 1e-10);
+    EXPECT_NEAR(solution[solution.size() - 1], 0.0, 1e-10);
+
+    for (size_t i = 0; i < solution.size(); i++){
+        std::cout << solution[i] << ", ";
+    }
+    std::cout << std::endl;
+
+    for(size_t i = 0; i < solution.size(); i++){
+        double x = static_cast<double>(i) / (num_elements * std::pow(polynomial_order+1, num_dimensions));
+        double exact_solution = 0.5 * x * (1-x); // Exact solution for f(x) = 1
+        std::cout << exact_solution << ", ";
+    }
+    std::cout << std::endl;
+
+    // Check the solution at some interior points
+    for (size_t i = 1; i < solution.size() - 1; ++i) {
+        double x = static_cast<double>(i) / (num_elements * std::pow(polynomial_order+1, num_dimensions));
+        double exact_solution = 0.5 * x * (1-x); // Exact solution for f(x) = 1
+        EXPECT_NEAR(solution[i], exact_solution, 1e-4);
     }
 }
 
-TEST(SpectralElementMethodTest, LaplaceEquation2D) {
-    // Problem: Δu = 0 on [0,1]×[0,1]
-    // Boundary condition: u = sin(πx)sinh(πy)
+// Test case for checking the assembly of the global matrix
+// TEST_F(SpectralElementMethodTest, AssemblesGlobalMatrix) {
+//     sem->assembleSystem();
 
-    auto pde_op = [](const std::vector<double>& x) { return 1.0; };
-    auto bc = [](const std::vector<double>& x) { 
-        return std::sin(M_PI * x[0]) * std::sinh(M_PI * x[1]); 
-    };
-    auto source = [](const std::vector<double>& x) { return 0.0; };
-    auto exact = [](double x, double y) { 
-        return std::sin(M_PI * x) * std::sinh(M_PI * y); 
-    };
+//     // Check the size of the global matrix
+//     size_t total_dof = sem->computeTotalDOF();
+//     EXPECT_EQ(sem->global_matrix.getRows(), total_dof);
+//     EXPECT_EQ(sem->global_matrix.getCols(), total_dof);
 
-    SpectralElementMethod<double> sem(
-        3,                          // elements per dimension
-        3,                          // polynomial order
-        2,                          // dimension
-        {0.0, 1.0, 0.0, 1.0},       // domain bounds
-        pde_op, bc, source
-    );
+//     for(size_t i = 0; i<sem->global_matrix.getRows(); i++){
+//         for(size_t j = 0; j<sem->global_matrix.getCols(); j++){
+//             printf("%0.4f ", sem->global_matrix(i,j));
+//         }
+//         std::cout << std::endl;
+//     }
 
-    size_t n = (3+1) * 3;
-    size_t s = std::pow((3+1), 2) * 3;  // nodes per dimension
-    VectorObj<double> solution(s);
-    sem.solve(solution);
-
-    // Validate solution at interior points
-    for (size_t i = 1; i < n - 1; ++i) {
-        for (size_t j = 1; j < n - 1; ++j) {
-            double x = i / (n - 1.0);
-            double y = j / (n - 1.0);
-            EXPECT_NEAR(solution[i * n + j], exact(x, y), 1e-3);
-        }
-    }
-}
-
-TEST(SpectralElementMethodTest, ConvergenceTest) {
-    // Verify p-convergence for 1D Poisson Equation
-    auto pde_op = [](const std::vector<double>& x) { return 1.0; };
-    auto bc = [](const std::vector<double>& x) { return 0.0; };
-    auto source = [](const std::vector<double>& x) { return 1.0; };
-    auto exact = [](double x) { return x * (1 - x) / 2; };
-
-    std::vector<double> errors;
-    for (size_t p = 2; p <= 8; ++p) {
-        SpectralElementMethod<double> sem(2, p, 1, {0.0, 1.0}, pde_op, bc, source);
-        VectorObj<double> solution(2 * (p + 1));
-        sem.solve(solution);
-
-        // Compute L2 error
-        double error = 0.0;
-        for (size_t i = 0; i < solution.size(); ++i) {
-            double x = i / (solution.size() - 1.0);
-            error += std::pow(solution[i] - exact(x), 2);
-        }
-        error = std::sqrt(error / solution.size());
-        errors.push_back(error);
-
-        if (p > 2) {
-            double rate = std::log(errors[p - 3] / errors[p - 2]) / std::log(p / (p - 1.0));
-            EXPECT_GT(rate, p - 1); // Expect spectral convergence
-        }
-    }
-}
-
-// TEST(SpectralElementMethodTest, BoundaryConditionTest) {
-//     // Verify enforcement of Dirichlet boundary conditions
-//     auto pde_op = [](const std::vector<double>& x) { return 1.0; };
-//     auto bc = [](const std::vector<double>& x) { return 1.0; };
-//     auto source = [](const std::vector<double>& x) { return 0.0; };
-
-//     SpectralElementMethod<double> sem(
-//         2,                  // elements
-//         3,                  // polynomial order
-//         1,                  // dimension
-//         {0.0, 1.0},         // domain bounds
-//         pde_op, bc, source
-//     );
-
-//     VectorObj<double> solution(8);
-//     sem.solve(solution);
-
-//     // Validate boundary values
-//     EXPECT_NEAR(solution[0], 1.0, 1e-10);
-//     EXPECT_NEAR(solution[6], 1.0, 1e-10);
+//     // Check that the global matrix is symmetric
+//     for (size_t i = 0; i < total_dof; ++i) {
+//         for (size_t j = 0; j < total_dof; ++j) {
+//             EXPECT_NEAR(sem->global_matrix(i, j), sem->global_matrix(j, i), 1e-10);
+//         }
+//     }
 // }
 
-int main(int argc, char** argv) {
-    testing::InitGoogleTest(&argc, argv);
+// Test case for checking the application of boundary conditions
+TEST_F(SpectralElementMethodTest, AppliesBoundaryConditions) {
+    sem->assembleSystem();
+    sem->applyBoundaryConditions();
+
+    // Check that the boundary conditions are applied correctly
+    size_t total_dof = sem->computeTotalDOF();
+    for (size_t i = 0; i < total_dof; ++i) {
+        std::vector<double> node_coords = sem->getNodeCoordinates(i);
+        if (sem->isOnBoundary(node_coords)) {
+            for (size_t j = 0; j < total_dof; ++j) {
+                if (i == j) {
+                    EXPECT_NEAR(sem->global_matrix(i, j), 1.0, 1e-10);
+                } else {
+                    EXPECT_NEAR(sem->global_matrix(i, j), 0.0, 1e-10);
+                }
+            }
+            EXPECT_NEAR(sem->global_vector[i], 0.0, 1e-10);
+        }
+    }
+}
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

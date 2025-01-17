@@ -142,7 +142,7 @@ public:
     LBMSolver(MeshObj<T,D>& mesh_, T viscosity, T dx = 1.0, T dt = 1.0) 
         : mesh(mesh_), deltaX(dx), deltaT(dt) {
         cs2 = 1.0/3.0;
-        T tau = viscosity/cs2 + 1.0;
+        T tau = viscosity/cs2 + 4.0;
         omega = 1.0/tau;
         initializeWeights();
     }

@@ -20,6 +20,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/PDEs
     ${PROJECT_SOURCE_DIR}/src/Intergal
     ${PROJECT_SOURCE_DIR}/src/Obj
+    ${PROJECT_SOURCE_DIR}/src/Mesh
     ${PROJECT_SOURCE_DIR}/application
     ${PROJECT_SOURCE_DIR}/application/Mesh
     ${PROJECT_SOURCE_DIR}/application/PostProcess
@@ -57,7 +58,7 @@ set(TEST_SOURCES
 )
 
 set(EXM_SOURCES
-    JetFlow_2D
+    CylinderFlowSEM
 )
 
 # Add test executables
