@@ -6,6 +6,7 @@
 #include <functional>
 #include <cmath>
 #include "GaussianQuad.hpp"
+#include "GMRES.hpp"
 #include "ConjugateGradient.hpp"
 #include "DenseObj.hpp"
 #include "VectorObj.hpp"

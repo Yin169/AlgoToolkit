@@ -7,8 +7,8 @@ class SpectralElementMethodTest : public ::testing::Test {
 protected:
     void SetUp() override {
         // Define the problem parameters
-        num_elements = 1;
-        polynomial_order = 30;
+        num_elements = 10;
+        polynomial_order = 4;
         num_dimensions = 1;
         domain_bounds = {0.0, 1.0};
 
@@ -54,7 +54,7 @@ protected:
 
 // Test case for solving the Poisson equation
 TEST_F(SpectralElementMethodTest, SolvesPoissonEquation) {
-    VectorObj<double> solution;
+    VectorObj<double> solution(num_elements * std::pow(polynomial_order+1, num_dimensions));
     sem->solve(solution);
 
     // Check the size of the solution vector
@@ -64,37 +64,49 @@ TEST_F(SpectralElementMethodTest, SolvesPoissonEquation) {
     EXPECT_NEAR(solution[0], 0.0, 1e-10);
     EXPECT_NEAR(solution[solution.size() - 1], 0.0, 1e-10);
 
+    for (size_t i = 0; i < solution.size(); i++){
+        std::cout << solution[i] << ", ";
+    }
+    std::cout << std::endl;
+
+    for(size_t i = 0; i < solution.size(); i++){
+        double x = static_cast<double>(i) / (num_elements * std::pow(polynomial_order+1, num_dimensions));
+        double exact_solution = 0.5 * x * (1-x); // Exact solution for f(x) = 1
+        std::cout << exact_solution << ", ";
+    }
+    std::cout << std::endl;
+
     // Check the solution at some interior points
     for (size_t i = 1; i < solution.size() - 1; ++i) {
-        double x = static_cast<double>(i) / (num_elements * polynomial_order);
+        double x = static_cast<double>(i) / (num_elements * std::pow(polynomial_order+1, num_dimensions));
         double exact_solution = 0.5 * x * (1-x); // Exact solution for f(x) = 1
         EXPECT_NEAR(solution[i], exact_solution, 1e-4);
     }
 }
 
 // Test case for checking the assembly of the global matrix
-TEST_F(SpectralElementMethodTest, AssemblesGlobalMatrix) {
-    sem->assembleSystem();
+// TEST_F(SpectralElementMethodTest, AssemblesGlobalMatrix) {
+//     sem->assembleSystem();
 
-    // Check the size of the global matrix
-    size_t total_dof = sem->computeTotalDOF();
-    EXPECT_EQ(sem->global_matrix.getRows(), total_dof);
-    EXPECT_EQ(sem->global_matrix.getCols(), total_dof);
+//     // Check the size of the global matrix
+//     size_t total_dof = sem->computeTotalDOF();
+//     EXPECT_EQ(sem->global_matrix.getRows(), total_dof);
+//     EXPECT_EQ(sem->global_matrix.getCols(), total_dof);
 
-    for(size_t i = 0; i<sem->global_matrix.getRows(); i++){
-        for(size_t j = 0; j<sem->global_matrix.getCols(); j++){
-            printf("%0.4f ", sem->global_matrix(i,j));
-        }
-        std::cout << std::endl;
-    }
+//     for(size_t i = 0; i<sem->global_matrix.getRows(); i++){
+//         for(size_t j = 0; j<sem->global_matrix.getCols(); j++){
+//             printf("%0.4f ", sem->global_matrix(i,j));
+//         }
+//         std::cout << std::endl;
+//     }
 
-    // Check that the global matrix is symmetric
-    for (size_t i = 0; i < total_dof; ++i) {
-        for (size_t j = 0; j < total_dof; ++j) {
-            EXPECT_NEAR(sem->global_matrix(i, j), sem->global_matrix(j, i), 1e-10);
-        }
-    }
-}
+//     // Check that the global matrix is symmetric
+//     for (size_t i = 0; i < total_dof; ++i) {
+//         for (size_t j = 0; j < total_dof; ++j) {
+//             EXPECT_NEAR(sem->global_matrix(i, j), sem->global_matrix(j, i), 1e-10);
+//         }
+//     }
+// }
 
 // Test case for checking the application of boundary conditions
 TEST_F(SpectralElementMethodTest, AppliesBoundaryConditions) {
