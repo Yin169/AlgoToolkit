@@ -39,7 +39,7 @@ public:
 
         std::vector<VectorType> V(KrylovDim + 1, VectorType(n));
         MatrixType H(KrylovDim + 1, KrylovDim + 1);
-        std::vector<TNum> cs(KrylovDim, TNum(0));
+        std::vector<TNum> cs(KrylovDim, TNum(1));
         std::vector<TNum> sn(KrylovDim, TNum(0));
         std::vector<TNum> rho(KrylovDim, TNum(0));
         VectorType e1(KrylovDim + 1, TNum(0));
@@ -48,7 +48,7 @@ public:
         for (int iter = 0; iter < maxIter; iter++) {
             V[0] = r / beta;
             int KryUpdate = KrylovDim;
-            for (int j=0; j < KrylovDim; ++j) {
+            for (int j = 0; j < KrylovDim; ++j) {
                 VectorType w = A * V[j];
                 for (int i = 0; i <= j; ++i) {
                     TNum w_dot_v = V[i] * w;
@@ -56,7 +56,6 @@ public:
                         KryUpdate = j;
                         break;
                     }
-                    // std::cout << "H(" << i << ", " << j << ") = " << w_dot_v << std::endl;
                     setMatrixValue(H, i, j, w_dot_v);
                     w = w - V[i] * H(i, j);
                 }
@@ -71,7 +70,7 @@ public:
 
                 // Apply Givens rotations
                 for (int i = 0; i < j; ++i) {
-                    applyMatrixGivensRotation(H, i, j, i + 1, j, H(i, i), H(i + 1, i));
+                    applyMatrixGivensRotation(H, i, j, i + 1, j, cs[i], sn[i]);
                 }
                 generateGivensRotation(H(j, j), H(j + 1, j), cs[j], sn[j], rho[j]);
                 setMatrixValue(H, j, j, rho[j]);
@@ -82,22 +81,7 @@ public:
             updateSolution(x, H, V, e1, KryUpdate);
             r = b - A * x;
             beta = r.L2norm();
-            auto Ax = A * x;
             std::cout << "Residual norm after restart: " << beta << " " << std::endl;
-            // for(int i=0; i < A.getRows(); ++i) {
-            //     for(int j=0; j < A.getCols(); ++j) {
-            //         std::cout << A(i, j) << " ";
-            //     }
-            //     std::cout << std::endl;
-            // }
-            // for(int i = 0; i < x.size(); ++i) {
-            //     std::cout << x[i] << " ";
-            // }
-            // std::cout << std::endl;
-            // for(int i = 0; i < x.size(); ++i) {
-            //     std::cout << Ax[i] << " ";
-            // }
-            // std::cout << std::endl;
 
             if (beta < tol) {
                 std::cout << "Converged after restart at iteration " << iter << std::endl;
@@ -126,11 +110,9 @@ private:
     }
 
     void applyMatrixGivensRotation(MatrixType& H, int i, int j, int ii, int jj, TNum cs, TNum sn) {
-        // std::cout << "Applying Givens rotation to H(" << i << ", " << j << ") and H(" << ii << ", " << jj << ")" << H(i, j) << " " << H(ii, jj) << std::endl;
         TNum temp = H(i, j);
         setMatrixValue(H, i, j,  cs * H(i, j) + sn * H(ii, jj));
         setMatrixValue(H, ii, jj, -sn * temp + cs * H(ii, jj));
-        // std::cout << "Applying Givens rotation to H(" << i << ", " << j << ") and H(" << ii << ", " << jj << ")" << H(i, j) << " " << H(ii, jj) << std::endl;
     }
 
     void generateGivensRotation(TNum dx, TNum dy, TNum& cs, TNum& sn, TNum& rho) {

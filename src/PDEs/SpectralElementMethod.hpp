@@ -68,8 +68,10 @@ public:
         assembleSystem();
         
         // Solve using conjugate gradient
-        ConjugateGrad<T, MatrixType, VectorObj<T>> solver(global_matrix, global_vector, 1000, 1e-8);
-        solver.solve(solution);
+        // ConjugateGrad<T, MatrixType, VectorObj<T>> solver(global_matrix, global_vector, 1000, 1e-8);
+        // solver.solve(solution);
+        GMRES<T, MatrixType, VectorObj<T>> solver;
+        solver.solve(global_matrix, global_vector, solution, 1000, std::min(global_matrix.getRows(), global_matrix.getCols()), 1e-8);
     }
 
     void initialize() {

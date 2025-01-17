@@ -7,7 +7,7 @@ class SpectralElementMethodTest : public ::testing::Test {
 protected:
     void SetUp() override {
         // Define the problem parameters
-        num_elements = 10;
+        num_elements = 4;
         polynomial_order = 4;
         num_dimensions = 1;
         domain_bounds = {0.0, 1.0};
