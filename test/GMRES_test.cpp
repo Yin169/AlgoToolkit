@@ -1,4 +1,5 @@
 #include "gtest/gtest.h"
+#include "LU.hpp"
 #include "GMRES.hpp"
 #include "SparseObj.hpp"
 #include "DenseObj.hpp"
@@ -8,8 +9,9 @@
 class GMRESTest : public ::testing::Test {
 protected:
     void SetUp() override {
+        int n = 3;
         // Create a simple 3x3 test matrix
-        matrix = DenseObj<double>(3, 3);
+        matrix = DenseObj<double>(n, n);
         matrix(0, 0) =  4.0;
         matrix(0, 1) =  -1.0;
         matrix(0, 2) = 0.0;
@@ -22,10 +24,18 @@ protected:
         // matrix.finalize();
 
         // Create right-hand side vector b = [1, 5, 0]
-        b = VectorObj<double>(3);
+        b = VectorObj<double>(n);
         b[0] = 1.0;
         b[1] = 5.0;
         b[2] = 0.0;
+
+        DenseObj<double> L(n, n); // Start with all zeros
+        DenseObj<double> U(n, n);
+
+        LU::ILU<double, DenseObj<double>>(matrix, L, U);
+
+        matrix = L * U * matrix;
+        b = L * U * b;
 
         // Initial guess x0 = [0, 0, 0]
         x = VectorObj<double>(3, 0.0);
