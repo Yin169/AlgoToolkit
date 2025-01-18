@@ -76,6 +76,25 @@ namespace LU {
         }
     }
 
+    template<typename T, typename MatrixType>
+    void ILU(const MatrixType &matrix, MatrixType &L, MatrixType &U){
+        std::vector<int> P;
+        MatrixType A = matrix;
+        PivotLU<T, MatrixType>(A, P);
+
+        // Extract L and U from the decomposed matrix A
+        for (int i = 0; i < A.getRows(); ++i) {
+            for (int j = 0; j < A.getCols(); ++j) {
+                if (i > j) {
+                    L(i, j) = A(i, j); // Lower triangular part
+                } else {
+                    U(i, j) = A(i, j); // Upper triangular part
+                }
+            }
+            L(i, i) = 1.0; // Set diagonal elements of L to 1
+        }
+    }
+
 } // namespace LU
 
 #endif // LU_HPP

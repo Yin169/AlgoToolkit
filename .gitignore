@@ -11,3 +11,5 @@ bazel-bin
 *.o
 *.log
 *.txt
+*.cmake
+/build
