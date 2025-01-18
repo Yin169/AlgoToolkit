@@ -13,6 +13,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Preconditioner
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Solver
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Krylov
+    ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Nonlinear
     ${PROJECT_SOURCE_DIR}/src/ODE
     ${PROJECT_SOURCE_DIR}/src/PDEs
     ${PROJECT_SOURCE_DIR}/src/Intergal
@@ -50,10 +51,10 @@ set(TEST_SOURCES
     GMRES_test
     RungeKutta_test
     GaussianQuad_test
+    NewtonMethod_test
     MeshObj_test
     Visual_test
     SpectralElementMethod_test
-    # SU2MeshAdapter_test
 )
 
 # Add test executables
