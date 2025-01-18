@@ -17,6 +17,11 @@ FASTSolver is a comprehensive scientific computing framework focused on:
 - Iterative solvers (GMRES, CG)
 - Multi-grid methods
 - ODE solvers
+- Newton Method for Nonlinear Systems
+  - Solves nonlinear systems of equations 
+  - Supports custom Jacobian computation
+  - Integration with GMRES for linear system solving
+  - convergence checks
 
 ### CFD Capabilities
 - Lattice Boltzmann Method (LBM)
@@ -45,8 +50,7 @@ The Spectral Element Method (SEM) is a high-order numerical technique for solvin
 ## Requirements
 - C++17 or higher
 - CMake 3.15+
-- Python 3.6+ (optional)
-- VTK 9.0+ (for visualization)
+- Python 3.9+ (optional)
 
 ## Installation
 
