@@ -13,12 +13,12 @@
 
 template<typename T, typename MatrixType = DenseObj<T>>
 class SpectralElementMethod {
-private:
+public:
     // Problem definition
     std::function<T(const std::vector<T>&)> pde_operator;
     std::function<T(const std::vector<T>&)> boundary_condition;
     std::function<T(const std::vector<T>&)> source_term;
-    
+  
     // Discretization parameters
     size_t num_elements;
     size_t polynomial_order;
@@ -34,7 +34,7 @@ private:
 
     // Numerical components
     std::vector<Quadrature::GaussianQuadrature<T>> quadratures;
-public:
+
     MatrixType global_matrix;
     VectorObj<T> global_vector;
 private:
@@ -406,7 +406,6 @@ public:
                 (domain_bounds[2*d + 1] - domain_bounds[2*d]) * 
                 global_indices[d] / (num_elements * polynomial_order);
         }
-        
         return coords;
     }
 

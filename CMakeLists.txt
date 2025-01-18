@@ -55,6 +55,7 @@ set(TEST_SOURCES
     MeshObj_test
     Visual_test
     SpectralElementMethod_test
+    SU2MeshAdapter_test
 )
 
 set(EXM_SOURCES
