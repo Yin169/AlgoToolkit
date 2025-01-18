@@ -5,6 +5,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <map>
 #include <algorithm>
 #include "SpectralElementMethod.hpp"
 
@@ -21,7 +22,12 @@ public:
         std::string line;
         std::vector<std::vector<double>> nodes;
         std::vector<std::vector<size_t>> elements;
-        std::vector<std::pair<std::string, std::vector<size_t>>> boundaries;
+        std::map<std::string, std::vector<std::vector<size_t>>> markers;
+
+        size_t num_dimensions = 0;
+        size_t num_points = 0;
+        size_t num_elements_mesh = 0;
+        size_t num_markers_mesh = 0;
 
         while (std::getline(file, line)) {
             std::istringstream iss(line);
@@ -29,116 +35,162 @@ public:
             iss >> keyword;
 
             if (keyword == "NDIME=") {
-                size_t num_dimensions;
                 iss >> num_dimensions;
-                // Assuming the SEM class is already initialized with the correct number of dimensions
+                if (num_dimensions != sem.num_dimensions) {
+                    throw std::runtime_error("Mesh dimensions do not match SEM dimensions.");
+                }
             } else if (keyword == "NPOIN=") {
-                size_t num_points;
                 iss >> num_points;
                 nodes.resize(num_points);
                 for (size_t i = 0; i < num_points; ++i) {
                     std::getline(file, line);
                     std::istringstream point_stream(line);
-                    std::vector<double> coords(sem.num_dimensions);
-                    for (size_t d = 0; d < sem.num_dimensions; ++d) {
-                        point_stream >> coords[d];
+                    std::vector<double> coords(num_dimensions);
+                    for (size_t d = 0; d < num_dimensions; ++d) {
+                        if (!(point_stream >> coords[d])) {
+                            throw std::runtime_error("Invalid coordinates for node " + std::to_string(i));
+                        }
                     }
                     nodes[i] = coords;
                 }
             } else if (keyword == "NELEM=") {
-                size_t num_elements;
-                iss >> num_elements;
-                elements.resize(num_elements);
-                for (size_t i = 0; i < num_elements; ++i) {
+                iss >> num_elements_mesh;
+                elements.resize(num_elements_mesh);
+                for (size_t i = 0; i < num_elements_mesh; ++i) {
                     std::getline(file, line);
                     std::istringstream elem_stream(line);
                     size_t elem_type, num_nodes;
-                    elem_stream >> elem_type >> num_nodes;
+                    if (!(elem_stream >> elem_type >> num_nodes)) {
+                        throw std::runtime_error("Invalid element data at element " + std::to_string(i));
+                    }
                     std::vector<size_t> node_indices(num_nodes);
                     for (size_t j = 0; j < num_nodes; ++j) {
-                        elem_stream >> node_indices[j];
+                        if (!(elem_stream >> node_indices[j])) {
+                            throw std::runtime_error("Invalid node index at element " + std::to_string(i) + ", node " + std::to_string(j));
+                        }
+                        node_indices[j]--; // Convert to zero-based indexing
                     }
                     elements[i] = node_indices;
                 }
             } else if (keyword == "NMARK=") {
-                size_t num_markers;
-                iss >> num_markers;
-                for (size_t i = 0; i < num_markers; ++i) {
+                iss >> num_markers_mesh;
+                for (size_t i = 0; i < num_markers_mesh; ++i) {
                     std::getline(file, line);
                     std::istringstream marker_stream(line);
                     std::string marker_tag;
-                    marker_stream >> marker_tag;
-                    size_t num_elements_marker;
+                    if (!(marker_stream >> marker_tag)) {
+                        throw std::runtime_error("Invalid marker tag at marker " + std::to_string(i));
+                    }
+                    size_t num_elements_marker = 0;
                     std::getline(file, line);
                     std::istringstream marker_elem_stream(line);
-                    marker_elem_stream >> num_elements_marker;
-                    std::vector<size_t> boundary_elements(num_elements_marker);
+                    if (!(marker_elem_stream >> num_elements_marker)) {
+                        throw std::runtime_error("Invalid number of elements in marker " + marker_tag);
+                    }
+                    std::vector<std::vector<size_t>> boundary_elements(num_elements_marker);
                     for (size_t j = 0; j < num_elements_marker; ++j) {
                         std::getline(file, line);
                         std::istringstream boundary_elem_stream(line);
                         size_t elem_type, num_nodes;
-                        boundary_elem_stream >> elem_type >> num_nodes;
+                        if (!(boundary_elem_stream >> elem_type >> num_nodes)) {
+                            throw std::runtime_error("Invalid boundary element data at marker " + marker_tag + ", element " + std::to_string(j));
+                        }
                         std::vector<size_t> node_indices(num_nodes);
                         for (size_t k = 0; k < num_nodes; ++k) {
-                            boundary_elem_stream >> node_indices[k];
+                            if (!(boundary_elem_stream >> node_indices[k])) {
+                                throw std::runtime_error("Invalid node index at marker " + marker_tag + ", element " + std::to_string(j) + ", node " + std::to_string(k));
+                            }
+                            node_indices[k]--; // Convert to zero-based indexing
                         }
-                        boundary_elements[j] = node_indices[0]; // Assuming boundary elements are points
+                        boundary_elements[j] = node_indices;
                     }
-                    boundaries.emplace_back(marker_tag, boundary_elements);
+                    markers[marker_tag] = boundary_elements;
                 }
             }
         }
 
-        // Initialize the SEM class with the mesh data
-        initializeSEM(sem, nodes, elements, boundaries);
+        // Build face_to_elements map
+        std::map<std::vector<size_t>, std::vector<size_t>> face_to_elements;
+        for (size_t elem_idx = 0; elem_idx < elements.size(); ++elem_idx) {
+            const auto& elem_nodes = elements[elem_idx];
+            auto elem_faces = get_faces(elem_nodes, num_dimensions);
+            for (const auto& face : elem_faces) {
+                face_to_elements[face].push_back(elem_idx);
+            }
+        }
+
+        // Assign neighboring elements and identify boundary faces
+        for (auto& face_pair : face_to_elements) {
+            const auto& face_nodes = face_pair.first;
+            const auto& elem_list = face_pair.second;
+            if (elem_list.size() == 1) {
+                // Boundary face
+                size_t elem_idx = elem_list[0];
+                sem.setBoundaryCondition(elem_idx, face_nodes, markers);
+            } else if (elem_list.size() == 2) {
+                // Internal face, assign neighboring elements
+                size_t elem_idx1 = elem_list[0];
+                size_t elem_idx2 = elem_list[1];
+                sem.setNeighboringElements(elem_idx1, elem_idx2, face_nodes);
+            } else {
+                throw std::runtime_error("Face shared by more than two elements, which should not happen.");
+            }
+        }
+
+        // Initialize SEM with the mesh data
+        initializeSEM(sem, nodes, elements, face_to_elements, markers);
     }
 
 private:
     std::string mesh_file_;
 
-    void initializeSEM(SpectralElementMethod<double>& sem, 
-                       const std::vector<std::vector<double>>& nodes,
-                       const std::vector<std::vector<size_t>>& elements,
-                       const std::vector<std::pair<std::string, std::vector<size_t>>>& boundaries) {
-        // Assuming the SEM class is already initialized with the correct number of elements and polynomial order
-        // We need to set up the element connectivity and boundary conditions
-
-        // Set up element connectivity
-        for (size_t e = 0; e < elements.size(); ++e) {
-            auto& conn = sem.element_connectivity[e];
-            conn.global_indices = elements[e];
-            // Initialize face nodes and neighboring elements (this is a simplified example)
-            initializeElementFaces(sem, e, elements);
-        }
-
-        // Set up boundary conditions
-        for (const auto& boundary : boundaries) {
-            std::string marker_tag = boundary.first;
-            const auto& boundary_nodes = boundary.second;
-            for (size_t node_index : boundary_nodes) {
-                std::vector<double> node_coords = nodes[node_index];
-                // Apply boundary condition based on marker tag
-                // This is a simplified example, assuming Dirichlet boundary conditions
-                sem.boundary_condition = [](const std::vector<double>& coords) {
-                    return 0.0; // Example: fixed value boundary condition
-                };
+    std::vector<std::vector<size_t>> get_faces(const std::vector<size_t>& nodes, size_t num_dimensions) {
+        std::vector<std::vector<size_t>> faces;
+        if (num_dimensions == 2) {
+            if (nodes.size() == 3) { // Triangle
+                faces.push_back({nodes[0], nodes[1]});
+                faces.push_back({nodes[1], nodes[2]});
+                faces.push_back({nodes[2], nodes[0]});
+            } else if (nodes.size() == 4) { // Quadrilateral
+                faces.push_back({nodes[0], nodes[1]});
+                faces.push_back({nodes[1], nodes[2]});
+                faces.push_back({nodes[2], nodes[3]});
+                faces.push_back({nodes[3], nodes[0]});
+            }
+        } else if (num_dimensions == 3) {
+            if (nodes.size() == 4) { // Tetrahedron
+                faces.push_back({nodes[0], nodes[1], nodes[2]});
+                faces.push_back({nodes[1], nodes[2], nodes[3]});
+                faces.push_back({nodes[0], nodes[2], nodes[3]});
+                faces.push_back({nodes[0], nodes[1], nodes[3]});
+            } else if (nodes.size() == 8) { // Hexahedron
+                faces.push_back({nodes[0], nodes[1], nodes[2], nodes[3]});
+                faces.push_back({nodes[4], nodes[5], nodes[6], nodes[7]});
+                faces.push_back({nodes[0], nodes[1], nodes[5], nodes[4]});
+                faces.push_back({nodes[2], nodes[3], nodes[7], nodes[6]});
+                faces.push_back({nodes[0], nodes[3], nodes[7], nodes[4]});
+                faces.push_back({nodes[1], nodes[2], nodes[6], nodes[5]});
             }
         }
+        for (auto& face : faces) {
+            std::sort(face.begin(), face.end());
+        }
+        return faces;
     }
 
-    void initializeElementFaces(SpectralElementMethod<double>& sem, size_t element_index, 
-                                const std::vector<std::vector<size_t>>& elements) {
-        auto& conn = sem.element_connectivity[element_index];
-        conn.face_nodes.resize(2 * sem.num_dimensions);
-        conn.neighboring_elements.resize(2 * sem.num_dimensions, -1);
-
-        // Simplified example: assuming elements are ordered and neighbors are adjacent
-        if (element_index > 0) {
-            conn.neighboring_elements[0] = element_index - 1;
+    void initializeSEM(SpectralElementMethod<double>& sem,
+                       const std::vector<std::vector<double>>& nodes,
+                       const std::vector<std::vector<size_t>>& elements,
+                       const std::map<std::vector<size_t>, std::vector<size_t>>& face_to_elements,
+                       const std::map<std::string, std::vector<std::vector<size_t>>>& markers) {
+        // Populate SEM's element connectivity
+        sem.element_connectivity.resize(elements.size());
+        for (size_t elem_idx = 0; elem_idx < elements.size(); ++elem_idx) {
+            sem.element_connectivity[elem_idx].global_indices = elements[elem_idx];
+            sem.element_connectivity[elem_idx].face_nodes = get_faces(elements[elem_idx], sem.num_dimensions);
+            sem.element_connectivity[elem_idx].neighboring_elements.resize(sem.element_connectivity[elem_idx].face_nodes.size(), -1);
         }
-        if (element_index < elements.size() - 1) {
-            conn.neighboring_elements[1] = element_index + 1;
-        }
+        // Further initialization as required by SEM
     }
 };
 
