@@ -1,8 +1,5 @@
 # FASTSolver: High-Performance Scientific Computing Framework
 
-## Author
-`NG YIN CHEANG`
-
 ## Overview
 FASTSolver is a comprehensive scientific computing framework focused on:
 - High-performance numerical solutions
