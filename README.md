@@ -53,11 +53,13 @@ The Spectral Element Method (SEM) is a high-order numerical technique for solvin
 ```bash
 git clone https://github.com/Yin169/FASTSolver.git
 cd FASTSolver
-mkdir build && cd build
-cmake ..
-make
+bash script_test.sh
 ```
 
+```bash
+cd FASTSolver
+python setup.py install
+```
 ---
 
 ## Usage
@@ -65,18 +67,31 @@ make
 Here is an example of how to use the `FASTSolver` module in Python:
 
 ```python
-import FASTSolver as ns
+import fastsolver as fs
 
-# Example: LU decomposition
-A = [[4, 1], [1, 3]]
-P = [0, 1]
-ns.pivot_lu(A, P)
-print("LU Decomposition Result:", A, "Pivot:", P)
+A = fs.SparseMatrix(2, 2)
+A.addValue(0, 0, 4.0)
+A.addValue(0, 1, 1.0)
+A.addValue(1, 0, 1.0)
+A.addValue(1, 1, 3.0)
+A.finalize()
 
-# Example: Solve using Conjugate Gradient
-solver = ns.ConjugateGrad()
-x = [0, 0]  # Initialize x with appropriate values
-solver.solve(x)
+b = fs.Vector(2)
+b[0] = 1.0
+b[1] = 2.0
+
+x = fs.Vector(2)
+x[0] = 0.0
+x[1] = 0.0
+
+amg = fs.AlgebraicMultiGrid()
+
+levels = 2
+smoothing_steps = 10
+theta = 0.5
+amg.amgVCycle(A, b, x, levels, smoothing_steps, theta)
+
+print("Solution x:", [x[i] for i in range(x.size())])
 ```
 
 ---
