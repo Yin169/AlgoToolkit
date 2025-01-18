@@ -4,8 +4,8 @@
 #include <iostream>
 #include <vector>
 #include <cstring> // For memset
-#include "DenseObj.hpp"
-#include "VectorObj.hpp"
+#include "../../Obj/DenseObj.hpp"
+#include "../../Obj/VectorObj.hpp"
 
 namespace basic {
 

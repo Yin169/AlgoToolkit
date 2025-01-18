@@ -6,9 +6,9 @@
 #include <type_traits>
 #include <stdexcept>
 #include <iostream>
-#include "basic.hpp"
-#include "SparseObj.hpp"
-#include "VectorObj.hpp"
+#include "../Factorized/basic.hpp"
+#include "../../Obj/SparseObj.hpp"
+#include "../../Obj/VectorObj.hpp"
 #include "KrylovSubspace.hpp"
 
 template <typename TNum, typename MatrixType = SparseMatrixCSC<TNum>, typename VectorType = VectorObj<TNum>>

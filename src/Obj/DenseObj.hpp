@@ -6,7 +6,8 @@
 #include <algorithm>
 #include <functional>
 #include <iostream>
-#include <openblas/cblas.h> // Ensure BLAS is installed or use a wrapper library like Eigen
+// #include <openblas/cblas.h>
+#include "cblas.h"
 
 #include "MatrixObj.hpp"
 #include "VectorObj.hpp"

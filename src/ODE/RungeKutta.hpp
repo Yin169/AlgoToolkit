@@ -1,9 +1,9 @@
 #ifndef RUNGE_KUTTA_HPP
 #define RUNGE_KUTTA_HPP
 
-#include "VectorObj.hpp"
-#include "DenseObj.hpp"
-#include "SparseObj.hpp"
+#include "../Obj/VectorObj.hpp"
+#include "../Obj/DenseObj.hpp"
+#include "../Obj/SparseObj.hpp"
 #include <functional>
 #include <stdexcept>
 #include <type_traits>
