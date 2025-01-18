@@ -2,12 +2,9 @@ cmake_minimum_required(VERSION 3.10)
 project(FASTSolver)
 
 # Compiler settings
-# set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall -Wextra")
-# set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
-# set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
 # Include directories
 include_directories(
@@ -32,6 +29,9 @@ find_package(OpenBLAS REQUIRED)
 find_package(benchmark REQUIRED)
 find_package(GTest REQUIRED)
 
+# Find pybind11
+# find_package(pybind11 REQUIRED)
+# set(OpenBLAS_DIR build/Release/generators/OpenBLASConfig.cmake)
 # Define common test dependencies
 set(TEST_DEPENDENCIES
     GTest::gtest 
@@ -58,10 +58,6 @@ set(TEST_SOURCES
     # SU2MeshAdapter_test
 )
 
-set(EXM_SOURCES
-    CylinderFlowSEM
-)
-
 # Add test executables
 foreach(test_source ${TEST_SOURCES})
     add_executable(${test_source} test/${test_source}.cpp)
@@ -69,11 +65,9 @@ foreach(test_source ${TEST_SOURCES})
     add_test(NAME ${test_source} COMMAND ${test_source})
 endforeach()
 
-# foreach(exm_source ${EXM_SOURCES})
-#     add_executable(${exm_source} examples/${exm_source}.cpp)
-#     target_link_libraries(${exm_source} PRIVATE ${TEST_DEPENDENCIES})
-#     add_test(NAME ${exm_source} COMMAND ${exm_source})
-# endforeach()
-
 # Enable testing
 enable_testing()
+
+# Python module
+# pybind11_add_module(fastsolver_pybind python/pybind.cpp)
+# target_link_libraries(fastsolver_pybind PRIVATE ${TEST_DEPENDENCIES} pybind11::module)
