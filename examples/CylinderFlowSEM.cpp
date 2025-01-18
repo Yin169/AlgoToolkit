@@ -1,216 +1,209 @@
 #include "SpectralElementMethod.hpp"
-#include "Visual.hpp"
+#include "SU2MeshAdapter.hpp"
 #include "RungeKutta.hpp"
-#include <cmath>
 #include <iostream>
-#include <string>
+#include <fstream>
+#include <cmath>
 
-template<typename T>
-class CylinderFlowSEM {
-private:
-    static constexpr size_t D = 2;
-    static constexpr T Re = 100;        // Reynolds number
-    static constexpr T U0 = 1.0;        // Inlet velocity
-    static constexpr T R = 0.5;         // Cylinder radius
-    static constexpr T L = 10.0;        // Domain length
-    static constexpr T H = 5.0;         // Domain height
-    static constexpr T cx = 2.0;        // Cylinder center x
-    static constexpr T cy = 2.5;        // Cylinder center y
-    
-    SpectralElementMethod<T> velocity_x;
-    SpectralElementMethod<T> velocity_y;
-    SpectralElementMethod<T> pressure;
-    RungeKutta<T, VectorObj<T>, VectorObj<T>> time_stepper;
-    
-    // State vectors for the time-dependent solution
-    VectorObj<T> u_current;
-    VectorObj<T> v_current;
-    VectorObj<T> p_current;
-    
-    bool isInCylinder(T x, T y) const {
-        return std::pow(x - cx, 2) + std::pow(y - cy, 2) <= R*R;
-    }
+// Constants for the simulation
+const double Reynolds = 100.0;    // Reynolds number for laminar vortex shedding
+const double U_inlet = 1.0;       // Inlet velocity
+const double dt = 0.001;          // Time step size
+const size_t num_steps = 5000;    // Number of time steps
+const size_t output_interval = 50; // Output solution every 50 steps
+const double cylinder_radius = 0.5;// Cylinder radius
+const double domain_length = 20.0; // Domain length
+const double domain_height = 10.0; // Domain height
 
-public:
-    CylinderFlowSEM() : 
-        velocity_x(20, 6, 2, {0, L, 0, H},
-            [](const std::vector<T>& x) { return 1.0; },  // Laplacian
-            [this](const std::vector<T>& x) {             // Boundary conditions
-                if(x[0] < 1e-10) return U0;               // Inlet
-                if(isInCylinder(x[0], x[1])) return 0.0;  // No-slip
-                return 0.0;                               // Other boundaries
-            },
-            [](const std::vector<T>& x) { return 0.0; }   // Source term
-        ),
-        velocity_y(20, 6, 2, {0, L, 0, H},
-            [](const std::vector<T>& x) { return 1.0; },
-            [this](const std::vector<T>& x) {
-                if(isInCylinder(x[0], x[1])) return 0.0;
-                return 0.0;
-            },
-            [](const std::vector<T>& x) { return 0.0; }
-        ),
-        pressure(20, 6, 2, {0, L, 0, H},
-            [](const std::vector<T>& x) { return 1.0; },
-            [](const std::vector<T>& x) { return 0.0; },
-            [](const std::vector<T>& x) { return 0.0; }
-        ) {
-        // Initialize solution vectors
-        size_t n = 20 * std::pow(6+1, 2);
-        u_current.resize(n);
-        v_current.resize(n);
-        p_current.resize(n);
-        initializeFlow();
-    }
+// Helper functions to access velocity components
+double& u_comp(VectorObj<double>& v, size_t i) { return v[2*i]; }
+double& v_comp(VectorObj<double>& v, size_t i) { return v[2*i + 1]; }
+const double& u_comp(const VectorObj<double>& v, size_t i) { return v[2*i]; }
+const double& v_comp(const VectorObj<double>& v, size_t i) { return v[2*i + 1]; }
 
-    void solve(T final_time, T initial_dt = 0.01) {
-        // Setup the system function for RK solver
-        auto system_function = [this](const VectorObj<T>& state) -> VectorObj<T> {
-            return computeDerivative(state);
-        };
-
-        // Combine velocity components into state vector
-        VectorObj<T> state = combineState(u_current, v_current);
-        
-        // Solve using adaptive time stepping
-        T tolerance = 1e-6;
-        size_t max_steps = 10000;
-        
-        time_stepper.solve(
-            state, 
-            system_function,
-            initial_dt,
-            max_steps
-        );
-        
-        // Extract final velocities
-        extractState(state, u_current, v_current);
-        
-        // Solve pressure (post-processing step)
-        solvePressure();
-        
-        // Save results
-        saveVTK(u_current, v_current, p_current, "cylinder_flow_final");
-    }
-
-private:
-    void initializeFlow() {
-        // Set initial conditions
-        for(size_t i = 0; i < u_current.size(); ++i) {
-            u_current[i] = 0.0;  // Uniform flow
-            v_current[i] = 0.0;
-            p_current[i] = 0.0;
-        }
-    }
+// Define the Navier-Stokes operator
+VectorObj<double> navierStokesOperator(const VectorObj<double>& velocity, SpectralElementMethod<double>& sem) {
+    size_t total_dof = velocity.size() / 2; // Number of nodes
+    VectorObj<double> result(velocity.size());
     
-    VectorObj<T> computeDerivative(const VectorObj<T>& state) {
-        // Extract velocity components
-        VectorObj<T> u_temp(u_current.size());
-        VectorObj<T> v_temp(v_current.size());
-        extractState(state, u_temp, v_temp);
-        
-        // Compute convective terms
-        VectorObj<T> conv_u = computeConvectiveTerm(u_temp, u_temp, v_temp);
-        VectorObj<T> conv_v = computeConvectiveTerm(v_temp, u_temp, v_temp);
-        
-        // Compute viscous terms
-        VectorObj<T> visc_u = computeViscousTerm(u_temp);
-        VectorObj<T> visc_v = computeViscousTerm(v_temp);
-        
-        // Combine derivatives
-        VectorObj<T> derivative(state.size());
-        for(size_t i = 0; i < u_temp.size(); ++i) {
-            derivative[i] = (-conv_u[i] + visc_u[i]) / Re;
-            derivative[i + u_temp.size()] = (-conv_v[i] + visc_v[i]) / Re;
-        }
-        
-        return derivative;
-    }
+    // Assemble the diffusion term
+    sem.assembleSystem();
     
-    VectorObj<T> computeConvectiveTerm(const VectorObj<T>& phi,
-                                      const VectorObj<T>& u,
-                                      const VectorObj<T>& v) {
-        // Compute u∂φ/∂x + v∂φ/∂y using spectral element discretization
-        VectorObj<T> result(phi.size());
-        // Implementation details here...
-        return result;
-    }
+    // Compute convection terms (u∂u/∂x + v∂u/∂y, u∂v/∂x + v∂v/∂y)
+    VectorObj<double> convection(velocity.size());
+    convection.zero();
     
-    VectorObj<T> computeViscousTerm(const VectorObj<T>& phi) {
-        // Compute ∇²φ using spectral element discretization
-        VectorObj<T> result(phi.size());
-        // Implementation details here...
-        return result;
-    }
-    
-    void solvePressure() {
-        // Solve pressure Poisson equation
-        pressure.solve(p_current);
-    }
-    
-    VectorObj<T> combineState(const VectorObj<T>& u, const VectorObj<T>& v) {
-        VectorObj<T> state(u.size() + v.size());
-        for(size_t i = 0; i < u.size(); ++i) {
-            state[i] = u[i];
-            state[i + u.size()] = v[i];
-        }
-        return state;
-    }
-    
-    void extractState(const VectorObj<T>& state,
-                     VectorObj<T>& u,
-                     VectorObj<T>& v) {
-        size_t n = state.size() / 2;
-        for(size_t i = 0; i < n; ++i) {
-            u[i] = state[i];
-            v[i] = state[i + n];
-        }
-    }
-    
-    void saveVTK(const VectorObj<T>& u, const VectorObj<T>& v, 
-             const VectorObj<T>& p, const std::string& filename) {
-        std::ofstream vtkFile(filename + ".vtk");
-        vtkFile << "# vtk DataFile Version 3.0\n";
-        vtkFile << "Cylinder Flow Simulation Data\n";
-        vtkFile << "ASCII\n";
-        vtkFile << "DATASET STRUCTURED_GRID\n";
-
-        // Assuming structured grid dimensions
-        size_t nx = 20; // Number of elements in x
-        size_t ny = 20; // Number of elements in y
-        size_t nz = 1;  // 2D case
-
-        vtkFile << "DIMENSIONS " << nx << " " << ny << " " << nz << "\n";
-
-        // Write grid points
-        vtkFile << "POINTS " << nx * ny * nz << " float\n";
-        for (size_t j = 0; j < ny; ++j) {
-            for (size_t i = 0; i < nx; ++i) {
-                vtkFile << i << " " << j << " 0\n";  // Replace with real coordinates if mapped
+    for (size_t e = 0; e < sem.num_elements; ++e) {
+        auto& conn = sem.element_connectivity[e];
+        for (size_t i = 0; i < conn.global_indices.size(); ++i) {
+            size_t gi = conn.global_indices[i];
+            double dudx = 0.0, dudy = 0.0, dvdx = 0.0, dvdy = 0.0;
+            
+            // Compute velocity gradients using spectral element basis functions
+            for (size_t j = 0; j < conn.global_indices.size(); ++j) {
+                size_t gj = conn.global_indices[j];
+                double weight = sem.global_matrix(gi, gj);
+                dudx += u_comp(velocity, gj) * weight;
+                dudy += u_comp(velocity, gj) * weight;
+                dvdx += v_comp(velocity, gj) * weight;
+                dvdy += v_comp(velocity, gj) * weight;
             }
+            
+            // Compute convection terms
+            u_comp(convection, gi) = u_comp(velocity, gi) * dudx + v_comp(velocity, gi) * dudy;
+            v_comp(convection, gi) = u_comp(velocity, gi) * dvdx + v_comp(velocity, gi) * dvdy;
         }
-
-        // Write velocity field
-        vtkFile << "POINT_DATA " << nx * ny * nz << "\n";
-        vtkFile << "VECTORS velocity float\n";
-        for (size_t i = 0; i < u.size(); ++i) {
-            vtkFile << u[i] << " " << v[i] << " 0.0\n";
-        }
-
-        // Write pressure field
-        vtkFile << "SCALARS pressure float 1\n";
-        vtkFile << "LOOKUP_TABLE default\n";
-        for (size_t i = 0; i < p.size(); ++i) {
-            vtkFile << p[i] << "\n";
-        }
-
-        vtkFile.close();
     }
+    
+    // Combine terms: du/dt = -(u∂u/∂x + v∂u/∂y) + (1/Re)∇²u
+    // Apply diffusion term to each component
+    for (size_t i = 0; i < total_dof; ++i) {
+        double diff_u = 0.0, diff_v = 0.0;
+        for (size_t j = 0; j < total_dof; ++j) {
+            double weight = sem.global_matrix(i, j);
+            diff_u += weight * u_comp(velocity, j);
+            diff_v += weight * v_comp(velocity, j);
+        }
+        
+        u_comp(result, i) = -u_comp(convection, i) + diff_u / Reynolds;
+        v_comp(result, i) = -v_comp(convection, i) + diff_v / Reynolds;
+    }
+    
+    return result;
+}
 
-};
+// Boundary conditions
+bool isOnCylinder(const std::vector<double>& coords) {
+    double x = coords[0];
+    double y = coords[1];
+    double r = std::sqrt(x*x + y*y);
+    return std::abs(r - cylinder_radius) < 1e-6;
+}
+
+bool isAtInlet(const std::vector<double>& coords) {
+    return coords[0] < 1e-6;
+}
+
+bool isAtOutlet(const std::vector<double>& coords) {
+    return coords[0] > domain_length - 1e-6;
+}
+
+double inletVelocityX(const std::vector<double>& coords) {
+    return U_inlet;
+}
+
+double inletVelocityY(const std::vector<double>& coords) {
+    return 0.0;
+}
 
 int main() {
-    CylinderFlowSEM<double> flow;
-    flow.solve(10.0);  // Simulate for 10 time units
+    // Define the mesh file
+    std::string mesh_file = "../mesh/mesh_cylinder_lam.su2";
+    
+    // Initialize the Spectral Element Method
+    size_t num_elements = 1000;  // Adjust based on mesh
+    size_t polynomial_order = 4; // 4th order polynomials
+    size_t num_dimensions = 2;   // 2D simulation
+    std::vector<double> domain_bounds = {0.0, domain_length, 0.0, domain_height};
+    
+    auto dummy_operator = [](const std::vector<double>& coords) { return 0.0; };
+    
+    SpectralElementMethod<double> sem(
+        num_elements,
+        polynomial_order,
+        num_dimensions,
+        domain_bounds,
+        mesh_file,
+        dummy_operator,
+        dummy_operator,
+        dummy_operator
+    );
+    
+    // Read the mesh
+    SU2MeshAdapter mesh_adapter(mesh_file);
+    mesh_adapter.readMesh(sem);
+    
+    // Initialize velocity field (2 components per node)
+    size_t total_dof = sem.computeTotalDOF();
+    VectorObj<double> velocity(2 * total_dof);
+    velocity.zero();
+    
+    // Set initial conditions
+    for (size_t i = 0; i < total_dof; ++i) {
+        std::vector<double> coords = sem.getNodeCoordinates(i);
+        
+        if (isAtInlet(coords)) {
+            u_comp(velocity, i) = inletVelocityX(coords);
+            v_comp(velocity, i) = inletVelocityY(coords);
+        } else if (isOnCylinder(coords)) {
+            u_comp(velocity, i) = 0.0;
+            v_comp(velocity, i) = 0.0;
+        } else {
+            u_comp(velocity, i) = U_inlet;
+            v_comp(velocity, i) = 0.0;
+        }
+    }
+    
+    // Initialize Runge-Kutta solver
+    RungeKutta<double, VectorObj<double>, VectorObj<double>> rk;
+    
+    // Define the system function for time stepping
+    auto system_function = [&sem](const VectorObj<double>& v) {
+        return navierStokesOperator(v, sem);
+    };
+    
+    // Output files
+    std::ofstream output_file("velocity_field.txt");
+    
+    // Time-stepping loop
+    double time = 0.0;
+    for (size_t step = 0; step < num_steps; ++step) {
+        // Perform one Runge-Kutta step
+        VectorObj<double> old_velocity = velocity;
+        rk.solve(velocity, system_function, dt, 4); // 4th order RK
+        
+        // Apply boundary conditions
+        for (size_t i = 0; i < total_dof; ++i) {
+            std::vector<double> coords = sem.getNodeCoordinates(i);
+            
+            if (isAtInlet(coords)) {
+                u_comp(velocity, i) = inletVelocityX(coords);
+                v_comp(velocity, i) = inletVelocityY(coords);
+            } else if (isOnCylinder(coords)) {
+                u_comp(velocity, i) = 0.0;
+                v_comp(velocity, i) = 0.0;
+            }
+        }
+        
+        // Update time
+        time += dt;
+        
+        // Output the solution at specified intervals
+        if (step % output_interval == 0) {
+            output_file << "Time: " << time << std::endl;
+            
+            // Write node coordinates and velocity components
+            for (size_t i = 0; i < total_dof; ++i) {
+                std::vector<double> coords = sem.getNodeCoordinates(i);
+                output_file << coords[0] << " " << coords[1] << " " 
+                           << u_comp(velocity, i) << " " << v_comp(velocity, i) << std::endl;
+            }
+            
+            // Compute and output maximum velocity magnitude
+            double max_velocity = 0.0;
+            for (size_t i = 0; i < total_dof; ++i) {
+                double vel_mag = std::sqrt(
+                    u_comp(velocity, i) * u_comp(velocity, i) + 
+                    v_comp(velocity, i) * v_comp(velocity, i)
+                );
+                max_velocity = std::max(max_velocity, vel_mag);
+            }
+            
+            std::cout << "Step: " << step << ", Time: " << time 
+                      << ", Max Velocity: " << max_velocity << std::endl;
+        }
+    }
+    
+    output_file.close();
     return 0;
 }

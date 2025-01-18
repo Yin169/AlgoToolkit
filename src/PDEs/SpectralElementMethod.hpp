@@ -13,14 +13,14 @@
 
 template<typename T, typename MatrixType = DenseObj<T>>
 class SpectralElementMethod {
-private:
+public:
     // Problem definition
     std::function<T(const std::vector<T>&)> pde_operator;
     std::function<T(const std::vector<T>&)> boundary_condition;
     std::function<T(const std::vector<T>&)> source_term;
-    
+  
     // Discretization parameters
-    size_t num_elements;
+    std::vector<size_t> num_elements_per_dim;
     size_t polynomial_order;
     size_t num_dimensions;
     std::vector<T> domain_bounds;
@@ -34,7 +34,7 @@ private:
 
     // Numerical components
     std::vector<Quadrature::GaussianQuadrature<T>> quadratures;
-public:
+
     MatrixType global_matrix;
     VectorObj<T> global_vector;
 private:
@@ -43,9 +43,18 @@ private:
     std::vector<VectorObj<T>> element_vectors;
     std::vector<std::vector<T>> basis_nodes; // Store GLL nodes for basis functions
 
+    // Helper function for integer exponentiation
+    size_t int_pow(size_t base, size_t exponent) {
+        size_t result = 1;
+        for (size_t i = 0; i < exponent; ++i) {
+            result *= base;
+        }
+        return result;
+    }
+
 public:
     SpectralElementMethod(
-        size_t elements,
+        const std::vector<size_t>& elements_per_dim,
         size_t order,
         size_t dims,
         const std::vector<T>& bounds,
@@ -53,7 +62,7 @@ public:
         std::function<T(const std::vector<T>&)> op,
         std::function<T(const std::vector<T>&)> bc,
         std::function<T(const std::vector<T>&)> source
-    ) : num_elements(elements),
+    ) : num_elements_per_dim(elements_per_dim),
         polynomial_order(order),
         num_dimensions(dims),
         domain_bounds(bounds),
@@ -67,6 +76,10 @@ public:
     void solve(VectorObj<T>& solution) {
         assembleSystem();
         
+        // Solve using GMRES
+        // GMRES<T, MatrixType, VectorObj<T>> solver;
+        // solver.solve(global_matrix, global_vector, solution, 1000, std::min(global_matrix.getRows(), global_matrix.getCols()), 1e-8);
+
         // Solve using conjugate gradient
         ConjugateGrad<T, MatrixType, VectorObj<T>> solver(global_matrix, global_vector, 1000, 1e-8);
         solver.solve(solution);
@@ -83,8 +96,8 @@ public:
     
         // Initialize element matrices
         size_t dof_per_element = std::pow(polynomial_order + 1, num_dimensions);
-        element_matrices.resize(num_elements, MatrixType(dof_per_element, dof_per_element));
-        element_vectors.resize(num_elements, VectorObj<T>(dof_per_element));
+        element_matrices.resize(total_elements(), MatrixType(dof_per_element, dof_per_element));
+        element_vectors.resize(total_elements(), VectorObj<T>(dof_per_element));
     
         // Initialize global system
         size_t total_dof = computeTotalDOF();
@@ -106,32 +119,32 @@ public:
     }
 
     void initializeConnectivity() {
-        element_connectivity.resize(num_elements);
+        element_connectivity.resize(total_elements());
         
         size_t nodes_per_dim = polynomial_order + 1;
         size_t dof_per_element = std::pow(nodes_per_dim, num_dimensions);
         
-        for (size_t e = 0; e < num_elements; ++e) {
+        for (size_t e = 0; e < total_elements(); ++e) {
             auto& conn = element_connectivity[e];
             conn.global_indices.resize(dof_per_element);
             
+            // Compute element indices per dimension
+            std::vector<size_t> elem_indices(num_dimensions);
+            size_t temp = e;
+            for (size_t d = 0; d < num_dimensions; ++d) {
+                elem_indices[d] = temp / int_pow(num_elements_per_dim[d], num_dimensions - 1 - d);
+                temp %= int_pow(num_elements_per_dim[d], num_dimensions - 1 - d);
+            }
+            
             // Compute global indices for each local node
-            std::vector<size_t> local_indices(num_dimensions);
             for (size_t i = 0; i < dof_per_element; ++i) {
-                // Convert linear index to multi-dimensional indices
-                size_t temp = i;
-                for (size_t d = 0; d < num_dimensions; ++d) {
-                    local_indices[d] = temp % nodes_per_dim;
-                    temp /= nodes_per_dim;
-                }
-                
-                // Compute global index
+                std::vector<size_t> local_indices = getLocalIndices(i);
                 size_t global_index = 0;
                 size_t stride = 1;
                 for (size_t d = 0; d < num_dimensions; ++d) {
-                    size_t global_pos = e * polynomial_order + local_indices[d];
+                    size_t global_pos = elem_indices[d] * nodes_per_dim + local_indices[d];
                     global_index += global_pos * stride;
-                    stride *= (num_elements * polynomial_order + 1);
+                    stride *= (num_elements_per_dim[d] * nodes_per_dim);
                 }
                 conn.global_indices[i] = global_index;
             }
@@ -143,41 +156,40 @@ public:
 
     void initializeElementFaces(size_t element_index) {
         auto& conn = element_connectivity[element_index];
+        size_t nodes_per_face = std::pow(polynomial_order + 1, num_dimensions - 1);
         conn.face_nodes.resize(2 * num_dimensions);
         conn.neighboring_elements.resize(2 * num_dimensions, -1);
         
         size_t nodes_per_dim = polynomial_order + 1;
         
-        // For each dimension, identify face nodes
         for (size_t d = 0; d < num_dimensions; ++d) {
             // Lower face in dimension d
-            std::vector<size_t> lower_face;
-            std::vector<size_t> upper_face;
-            
-            size_t num_face_nodes = std::pow(nodes_per_dim, num_dimensions - 1);
-            lower_face.reserve(num_face_nodes);
-            upper_face.reserve(num_face_nodes);
-            
-            // Iterate over all nodes and identify those on faces
-            for (size_t i = 0; i < std::pow(nodes_per_dim, num_dimensions); ++i) {
-                std::vector<size_t> indices = getLocalIndices(i);
-                if (indices[d] == 0) {
-                    lower_face.push_back(i);
-                }
-                if (indices[d] == nodes_per_dim - 1) {
-                    upper_face.push_back(i);
-                }
+            for (size_t i = 0; i < nodes_per_face; ++i) {
+                std::vector<size_t> local_indices = getLocalIndices(i);
+                local_indices.insert(local_indices.begin() + d, 0);
+                conn.face_nodes[2*d].push_back(getLocalIndex(local_indices));
             }
             
-            conn.face_nodes[2*d] = lower_face;
-            conn.face_nodes[2*d + 1] = upper_face;
+            // Upper face in dimension d
+            for (size_t i = 0; i < nodes_per_face; ++i) {
+                std::vector<size_t> local_indices = getLocalIndices(i);
+                local_indices.insert(local_indices.begin() + d, nodes_per_dim - 1);
+                conn.face_nodes[2*d + 1].push_back(getLocalIndex(local_indices));
+            }
             
             // Identify neighboring elements
-            if (element_index % num_elements != 0) {
-                conn.neighboring_elements[2*d] = element_index - 1;
+            std::vector<size_t> elem_indices(num_dimensions);
+            size_t temp = element_index;
+            for (size_t dim = 0; dim < num_dimensions; ++dim) {
+                elem_indices[dim] = temp / int_pow(num_elements_per_dim[dim], num_dimensions - 1 - dim);
+                temp %= int_pow(num_elements_per_dim[dim], num_dimensions - 1 - dim);
             }
-            if (element_index % num_elements != num_elements - 1) {
-                conn.neighboring_elements[2*d + 1] = element_index + 1;
+            
+            if (elem_indices[d] > 0) {
+                conn.neighboring_elements[2*d] = element_index - int_pow(num_elements_per_dim[d], d);
+            }
+            if (elem_indices[d] < num_elements_per_dim[d] - 1) {
+                conn.neighboring_elements[2*d + 1] = element_index + int_pow(num_elements_per_dim[d], d);
             }
         }
     }
@@ -193,6 +205,15 @@ public:
         }
         
         return indices;
+    }
+
+    size_t getLocalIndex(const std::vector<size_t>& indices) {
+        size_t index = 0;
+        size_t nodes_per_dim = polynomial_order + 1;
+        for (size_t d = 0; d < num_dimensions; ++d) {
+            index += indices[d] * int_pow(nodes_per_dim, d);
+        }
+        return index;
     }
 
     T evaluateBasis(size_t basis_index, const std::vector<T>& xi) {
@@ -340,23 +361,6 @@ public:
         return det;
     }
 
-    std::vector<T> computeInverseJacobian(const std::vector<T>& bounds) {
-        std::vector<T> inverse_jacobian(num_dimensions * num_dimensions);
-        
-        for (size_t i = 0; i < num_dimensions; ++i) {
-            for (size_t j = 0; j < num_dimensions; ++j) {
-                if (i == j) {
-                    inverse_jacobian[i * num_dimensions + j] = 
-                        2.0 / (bounds[2*i + 1] - bounds[2*i]);
-                } else {
-                    inverse_jacobian[i * num_dimensions + j] = 0.0;
-                }
-            }
-        }
-        
-        return inverse_jacobian;
-    }
-
     void applyBoundaryConditions() {
         // Apply Dirichlet boundary conditions
         size_t total_dof = computeTotalDOF();
@@ -388,13 +392,15 @@ public:
 
     std::vector<T> getNodeCoordinates(size_t global_index) {
         // Convert global index to element and local indices
-        std::vector<size_t> global_indices(num_dimensions);
+        std::vector<size_t> elem_indices(num_dimensions);
         size_t temp = global_index;
         size_t stride = 1;
+        size_t nodes_per_dim = polynomial_order + 1;
         
         for (size_t d = 0; d < num_dimensions; ++d) {
-            global_indices[d] = temp % (num_elements * polynomial_order + 1);
-            temp /= (num_elements * polynomial_order + 1);
+            elem_indices[d] = temp / stride / nodes_per_dim;
+            temp -= elem_indices[d] * stride * nodes_per_dim;
+            stride *= num_elements_per_dim[d] * nodes_per_dim;
         }
         
         // Compute physical coordinates
@@ -402,19 +408,23 @@ public:
         for (size_t d = 0; d < num_dimensions; ++d) {
             coords[d] = domain_bounds[2*d] + 
                 (domain_bounds[2*d + 1] - domain_bounds[2*d]) * 
-                global_indices[d] / (num_elements * polynomial_order);
+                (static_cast<T>(elem_indices[d]) + 0.5) / num_elements_per_dim[d];
         }
-        
         return coords;
     }
 
     size_t computeTotalDOF() {
-        return num_elements * std::pow(polynomial_order + 1, num_dimensions);
+        size_t total_dof = 1;
+        size_t nodes_per_dim = polynomial_order + 1;
+        for (size_t d = 0; d < num_dimensions; ++d) {
+            total_dof *= num_elements_per_dim[d] * nodes_per_dim;
+        }
+        return total_dof;
     }
 
     void assembleSystem() {
         // Assemble element matrices and vectors
-        for (size_t e = 0; e < num_elements; ++e) {
+        for (size_t e = 0; e < total_elements(); ++e) {
             assembleElementMatrix(e);
             assembleElementVector(e);
             incorporateElement(e);
@@ -424,75 +434,71 @@ public:
         applyBoundaryConditions();
     }
 
-void assembleElementMatrix(size_t element_index) {
-    auto& element_matrix = element_matrices[element_index];
-    element_matrix.zero();
-    
-    std::vector<T> element_bounds = getElementBounds(element_index);
-    
-    // Get quadrature points and weights
-    std::vector<std::vector<T>> quad_points(num_dimensions);
-    std::vector<std::vector<T>> quad_weights(num_dimensions);
-    for (size_t d = 0; d < num_dimensions; ++d) {
-        quad_points[d] = quadratures[d].getPoints();
-        quad_weights[d] = quadratures[d].getWeights();
-    }
-    
-    // Nested quadrature loop
-    std::vector<size_t> quad_indices(num_dimensions, 0);
-    bool done = false;
-    
-    while (!done) {
-        // Compute quadrature point coordinates and weights
-        T weight = 1.0;
-        std::vector<T> quad_coords(num_dimensions);
+    void assembleElementMatrix(size_t element_index) {
+        auto& element_matrix = element_matrices[element_index];
+        element_matrix.zero();
         
+        std::vector<T> element_bounds = getElementBounds(element_index);
+        
+        // Get quadrature points and weights
+        std::vector<std::vector<T>> quad_points(num_dimensions);
+        std::vector<std::vector<T>> quad_weights(num_dimensions);
         for (size_t d = 0; d < num_dimensions; ++d) {
-            quad_coords[d] = quad_points[d][quad_indices[d]];
-            weight *= quad_weights[d][quad_indices[d]];
+            quad_points[d] = quadratures[d].getPoints();
+            quad_weights[d] = quadratures[d].getWeights();
         }
         
-        // Map to physical space
-        std::vector<T> phys_coords = mapToPhysical(quad_coords, element_bounds);
+        // Nested quadrature loop
+        std::vector<size_t> quad_indices(num_dimensions, 0);
+        bool done = false;
         
-        // Evaluate basis functions and their gradients at quadrature point
-        std::vector<T> basis_values = computeBasisFunctions(quad_coords);
-        std::vector<std::vector<T>> basis_gradients(basis_values.size());
-        for (size_t i = 0; i < basis_values.size(); ++i) {
-            basis_gradients[i] = evaluateBasisGradient(i, quad_coords);
-        }
-        
-        // Compute Jacobian determinant and inverse Jacobian
-        T jacobian_det = computeJacobianDeterminant(element_bounds);
-        std::vector<T> inverse_jacobian = computeInverseJacobian(element_bounds);
-        
-        // Compute the element matrix contribution
-        for (size_t i = 0; i < basis_values.size(); ++i) {
-            for (size_t j = 0; j < basis_values.size(); ++j) {
-                T stiffness = 0.0;
-                for (size_t d1 = 0; d1 < num_dimensions; ++d1) {
-                    for (size_t d2 = 0; d2 < num_dimensions; ++d2) {
-                        stiffness += basis_gradients[i][d1] * inverse_jacobian[d1 * num_dimensions + d2] *
-                                     basis_gradients[j][d2] * inverse_jacobian[d1 * num_dimensions + d2];
+        while (!done) {
+            // Compute quadrature point coordinates and weights
+            T weight = 1.0;
+            std::vector<T> quad_coords(num_dimensions);
+            
+            for (size_t d = 0; d < num_dimensions; ++d) {
+                quad_coords[d] = quad_points[d][quad_indices[d]];
+                weight *= quad_weights[d][quad_indices[d]];
+            }
+            
+            // Map to physical space
+            std::vector<T> phys_coords = mapToPhysical(quad_coords, element_bounds);
+            
+            // Evaluate basis functions and their gradients at quadrature point
+            std::vector<T> basis_values = computeBasisFunctions(quad_coords);
+            std::vector<std::vector<T>> basis_gradients(basis_values.size());
+            for (size_t i = 0; i < basis_values.size(); ++i) {
+                basis_gradients[i] = evaluateBasisGradient(i, quad_coords);
+            }
+            
+            // Compute Jacobian determinant
+            T jacobian_det = computeJacobianDeterminant(element_bounds);
+            
+            // Compute the element matrix contribution
+            for (size_t i = 0; i < basis_values.size(); ++i) {
+                for (size_t j = 0; j < basis_values.size(); ++j) {
+                    T stiffness = 0.0;
+                    for (size_t d = 0; d < num_dimensions; ++d) {
+                        stiffness += basis_gradients[i][d] * basis_gradients[j][d];
                     }
+                    element_matrix(i, j) += weight * stiffness * jacobian_det;
                 }
-                element_matrix(i, j) += weight * stiffness * jacobian_det;
             }
-        }
-        
-        // Update quadrature indices
-        for (int d = num_dimensions - 1; d >= 0; --d) {
-            quad_indices[d]++;
-            if (quad_indices[d] < quad_points[d].size()) {
-                break;
-            }
-            quad_indices[d] = 0;
-            if (d == 0) {
-                done = true;
+            
+            // Update quadrature indices
+            for (int d = num_dimensions - 1; d >= 0; --d) {
+                quad_indices[d]++;
+                if (quad_indices[d] < quad_points[d].size()) {
+                    break;
+                }
+                quad_indices[d] = 0;
+                if (d == 0) {
+                    done = true;
+                }
             }
         }
     }
-}
 
     std::vector<T> computeBasisFunctions(const std::vector<T>& xi) {
         std::vector<T> basis_values(std::pow(polynomial_order + 1, num_dimensions));
@@ -504,15 +510,30 @@ void assembleElementMatrix(size_t element_index) {
 
     std::vector<T> getElementBounds(size_t element_index) {
         std::vector<T> bounds(2 * num_dimensions);
+        std::vector<size_t> elem_indices(num_dimensions);
+        size_t temp = element_index;
+        for (size_t d = 0; d < num_dimensions; ++d) {
+            elem_indices[d] = temp / int_pow(num_elements_per_dim[d], num_dimensions - 1 - d);
+            temp %= int_pow(num_elements_per_dim[d], num_dimensions - 1 - d);
+        }
+        
         for (size_t d = 0; d < num_dimensions; ++d) {
             bounds[2*d] = domain_bounds[2*d] + 
                 (domain_bounds[2*d + 1] - domain_bounds[2*d]) * 
-                element_index / num_elements;
+                elem_indices[d] / num_elements_per_dim[d];
             bounds[2*d + 1] = domain_bounds[2*d] + 
                 (domain_bounds[2*d + 1] - domain_bounds[2*d]) * 
-                (element_index + 1) / num_elements;
+                (elem_indices[d] + 1) / num_elements_per_dim[d];
         }
         return bounds;
+    }
+
+    size_t total_elements() {
+        size_t total = 1;
+        for (size_t d = 0; d < num_dimensions; ++d) {
+            total *= num_elements_per_dim[d];
+        }
+        return total;
     }
 };
 
