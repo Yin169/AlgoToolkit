@@ -22,16 +22,14 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/application/Mesh
     ${PROJECT_SOURCE_DIR}/application/PostProcess
     ${PROJECT_SOURCE_DIR}/application/LatticeBoltz
+    ${PROJECT_SOURCE_DIR}/benchmark
 )
 
 # Find required packages
 find_package(OpenBLAS REQUIRED)
-find_package(benchmark REQUIRED)
+find_package(benchmark REQUIRED)  # Google Benchmark
 find_package(GTest REQUIRED)
 
-# Find pybind11
-# find_package(pybind11 REQUIRED)
-# set(OpenBLAS_DIR build/Release/generators/OpenBLASConfig.cmake)
 # Define common test dependencies
 set(TEST_DEPENDENCIES
     GTest::gtest 
@@ -68,6 +66,20 @@ endforeach()
 # Enable testing
 enable_testing()
 
-# Python module
+# Benchmark executable
+set(BENCHMARK_SOURCES
+    bench_Obj
+    bench_LU
+    bench_Solver
+    bench_ODE
+)
+
+# Add benchmark executables
+foreach(benchmark_source ${BENCHMARK_SOURCES})
+    add_executable(${benchmark_source} benchmark/${benchmark_source}.cpp)
+    target_link_libraries(${benchmark_source} PRIVATE benchmark::benchmark OpenBLAS::OpenBLAS)
+endforeach()
+
+# Python module (optional, commented out)
 # pybind11_add_module(fastsolver_pybind python/pybind.cpp)
 # target_link_libraries(fastsolver_pybind PRIVATE ${TEST_DEPENDENCIES} pybind11::module)
