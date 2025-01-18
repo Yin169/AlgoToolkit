@@ -1,7 +1,7 @@
 #ifndef CONJUGATEGRADIENT_HPP
 #define CONJUGATEGRADIENT_HPP
 
-#include <VectorObj.hpp>
+#include "../../Obj/VectorObj.hpp"
 #include <vector>
 #include <cmath>
 #include <stdexcept>

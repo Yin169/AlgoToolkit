@@ -3,8 +3,8 @@
 
 #include <fstream>
 #include <algorithm>
-#include "DenseObj.hpp"
-#include "SparseObj.hpp"
+#include "Obj/DenseObj.hpp"
+#include "Obj/SparseObj.hpp"
 
 namespace utils{
 

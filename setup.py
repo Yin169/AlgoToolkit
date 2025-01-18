@@ -1,50 +1,38 @@
-from setuptools import setup, Extension
-from setuptools.command.build_ext import build_ext
-import subprocess
+# setup.py
 import os
-import sys
+from setuptools import setup, Extension
+import pybind11
 
-class CMakeExtension(Extension):
-    def __init__(self, name, sourcedir=''):
-        Extension.__init__(self, name, sources=[])
-        self.sourcedir = os.path.abspath(sourcedir)
+source_file = []
+def getallsource(path="src"):
+	if "/." in path:
+		return
+	if path.endswith(".hpp"):
+		source_file.append(path)
+		return
+	child = os.listdir(path)
+	for c in child:
+		getallsource(os.path.join(path, c))
+	return 
 
-class CMakeBuild(build_ext):
-    def run(self):
-        for ext in self.extensions:
-            self.build_extension(ext)
+getallsource()
+source_file = ["#include ../"+ i for i in source_file]
 
-    def build_extension(self, ext):
-        extdir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
-        cmake_args = [
-            f'-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={extdir}',
-            f'-DPYTHON_EXECUTABLE={sys.executable}'
-        ]
+# Define the extension module
+fastsolver_module = Extension(
+    'fastsolver',
+    sources=['python/pybind.cpp'],
+	include_dirs=[pybind11.get_include(), os.getenv('OPENBLAS_INCLUDE', '/opt/homebrew/opt/openblas/include')],  # OpenBLAS 头文件路径
+    library_dirs=[os.getenv('OPENBLAS_LIB', '/opt/homebrew/opt/openblas/lib')],  # OpenBLAS 库路径
+    language='c++',
+	extra_compile_args=['-std=c++17']
+)
 
-        cfg = 'Debug' if self.debug else 'Release'
-        build_args = ['--config', cfg]
-
-        cmake_args += [f'-DCMAKE_BUILD_TYPE={cfg}']
-        build_args += ['--', '-j2']
-
-        env = os.environ.copy()
-        env['CXXFLAGS'] = f'{env.get("CXXFLAGS", "")} -DVERSION_INFO=\\"{self.distribution.get_version()}\\"'
-        if not os.path.exists(self.build_temp):
-            os.makedirs(self.build_temp)
-
-        # 运行 CMake 配置
-        subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
-        # 运行 CMake 构建
-        subprocess.check_call(['cmake', '--build', '.'] + build_args, cwd=self.build_temp)
-
+# Setup configuration
 setup(
     name='fastsolver',
     version='0.1',
-    author='NG YIN CHEANG',
-    author_email='yincheang.ng@outlook.com',
-    description='A fast solver using OpenBLAS and pybind11',
-    long_description='',
-    ext_modules=[CMakeExtension('fastsolver')],
-    cmdclass=dict(build_ext=CMakeBuild),
-    zip_safe=False,
+    description='Python bindings for FASTSolver',
+    ext_modules=[fastsolver_module],
+    install_requires=['pybind11'],
 )

@@ -1,7 +1,7 @@
 #ifndef ITER_SOLVER_HPP
 #define ITER_SOLVER_HPP
 
-#include "SparseObj.hpp"
+#include "../../Obj/SparseObj.hpp"
 #include <vector>
 #include <cmath>
 #include <stdexcept>

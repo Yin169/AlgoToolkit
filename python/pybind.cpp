@@ -1,29 +1,36 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include "LU.hpp"
-#include "basic.hpp"
-#include "ConjugateGradient.hpp"
-#include "KrylovSubspace.hpp"
-#include "IterSolver.hpp"
-#include "MultiGrid.hpp"
-#include "GMRES.hpp"
-#include "RungeKutta.hpp"
-#include "GaussianQuad.hpp"
+#include <pybind11/functional.h>  // 确保包含 functional.h
+#include "../src/Obj/SparseObj.hpp"
+#include "../src/Obj/DenseObj.hpp"
+#include "../src/Obj/VectorObj.hpp"
+#include "../src/Obj/MatrixObj.hpp"
+#include "../src/Intergal/GaussianQuad.hpp"
+#include "../src/ODE/RungeKutta.hpp"
+#include "../src/PDEs/SpectralElementMethod.hpp"
+#include "../src/LinearAlgebra/Preconditioner/LU.hpp"
+#include "../src/LinearAlgebra/Preconditioner/MultiGrid.hpp"
+#include "../src/LinearAlgebra/Krylov/ConjugateGradient.hpp"
+#include "../src/LinearAlgebra/Krylov/GMRES.hpp"
+#include "../src/LinearAlgebra/Krylov/KrylovSubspace.hpp"
+#include "../src/LinearAlgebra/Solver/IterSolver.hpp"
+#include "../src/LinearAlgebra/Factorized/basic.hpp"
+#include "../src/utils.hpp"
 
 using namespace Quadrature;
 namespace py = pybind11;
 
 // 自定义异常
-class NumericalSolverError : public std::runtime_error {
+class fastsolverError : public std::runtime_error {
 public:
     using std::runtime_error::runtime_error;
 };
 
-PYBIND11_MODULE(numerical_solver, m) {
+PYBIND11_MODULE(fastsolver, m) {
     m.doc() = "Pybind11 interface for numerical solvers and linear algebra tools";
 
     // 注册自定义异常
-    py::register_exception<NumericalSolverError>(m, "NumericalSolverError");
+    py::register_exception<fastsolverError>(m, "fastsolverError");
 
     // Basic Operations
     m.def("power_iter", &basic::powerIter<double, DenseObj<double>>, 
@@ -81,29 +88,43 @@ PYBIND11_MODULE(numerical_solver, m) {
         .def("getWeights", &GaussianQuadrature<double>::getWeights, 
              "Get the quadrature weights.");
 
-    // ODE Solvers
-    py::class_<RungeKutta<double>>(m, "RK4")
+    py::class_<RungeKutta<double, VectorObj<double>, VectorObj<double>>>(m, "RK4")
         .def(py::init<>())
-        .def("solve", &RungeKutta<double, VectorObj<double>, VectorObj<double>>::solve,
-             "Solve the ODE using the Runge-Kutta 4th order method.",
-             py::arg("f"), py::arg("t0"), py::arg("y0"), py::arg("t_end"), py::arg("h"));
+        .def("solve", &RungeKutta<double, VectorObj<double>, VectorObj<double>>::solve, 
+            py::arg("y"), py::arg("f"), py::arg("h"), py::arg("n"), py::arg("callback") = nullptr)
+        .def("solve_adaptive", &RungeKutta<double, VectorObj<double>, VectorObj<double>>::solveAdaptive, 
+            py::arg("y"), py::arg("f"), py::arg("h"), py::arg("tol"), py::arg("max_steps"));
 
     // Matrix/Vector Operations
     py::class_<VectorObj<double>>(m, "Vector")
         .def(py::init<int>())
-        .def("__getitem__", static_cast<double& (VectorObj<double>::*)(size_t)>(&VectorObj<double>::operator[]))
-        .def("__getitem__", static_cast<const double& (VectorObj<double>::*)(size_t) const>(&VectorObj<double>::operator[]))
-        .def("__setitem__", [](VectorObj<double>& v, size_t i, double val) { v[i] = val; })
+        .def("__getitem__", [](const VectorObj<double> &self, size_t index) -> double {
+            if (index >= self.size()) {
+                throw py::index_error("Index out of range");
+            }
+            return self[index];
+        })
+        .def("__setitem__", [](VectorObj<double> &self, size_t index, double value) {
+            if (index >= self.size()) {
+                throw py::index_error("Index out of range");
+            }
+            self[index] = value;
+        })
         .def("size", &VectorObj<double>::size)
         .def("norm", &VectorObj<double>::L2norm, "Compute the L2 norm of the vector.");
 
     // Dense Matrix
     py::class_<DenseObj<double>>(m, "DenseMatrix")
         .def(py::init<int, int>())
-        .def("__call__", static_cast<double& (DenseObj<double>::*)(int, int)>(&DenseObj<double>::operator()))
-        .def("__call__", static_cast<const double& (DenseObj<double>::*)(int, int) const>(&DenseObj<double>::operator()))
+        .def("__setitem__", [](DenseObj<double> &self, std::pair<int, int> idx, double value) {
+            self(idx.first, idx.second) = value;
+        })
+        .def("__getitem__", [](const DenseObj<double> &self, std::pair<int, int> idx) {
+            return self(idx.first, idx.second);
+        })
         .def("rows", &DenseObj<double>::getRows)
-        .def("cols", &DenseObj<double>::getCols);
+        .def("cols", &DenseObj<double>::getCols)
+        .def("__len__", &DenseObj<double>::getRows);  // 返回矩阵的行数
 
     // Sparse Matrix
     py::class_<SparseMatrixCSC<double>>(m, "SparseMatrix")

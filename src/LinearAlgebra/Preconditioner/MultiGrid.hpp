@@ -1,8 +1,8 @@
 #ifndef AMG_HPP
 #define AMG_HPP
 
-#include "SparseObj.hpp"
-#include "IterSolver.hpp"
+#include "../../Obj/SparseObj.hpp"
+#include "../Solver/IterSolver.hpp"
 #include <vector>
 #include <cmath>
 #include <unordered_map>

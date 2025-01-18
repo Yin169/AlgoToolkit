@@ -5,11 +5,11 @@
 #include <array>
 #include <functional>
 #include <cmath>
-#include "GaussianQuad.hpp"
-#include "GMRES.hpp"
-#include "ConjugateGradient.hpp"
-#include "DenseObj.hpp"
-#include "VectorObj.hpp"
+#include "../Intergal/GaussianQuad.hpp"
+#include "../LinearAlgebra/Krylov/GMRES.hpp"
+#include "../LinearAlgebra/Krylov/ConjugateGradient.hpp"
+#include "../Obj/DenseObj.hpp"
+#include "../Obj/VectorObj.hpp"
 
 template<typename T, typename MatrixType = DenseObj<T>>
 class SpectralElementMethod {
