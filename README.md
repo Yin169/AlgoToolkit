@@ -33,7 +33,7 @@ FASTSolver is a comprehensive scientific computing framework focused on:
 - Real-time flow visualization
 - Performance metrics logging
 
-![JetFlow](https://github.com/Yin169/FASTSolver/blob/dev/doc/pic_1.png)
+<!-- ![JetFlow](https://github.com/Yin169/FASTSolver/blob/dev/doc/pic_1.png) -->
 <img src="https://github.com/Yin169/FASTSolver/blob/dev/doc/pic_1.png" alt="JetFlow" width="500">
 
 ## Requirements
