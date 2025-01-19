@@ -28,21 +28,13 @@ FASTSolver is a comprehensive scientific computing framework focused on:
 - Flow visualization
 - Performance monitoring
 
-### Spectral Element Method (SEM)
-
-The Spectral Element Method (SEM) is a high-order numerical technique for solving partial differential equations (PDEs). It combines the flexibility of finite element methods with the accuracy of spectral methods. The implementation in FASTSolver supports:
-
-- High-order polynomial approximations
-- Multi-dimensional problems (1D, 2D, and 3D)
-- Customizable PDE operators and boundary conditions
-- Integration with iterative solvers like GMRES
-
 ### Tools
 - VTK output generation
 - Real-time flow visualization
 - Performance metrics logging
 
 ![JetFlow](https://github.com/Yin169/FASTSolver/blob/dev/doc/pic_1.png)
+<img src="https://github.com/Yin169/FASTSolver/blob/dev/doc/pic_1.png" alt="JetFlow" width="500">
 
 ## Requirements
 - C++17 or higher
