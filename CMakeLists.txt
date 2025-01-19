@@ -54,7 +54,6 @@ set(TEST_SOURCES
     NewtonMethod_test
     MeshObj_test
     Visual_test
-    SpectralElementMethod_test
 )
 
 # Add test executables

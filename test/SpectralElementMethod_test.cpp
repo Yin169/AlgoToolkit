@@ -9,7 +9,7 @@ protected:
     void SetUp() override {
         // Define mock functions
         pde_operator = [](const std::vector<double>& x) -> double {
-            return 0.0; // Mock PDE operator
+            return 1.0; // Mock PDE operator
         };
 
         boundary_condition = [](const std::vector<double>& x) -> double {
@@ -17,7 +17,7 @@ protected:
         };
 
         source_term = [](const std::vector<double>& x) -> double {
-            return 0.0; // Mock source term
+            return 1.0; // Mock source term
         };
 
         // Define discretization parameters
