@@ -9,13 +9,20 @@
 #include "../Factorized/basic.hpp"
 #include "../../Obj/SparseObj.hpp"
 #include "../../Obj/VectorObj.hpp"
-#include "KrylovSubspace.hpp"
+#include "../Preconditioner/ILU.hpp"
 
 template <typename TNum, typename MatrixType = SparseMatrixCSC<TNum>, typename VectorType = VectorObj<TNum>>
 class GMRES {
+private:
+    ILUPreconditioner<TNum, MatrixType> preconditioner;
+    bool usePreconditioner = false;
 public:
     GMRES() = default;
     virtual ~GMRES() = default;
+
+    void enablePreconditioner() {
+        usePreconditioner = true;
+    }
 
     void solve(const MatrixType& A, const VectorType& b, VectorType& x, int maxIter, int KrylovDim, double tol) {
         const int n = b.size();
@@ -30,6 +37,11 @@ public:
         }
 
         VectorType r = b - A * x;
+        if (usePreconditioner) {
+            preconditioner.compute(A);
+            r = preconditioner.solve(r);
+        }
+
         double beta = r.L2norm();
         std::cout << "Initial residual norm: " << beta << std::endl;
         if (beta < tol) {
@@ -50,6 +62,10 @@ public:
             int KryUpdate = KrylovDim;
             for (int j = 0; j < KrylovDim; ++j) {
                 VectorType w = A * V[j];
+                if (usePreconditioner) {
+                    w = preconditioner.solve(w);
+                }
+
                 for (int i = 0; i <= j; ++i) {
                     TNum w_dot_v = V[i] * w;
                     if (i == j && std::abs(w_dot_v) < tol) {
@@ -63,7 +79,7 @@ public:
                 setMatrixValue(H, j + 1, j, w_norm);
                 if (w_norm < tol) {
                     KryUpdate = j;
-                    // std::cout << "Happy breakdown at iteration " << iter << std::endl;
+                    std::cout << "Happy breakdown at iteration " << iter << std::endl;
                     break;
                 }
                 V[j + 1] = w / H(j + 1, j);
@@ -80,6 +96,10 @@ public:
 
             updateSolution(x, H, V, e1, KryUpdate);
             r = b - A * x;
+            if (usePreconditioner) {
+                r = preconditioner.solve(r);
+            }
+
             beta = r.L2norm();
             std::cout << "Residual norm after restart: " << beta << " " << std::endl;
 

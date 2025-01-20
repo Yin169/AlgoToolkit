@@ -1,5 +1,4 @@
 #include <benchmark/benchmark.h>
-#include "LU.hpp"
 #include "MultiGrid.hpp"
 #include "KrylovSubspace.hpp"
 #include "GMRES.hpp"
@@ -91,12 +90,10 @@ static void BM_GMRES(benchmark::State& state) {
         A(i, i) = i + 1; // Diagonal matrix
         b[i] = i + 1; // Example initialization
     }
-	DenseObj<double> L(n,n), U(n,n);
-	LU::ILU<double, DenseObj<double>>(A, L, U);
     GMRES<double, DenseObj<double>, VectorObj<double>> gmres;
 
     for (auto _ : state) {
-        gmres.solve(L*U*A, L*U*b, x, 100, n, 1e-6); // Perform GMRES solve
+        gmres.solve(A, b, x, 100, n, 1e-6); // Perform GMRES solve
         benchmark::DoNotOptimize(x); // Prevent compiler optimizations
     }
 }
