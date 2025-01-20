@@ -9,17 +9,14 @@
 // #include <openblas/cblas.h>
 #include "cblas.h"
 
-#include "MatrixObj.hpp"
 #include "VectorObj.hpp"
 
 template<typename TObj> 
 class VectorObj;
 
-template<typename TObj> 
-class MatrixObj;
 
 template<typename TObj>
-class DenseObj : public MatrixObj<TObj> {
+class DenseObj {
 private:
     int _n; // Number of rows
     int _m; // Number of columns
@@ -101,8 +98,8 @@ public:
     TObj* data() { return arr.data(); }
     const TObj* data() const { return arr.data(); }
 
-    inline int getRows() const override { return _n; }
-    inline int getCols() const override { return _m; }
+    inline int getRows() const { return _n; }
+    inline int getCols() const { return _m; }
 
     // Scalar multiplication
     DenseObj& operator*=(TObj scalar) {
@@ -185,7 +182,7 @@ public:
     }
 
     // Get a specific column
-    VectorObj<TObj> getColumn(int index) const override {
+    VectorObj<TObj> getColumn(int index) const {
         if (index < 0 || index >= _m) {
             throw std::out_of_range("Column index is out of range.");
         }

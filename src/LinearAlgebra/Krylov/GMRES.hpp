@@ -94,13 +94,13 @@ public:
     }
 
 private:
-    void setMatrixValue(MatrixType& H, int i, int j, TNum value) {
-        if constexpr (std::is_same_v<MatrixType, SparseMatrixCSC<TNum>>) {
-            H.addValue(i, j, value);
-            H.finalize();
-        } else {
-            H(i, j) = value;
-        }
+    void setMatrixValue(DenseObj<TNum>& H, int i, int j, TNum value) {
+        H(i, j) = value;
+    }
+
+    void setMatrixValue(SparseMatrixCSC<TNum>& H, int i, int j, TNum value) {
+        H.addValue(i, j, value);
+        H.finalize();
     }
 
     void applyGivensRotation(TNum& dx, TNum& dy, TNum cs, TNum sn) {
@@ -116,7 +116,9 @@ private:
     }
 
     void generateGivensRotation(TNum dx, TNum dy, TNum& cs, TNum& sn, TNum& rho) {
+        printf("dx : %f , dy : %f", dx, dy);
         rho = std::sqrt(dx * dx + dy * dy);
+        printf(" rho: %f \n", rho);
         cs = dx / rho;
         sn = dy / rho;
     }
@@ -128,6 +130,7 @@ private:
             for (int j = i + 1; j < k; ++j) {
                 y[i] = y[i] - H(i, j) * y[j];
             }
+            // printf(" i : %d, val : %f \n", i, H(i,i));
             y[i] = y[i] / H(i, i);
         }
         for (int i = 0; i < k; ++i) {

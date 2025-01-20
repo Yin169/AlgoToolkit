@@ -4,7 +4,7 @@
 #include <iostream>
 #include <cmath>
 #include <functional>
-#include "VectorObj.hpp" // Assuming VectorObj is a custom vector class
+#include "VectorObj.hpp"
 #include "GMRES.hpp"
 #include "LU.hpp"
 
@@ -57,7 +57,7 @@ public:
 			U.zero();	
 			LU::ILU<T, MatrixType>(J_x, L, U);
             // Use GMRES to solve the linear system
-            linear_solver.solve(L * U *J_x, L * U *rhs, delta_x, max_iter, std::min(J_x.getRows(), J_x.getCols()), tol);
+            linear_solver.solve((L * U) * J_x, (L * U) * rhs, delta_x, max_iter, std::min(J_x.getRows(), J_x.getCols()), tol);
 
             // Update the solution: x = x + alpha * delta_x
             x = x + delta_x * alpha;

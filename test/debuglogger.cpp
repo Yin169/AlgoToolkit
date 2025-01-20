@@ -10,6 +10,7 @@ TEST(Solver, DebuggingIntermediateSteps) {
     A.addValue(3, 3, 1.0);
     A.finalize();
 
+    std::cout << " ----finish---- " << std::endl;
     VectorObj<double> b(4);
     b[0] = 8.0;
     b[1] = 9.0;
