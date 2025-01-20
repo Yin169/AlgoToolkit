@@ -63,7 +63,7 @@ public:
                 setMatrixValue(H, j + 1, j, w_norm);
                 if (w_norm < tol) {
                     KryUpdate = j;
-                    std::cout << "Happy breakdown at iteration " << iter << std::endl;
+                    // std::cout << "Happy breakdown at iteration " << iter << std::endl;
                     break;
                 }
                 V[j + 1] = w / H(j + 1, j);
@@ -94,13 +94,14 @@ public:
     }
 
 private:
-    void setMatrixValue(MatrixType& H, int i, int j, TNum value) {
-        if constexpr (std::is_same_v<MatrixType, SparseMatrixCSC<TNum>>) {
-            H.addValue(i, j, value);
-            H.finalize();
-        } else {
-            H(i, j) = value;
-        }
+    void setMatrixValue(DenseObj<TNum>& H, int i, int j, TNum value) {
+        H(i, j) = value;
+    }
+
+    void setMatrixValue(SparseMatrixCSC<TNum>& H, int i, int j, TNum value) {
+        H.addValue(i, j, value);
+        H.finalize();
+        // printf(" i : %d j : %d H: %f value : %f \n",i, j, H(i, j), value);
     }
 
     void applyGivensRotation(TNum& dx, TNum& dy, TNum cs, TNum sn) {

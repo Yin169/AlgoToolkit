@@ -46,6 +46,7 @@ set(TEST_SOURCES
     itersolver_test
     LU_test
     KrylovSubspace_test
+    MultiGrid_test
     ConjugateGradient_test
     SparseMatrixCSCTest
     GMRES_test
@@ -72,6 +73,7 @@ set(BENCHMARK_SOURCES
     bench_LU
     bench_Solver
     bench_ODE
+    MainTest
 )
 
 # Add benchmark executables
