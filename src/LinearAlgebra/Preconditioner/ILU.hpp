@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include "../../Obj/SparseObj.hpp"
 #include "../../Obj/VectorObj.hpp"
+#include "../../utils.hpp"
 
 template <typename TNum, typename MatrixType = SparseMatrixCSC<TNum>>
 class ILUPreconditioner {
@@ -17,7 +18,8 @@ private:
 public:
     ILUPreconditioner() : isComputed(false), n(0) {}
 
-    void compute(const MatrixType& A) {
+    void compute(const MatrixType& Matrix) {
+        MatrixType A = Matrix;
         n = A.getRows();
         if (n != A.getCols()) {
             throw std::invalid_argument("Matrix must be square for ILU factorization");
@@ -27,50 +29,40 @@ public:
         L = MatrixType(n, n);
         U = MatrixType(n, n);
         
-        // Copy A's structure to U initially
+         // LU Decomposition 
         for (int j = 0; j < n; ++j) {
-            for (int i = 0; i < n; ++i) {
-                TNum val = A(i, j);
-                if (val != TNum(0)) {
-                    if (i > j) {
-                        L.addValue(i, j, val);
-                    } else {
-                        U.addValue(i, j, val);
-                    }
-                }
-            }
-        }
-        
-        L.finalize();
-        U.finalize();
-
-        // Perform the incomplete LU factorization
-        for (int k = 0; k < n - 1; ++k) {
-            // Check for zero pivot
-            if (std::abs(U(k,k)) < 1e-12) {
-                throw std::runtime_error("Zero pivot encountered in ILU factorization");
+            // Check for singular matrix using a small tolerance
+            const TNum epsilon = static_cast<TNum>(1e-12);
+            if (std::abs(A(j, j)) < epsilon) {
+                throw std::runtime_error("Matrix is singular or nearly singular and cannot be decomposed.");
             }
 
-            for (int i = k + 1; i < n; ++i) {
-                if (L(i,k) != TNum(0)) {
-                    TNum factor = L(i,k) / U(k,k);
-                    L.addValue(i, k, factor);
-                    
-                    for (int j = k + 1; j < n; ++j) {
-                        if (U(k,j) != TNum(0)) {
-                            TNum existing = U(i,j);
-                            if (existing != TNum(0)) {
-                                U.addValue(i, j, existing - factor * U(k,j));
-                            }
-                        }
-                    }
+            for (int i = j + 1; i < n; ++i) {
+                TNum factor = A(i, j) / A(j, j);
+                // A(i, j) = factor; // Store the factor in place
+                A.addValue(i, j, factor);
+                A.finalize();
+                
+                for (int k = j + 1; k < n; ++k) {
+                    // A(i, k) = A(i, k) - factor * A(j, k);
+                    A.addValue(i, k, A(i, k) - factor * A(j, k));
+                    A.finalize();
                 }
             }
         }
 
-        // Add ones to L's diagonal
+
         for (int i = 0; i < n; ++i) {
-            L.addValue(i, i, TNum(1));
+            for (int j = 0; j < n; ++j) {
+                if (i > j) {
+                    // L(i, j) = A(i, j); // Lower triangular part
+                    L.addValue(i, j, A(i, j));
+                } else {
+                    // U(i, j) = A(i, j); // Upper triangular part
+                    U.addValue(i, j, A(i, j));
+                }
+            }
+            L.addValue(i, i, TNum(1.0)); // Set diagonal elements of L to 1
         }
 
         L.finalize();
