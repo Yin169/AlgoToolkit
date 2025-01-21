@@ -6,6 +6,7 @@
 #include <cstring> // For memset
 #include "../../Obj/DenseObj.hpp"
 #include "../../Obj/VectorObj.hpp"
+#include "../utils.hpp"
 
 namespace basic {
 
@@ -176,10 +177,12 @@ namespace basic {
 
             for (int i = j + 1; i < n; ++i) {
                 TNum factor = A(i, j) / A(j, j);
-                A(i, j) = factor; // Store the factor in place
+                // A(i, j) = factor; // Store the factor in place
+                utils::setMatrixValue(A, i, j, factor);
 
                 for (int k = j + 1; k < n; ++k) {
-                    A(i, k) -= factor * A(j, k);
+                    // A(i, k) = A(i, k) - factor * A(j, k);
+                    utils::setMatrixValue(A, i, k, A(i, k) - factor * A(j, k));
                 }
             }
         }

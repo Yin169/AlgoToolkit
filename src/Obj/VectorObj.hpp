@@ -7,7 +7,6 @@
 #include <numeric> // For std::inner_product
 #include <vector>
 
-#include "MatrixObj.hpp"
 
 template <typename TObj>
 class VectorObj {

@@ -49,6 +49,7 @@ set(TEST_SOURCES
     MultiGrid_test
     ConjugateGradient_test
     SparseMatrixCSCTest
+    ILU_test
     GMRES_test
     RungeKutta_test
     GaussianQuad_test
