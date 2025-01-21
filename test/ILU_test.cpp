@@ -1,169 +1,157 @@
 #include <gtest/gtest.h>
 #include "ILU.hpp"
-#include "SparseObj.hpp"
-#include "DenseObj.hpp"
 #include <cmath>
 
-class ILUPreconditionerTest : public ::testing::Test {
+class ILUTest : public ::testing::Test {
 protected:
-    const double tolerance = 1e-8;
+    using MatrixType = SparseMatrixCSC<double>;
+    using VectorType = VectorObj<double>;
     
-    bool isClose(double a, double b) {
-        return std::abs(a - b) < tolerance;
+    // Helper function to create a simple test matrix
+    MatrixType createTestMatrix() {
+        MatrixType A(3, 3);
+        A.addValue(0, 0, 4.0);  A.addValue(0, 1, -1.0); A.addValue(0, 2, 0.0);
+        A.addValue(1, 0, -1.0); A.addValue(1, 1, 4.0);  A.addValue(1, 2, -1.0);
+        A.addValue(2, 0, 0.0);  A.addValue(2, 1, -1.0); A.addValue(2, 2, 4.0);
+        A.finalize();
+        return A;
     }
-
-    bool vectorIsClose(const VectorObj<double>& a, const VectorObj<double>& b) {
-        if (a.size() != b.size()) return false;
-        for (size_t i = 0; i < a.size(); i++) {
-            if (!isClose(a[i], b[i])) return false;
+    
+    // Helper function to check if two matrices are approximately equal
+    bool areMatricesEqual(const MatrixType& A, const MatrixType& B, double tol = 1e-10) {
+        if (A.getRows() != B.getRows() || A.getCols() != B.getCols()) {
+            return false;
+        }
+        
+        for (int i = 0; i < A.getRows(); ++i) {
+            for (int j = 0; j < A.getCols(); ++j) {
+                if (std::abs(A(i,j) - B(i,j)) > tol) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    // Helper function to check if two vectors are approximately equal
+    bool areVectorsEqual(const VectorType& a, const VectorType& b, double tol = 1e-10) {
+        if (a.size() != b.size()) {
+            return false;
+        }
+        
+        for (size_t i = 0; i < a.size(); ++i) {
+            if (std::abs(a[i] - b[i]) > tol) {
+                return false;
+            }
         }
         return true;
     }
 };
 
-TEST_F(ILUPreconditionerTest, SparseMatrixSimple2x2) {
-    // Create a simple 2x2 sparse matrix
-    SparseMatrixCSC<double> A(2, 2);
-    A.addValue(0, 0, 2.0);
-    A.addValue(0, 1, 1.0);
-    A.addValue(1, 0, 1.0);
-    A.addValue(1, 1, 3.0);
-    A.finalize();
-
-    ILUPreconditioner<double, SparseMatrixCSC<double>> ilu;
-    ilu.compute(A);
-
-    // Test with a known right-hand side
-    VectorObj<double> b(2);
-    b[0] = 3.0;
-    b[1] = 4.0;
-
-    VectorObj<double> x = ilu.solve(b);
-
-    // Expected solution for the system Ax = b
-    VectorObj<double> expected(2);
-    expected[0] = 1.0;
-    expected[1] = 1.0;
-
-    EXPECT_TRUE(vectorIsClose(x, expected));
+// Test basic initialization
+TEST_F(ILUTest, Initialization) {
+    ILUPreconditioner<double> ilu;
+    EXPECT_NO_THROW(ilu.compute(createTestMatrix()));
 }
 
-TEST_F(ILUPreconditionerTest, DenseMatrixSimple2x2) {
-    // Create a simple 2x2 dense matrix
-    DenseObj<double> A(2, 2);
-    A(0, 0) = 2.0; A(0, 1) = 1.0;
-    A(1, 0) = 1.0; A(1, 1) = 3.0;
-
-    ILUPreconditioner<double, DenseObj<double>> ilu;
-    ilu.compute(A);
-
-    VectorObj<double> b(2);
-    b[0] = 3.0;
-    b[1] = 4.0;
-
-    VectorObj<double> x = ilu.solve(b);
-
-    VectorObj<double> expected(2);
-    expected[0] = 1.0;
-    expected[1] = 1.0;
-
-    EXPECT_TRUE(vectorIsClose(x, expected));
+// Test for non-square matrix
+TEST_F(ILUTest, NonSquareMatrix) {
+    MatrixType nonsquare(3, 4);
+    ILUPreconditioner<double> ilu;
+    EXPECT_THROW(ilu.compute(nonsquare), std::invalid_argument);
 }
 
-TEST_F(ILUPreconditionerTest, SparseMatrixLarger) {
-    // Create a 3x3 sparse matrix
-    SparseMatrixCSC<double> A(3, 3);
-    A.addValue(0, 0, 4.0);
-    A.addValue(0, 1, -1.0);
-    A.addValue(0, 2, 0.0);
-    A.addValue(1, 0, -1.0);
-    A.addValue(1, 1, 4.0);
-    A.addValue(1, 2, -1.0);
-    A.addValue(2, 0, 0.0);
-    A.addValue(2, 1, -1.0);
-    A.addValue(2, 2, 4.0);
-    A.finalize();
+// Test singular matrix detection
+TEST_F(ILUTest, SingularMatrix) {
+    MatrixType singular(3, 3);
+    singular.addValue(0, 0, 0.0); singular.addValue(0, 1, 1.0);
+    singular.addValue(1, 0, 0.0); singular.addValue(1, 1, 0.0);
+    singular.addValue(2, 0, 0.0); singular.addValue(2, 1, 0.0);
+    singular.finalize();
+    
+    ILUPreconditioner<double> ilu;
+    EXPECT_THROW(ilu.compute(singular), std::runtime_error);
+}
 
-    ILUPreconditioner<double, SparseMatrixCSC<double>> ilu;
+// Test solving a system
+TEST_F(ILUTest, SolveSystem) {
+    ILUPreconditioner<double> ilu;
+    MatrixType A = createTestMatrix();
     ilu.compute(A);
-
-    VectorObj<double> b(3);
-    b[0] = 1.0;
-    b[1] = 5.0;
-    b[2] = 0.0;
-
-    VectorObj<double> x = ilu.solve(b);
-
-    // Verify that Ax ≈ b
-    VectorObj<double> Ax(3);
-    for (int i = 0; i < 3; i++) {
+    
+    // Create a known solution
+    VectorType x_true(3);
+    x_true[0] = 1.0;
+    x_true[1] = 2.0;
+    x_true[2] = 3.0;
+    
+    // Compute b = Ax
+    VectorType b(3);
+    for (int i = 0; i < 3; ++i) {
         double sum = 0.0;
-        for (int j = A.col_ptr[i]; j < A.col_ptr[i + 1]; j++) {
-            sum += A.values[j] * x[A.row_indices[j]];
+        for (int j = 0; j < 3; ++j) {
+            sum += A(i,j) * x_true[j];
         }
-        Ax[i] = sum;
+        b[i] = sum;
     }
-
-    EXPECT_TRUE(vectorIsClose(Ax, b));
+    
+    // Solve the system
+    VectorType x = ilu.solve(b);
+    
+    // Check if the solution is correct
+    EXPECT_TRUE(areVectorsEqual(x, x_true));
 }
 
-TEST_F(ILUPreconditionerTest, NonSquareMatrixThrows) {
-    SparseMatrixCSC<double> A(2, 3);
-    ILUPreconditioner<double, SparseMatrixCSC<double>> ilu;
+// Test L and U factors properties
+TEST_F(ILUTest, FactorsProperties) {
+    ILUPreconditioner<double> ilu;
+    ilu.compute(createTestMatrix());
     
-    EXPECT_THROW(ilu.compute(A), std::invalid_argument);
-
-    DenseObj<double> B(2, 3);
-    ILUPreconditioner<double, DenseObj<double>> ilu_dense;
+    const auto& L = ilu.getLFactor();
+    const auto& U = ilu.getUFactor();
     
-    EXPECT_THROW(ilu_dense.compute(B), std::invalid_argument);
+    // Check dimensions
+    EXPECT_EQ(L.getRows(), 3);
+    EXPECT_EQ(L.getCols(), 3);
+    EXPECT_EQ(U.getRows(), 3);
+    EXPECT_EQ(U.getCols(), 3);
+    
+    // Check L's diagonal elements are 1
+    for (int i = 0; i < 3; ++i) {
+        EXPECT_NEAR(L(i,i), 1.0, 1e-10);
+    }
+    
+    // Check L is lower triangular
+    for (int i = 0; i < 3; ++i) {
+        for (int j = i + 1; j < 3; ++j) {
+            EXPECT_NEAR(L(i,j), 0.0, 1e-10);
+        }
+    }
+    
+    // Check U is upper triangular
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < i; ++j) {
+            EXPECT_NEAR(U(i,j), 0.0, 1e-10);
+        }
+    }
 }
 
-TEST_F(ILUPreconditionerTest, ZeroDiagonalHandling) {
-    DenseObj<double> A(2, 2);
-    A(0, 0) = 0.0; A(0, 1) = 1.0;
-    A(1, 0) = 1.0; A(1, 1) = 1.0;
-
-    ILUPreconditioner<double, DenseObj<double>> ilu;
-    
-    // This should either throw an exception or handle zero diagonal elements gracefully
-    // depending on your implementation's requirements
-    EXPECT_THROW(ilu.compute(A), std::runtime_error);
+// Test solving without computing first
+TEST_F(ILUTest, SolveWithoutCompute) {
+    ILUPreconditioner<double> ilu;
+    VectorType b(3, 1.0);
+    EXPECT_THROW(ilu.solve(b), std::runtime_error);
 }
 
-// TEST_F(ILUPreconditionerTest, SparsityPatternPreservation) {
-//     // Create a sparse matrix with a specific sparsity pattern
-//     SparseMatrixCSC<double> A(3, 3);
-//     A.addValue(0, 0, 4.0);
-//     A.addValue(1, 1, 4.0);
-//     A.addValue(2, 2, 4.0);
-//     A.addValue(1, 0, -1.0);
-//     A.finalize();
-
-//     ILUPreconditioner<double, SparseMatrixCSC<double>> ilu;
-//     ilu.compute(A);
-
-//     VectorObj<double> b(3);
-//     b[0] = 1.0;
-//     b[1] = 2.0;
-//     b[2] = 3.0;
-
-//     VectorObj<double> x = ilu.solve(b);
-
-//     // Verify solution maintains sparsity pattern
-//     VectorObj<double> Ax(3);
-//     for (int i = 0; i < 3; i++) {
-//         double sum = 0.0;
-//         for (int j = A.col_ptr[i]; j < A.col_ptr[i + 1]; j++) {
-//             sum += A.values[j] * x[A.row_indices[j]];
-//         }
-//         Ax[i] = sum;
-//     }
-
-//     EXPECT_TRUE(vectorIsClose(Ax, b));
-// }
+// Test solving with wrong size vector
+TEST_F(ILUTest, SolveWrongSize) {
+    ILUPreconditioner<double> ilu;
+    ilu.compute(createTestMatrix());
+    VectorType b(4, 1.0);  // Wrong size
+    EXPECT_THROW(ilu.solve(b), std::invalid_argument);
+}
 
 int main(int argc, char **argv) {
-    testing::InitGoogleTest(&argc, argv);
+    ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
