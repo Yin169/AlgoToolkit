@@ -23,12 +23,8 @@ double GenRandom(){
 
 template <typename T = double, typename MatrixType = DenseObj<T>>
 void setMatrixValue(MatrixType& H, int i, int j, T value) {
-	if constexpr (std::is_same_v<MatrixType, SparseMatrixCSC<T>>) {
-        H.addValue(i, j, value);
-        H.finalize();
-    } else {
-        H(i, j) = value;
-    }
+    H.addValue(i, j, value);
+    H.finalize();
 }
 
 template <typename T, typename MatrixType>
