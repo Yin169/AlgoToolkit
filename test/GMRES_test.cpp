@@ -1,5 +1,4 @@
 #include "gtest/gtest.h"
-#include "LU.hpp"
 #include "GMRES.hpp"
 #include "SparseObj.hpp"
 #include "DenseObj.hpp"
@@ -28,14 +27,6 @@ protected:
         b[0] = 1.0;
         b[1] = 5.0;
         b[2] = 0.0;
-
-        DenseObj<double> L(n, n); // Start with all zeros
-        DenseObj<double> U(n, n);
-
-        LU::ILU<double, DenseObj<double>>(matrix, L, U);
-
-        matrix = L * U * matrix;
-        b = L * U * b;
 
         // Initial guess x0 = [0, 0, 0]
         x = VectorObj<double>(3, 0.0);

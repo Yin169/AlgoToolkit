@@ -252,6 +252,48 @@ public:
         }
         return column;
     }
+    void swapRows(int row1, int row2){
+        if (row1 < 0 || row1 >= _n || row2 < 0 || row2 >= _n) {
+            throw std::out_of_range("Index out of range");
+        }
+
+        if (row1 == row2) return;
+
+        std::vector<TObj> row1_values;
+        std::vector<int> row1_indices;
+        for (int i = 0; i < _m; ++i) {
+            auto it = SearchList(row1, i);
+            if (it != row_indices.begin() + col_ptr[i + 1] && *it == row1) {
+                row1_values.push_back(values[it - row_indices.begin()]);
+            } else {
+                row1_values.push_back(TObj());
+            }
+            row1_indices.push_back(i);
+        }
+
+        std::vector<TObj> row2_values;
+        std::vector<int> row2_indices;
+        for (int i = 0; i < _m; ++i) {
+            auto it = SearchList(row2, i);
+            if (it != row_indices.begin() + col_ptr[i + 1] && *it == row2) {
+                row2_values.push_back(values[it - row_indices.begin()]);
+            } else {
+                row2_values.push_back(TObj());
+            }
+            row2_indices.push_back(i);
+        }
+
+        for (int i = 0; i < _m; ++i) {
+            if (row1_values[i] != TObj()) {
+                addValue(row2, row1_indices[i], row1_values[i]);
+            }
+            if (row2_values[i] != TObj()) {
+                addValue(row1, row2_indices[i], row2_values[i]);
+            }
+        }
+
+        finalize();
+    }
 };
 
 #endif // SPARSEOBJ_HPP

@@ -1,6 +1,5 @@
 #include <iostream>
 #include "utils.hpp"
-#include "LU.hpp"
 #include "DenseObj.hpp"
 #include "SparseObj.hpp"
 #include "VectorObj.hpp"
@@ -23,6 +22,7 @@ void solve(){
 
 	VectorObj<double> x(b.size());
 	GMRES<double, MatrixType, VectorObj<double>> gmres;
+	// gmres.enablePreconditioner();
 	gmres.solve(A, b, x, 1000, std::min(A.getRows(), A.getCols()), 1e-6);
 
 	for(size_t i=0; i<x.size(); i++){

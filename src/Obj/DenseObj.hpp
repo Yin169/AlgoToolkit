@@ -207,6 +207,14 @@ public:
         arr.resize(n * m);
     }
 
+    void addValue(int row, int col, TObj value) {
+        if (row < 0 || col < 0 || row >= _n || col >= _m) {
+            throw std::out_of_range("Matrix indices are out of range.");
+        }
+        (*this)(row, col) = value;
+    }
+
+    void finalize() {}
 };
 
 #endif // MATRIXOBJ_HPP

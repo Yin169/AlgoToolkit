@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "LU.hpp"
+#include "basic.hpp"
 #include "DenseObj.hpp"
 
 // Helper function to initialize a square matrix
@@ -33,7 +33,7 @@ TEST(LUDecomposition, SquareMatrix) {
     DenseObj<double> originalA = A;
 
     // Perform LU decomposition
-    LU::PivotLU<double, DenseObj<double>>(A, P);
+    basic::PivotLU<double, DenseObj<double>>(A, P);
 
     // Initialize L and U matrices
     DenseObj<double> L(n, n); // Start with all zeros

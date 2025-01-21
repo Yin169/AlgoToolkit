@@ -6,7 +6,6 @@
 #include <functional>
 #include "VectorObj.hpp"
 #include "GMRES.hpp"
-#include "LU.hpp"
 
 template<typename T, typename MatrixType, typename VectorType = VectorObj<T>>
 class NewtonMethod {
@@ -33,6 +32,7 @@ public:
         VectorType residual;
         VectorType delta_x;
         T residual_norm;
+        // linear_solver.enablePreconditioner();
 
         while (iter < max_iter) {
             // Evaluate the nonlinear function F(x)

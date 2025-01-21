@@ -1,6 +1,5 @@
 #include <benchmark/benchmark.h>
 #include "basic.hpp"
-#include "LU.hpp"
 #include "DenseObj.hpp"
 #include "VectorObj.hpp"
 
@@ -82,7 +81,7 @@ static void BM_PivotLU(benchmark::State& state) {
     }
 
     for (auto _ : state) {
-        LU::PivotLU<double, DenseObj<double>>(A, P);
+        basic::PivotLU<double, DenseObj<double>>(A, P);
         benchmark::DoNotOptimize(A); // Prevent compiler optimizations
         benchmark::DoNotOptimize(P); // Prevent compiler optimizations
     }
