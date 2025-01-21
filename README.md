@@ -1,11 +1,7 @@
 # FASTSolver: High-Performance Scientific Computing Framework
 
 ## Overview
-FASTSolver is a comprehensive scientific computing framework focused on:
-- High-performance numerical solutions
-- Computational Fluid Dynamics (CFD)
-- Linear algebra operations
-- Scientific visualization
+FASTSolver is a comprehensive scientific computing framework designed for high-performance numerical solutions, computational fluid dynamics (CFD), linear algebra operations, and scientific visualization.
 
 ## Key Features
 
@@ -15,10 +11,10 @@ FASTSolver is a comprehensive scientific computing framework focused on:
 - Multi-grid methods
 - ODE solvers
 - Newton Method for Nonlinear Systems
-  - Solves nonlinear systems of equations 
+  - Solves nonlinear systems of equations
   - Supports custom Jacobian computation
   - Integration with GMRES for linear system solving
-  - convergence checks
+  - Convergence checks
 
 ### CFD Capabilities
 - Lattice Boltzmann Method (LBM)
@@ -33,8 +29,7 @@ FASTSolver is a comprehensive scientific computing framework focused on:
 - Real-time flow visualization
 - Performance metrics logging
 
-<!-- ![JetFlow](https://github.com/Yin169/FASTSolver/blob/dev/doc/pic_1.png) -->
-<img src="https://github.com/Yin169/FASTSolver/blob/dev/doc/pic_1.png" alt="JetFlow" width="500">
+![JetFlow](https://github.com/Yin169/FASTSolver/blob/dev/doc/pic_1.png)
 
 ## Requirements
 - C++17 or higher
@@ -43,21 +38,24 @@ FASTSolver is a comprehensive scientific computing framework focused on:
 
 ## Installation
 
+Clone the repository and run the setup script:
+
 ```bash
 git clone https://github.com/Yin169/FASTSolver.git
 cd FASTSolver
 bash script_test.sh
 ```
 
+For Python installation:
+
 ```bash
 cd FASTSolver
 python setup.py install
 ```
----
 
 ## Usage
 
-Here is an example of how to use the `FASTSolver` module in Python:
+Here's an example of how to use the `FASTSolver` module in Python:
 
 ```python
 import fastsolver as fs
@@ -86,8 +84,6 @@ amg.amgVCycle(A, b, x, levels, smoothing_steps, theta)
 
 print("Solution x:", [x[i] for i in range(x.size())])
 ```
-
----
 
 ## Project Structure
 
@@ -165,8 +161,6 @@ FASTSolver
     └── testfile.cpp
 ```
 
----
-
 ## Contributing
 
 Contributions are welcome! Feel free to fork the repository and submit a pull request.
@@ -177,20 +171,14 @@ Contributions are welcome! Feel free to fork the repository and submit a pull re
 4. Push to the branch (`git push origin feature-branch`)
 5. Open a Pull Request
 
----
-
 ## License
 
 This project is licensed under the MIT License.
-
----
 
 ## Acknowledgments
 
 - Pybind11 for seamless C++ and Python integration
 - Community contributions to numerical methods and solvers
-
----
 
 ## Citation
 

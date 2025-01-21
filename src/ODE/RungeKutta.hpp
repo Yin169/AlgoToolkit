@@ -7,6 +7,7 @@
 #include <functional>
 #include <stdexcept>
 #include <type_traits>
+#include <iostream>
 
 template <typename TNum, 
           typename VectorType = VectorObj<TNum>, 
@@ -16,7 +17,7 @@ public:
     // Type aliases for clarity
     using StateVector = VectorType;
     using SystemMatrix = MatrixType;
-    using SystemFunction = std::function<SystemMatrix(const StateVector&)>;
+    using SystemFunction = std::function<StateVector(const StateVector&)>;
     
     RungeKutta() = default;
     virtual ~RungeKutta() = default;
@@ -85,19 +86,27 @@ public:
     }
     
     /**
-     * @brief Solves the system with adaptive step size control
+     * @brief Solves the system with adaptive step size control using embedded RK4(5) method
      * @param y Initial state vector, will contain the solution
      * @param f System function that computes the derivative
      * @param h Initial step size
      * @param tol Error tolerance
      * @param max_steps Maximum number of steps
+     * @param safety_factor Safety factor for step size adjustment (default: 0.9)
+     * @param min_scale Minimum scale factor for step size (default: 0.1)
+     * @param max_scale Maximum scale factor for step size (default: 2.0)
      * @return Number of steps actually taken
+     * @throws std::invalid_argument if parameters are invalid
+     * @throws std::runtime_error if max_steps is reached before convergence
      */
     size_t solveAdaptive(StateVector& y,
                         const SystemFunction& f,
                         TNum h,
                         TNum tol,
-                        size_t max_steps) {
+                        size_t max_steps,
+                        TNum safety_factor = 0.9,
+                        TNum min_scale = 0.1,
+                        TNum max_scale = 2.0) {
         validateParameters(y, h, max_steps);
         if (tol <= 0) {
             throw std::invalid_argument("Tolerance must be positive");
@@ -116,18 +125,27 @@ public:
             solve(y_full, f, current_h, 1);
             
             // Estimate error
-            TNum error = (y_temp - y_full).L2norm() / std::min(y_temp.L2norm(), y_full.L2norm());
-			std::cout << "Step: " << steps_taken << " y[0]: " << y_temp[0] << " current_h: " << current_h << " error: " << error << std::endl;
+            TNum error = (y_temp - y_full).L2norm();
+            TNum scale = y_temp.L2norm();
+            if (scale > 0) {
+                error /= scale;
+            }
+            
+            // Check if step is acceptable
             if (error < tol) {
                 // Accept the step
                 y = y_temp;
                 steps_taken++;
                 
                 // Adjust step size up
-                current_h *= std::min(std::pow(tol/error, 0.2), 2.0);
+                TNum factor = safety_factor * std::pow(tol/error, 0.2);
+                factor = std::min(max_scale, std::max(min_scale, factor));
+                current_h *= factor;
             } else {
                 // Reject the step and reduce step size
-                current_h *= std::max(std::pow(tol/error, 0.25), 0.1);
+                TNum factor = safety_factor * std::pow(tol/error, 0.25);
+                factor = std::min(max_scale, std::max(min_scale, factor));
+                current_h *= factor;
                 y_temp = y;
             }
         }

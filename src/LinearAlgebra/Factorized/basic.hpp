@@ -3,17 +3,43 @@
 
 #include <iostream>
 #include <vector>
-#include <cstring> // For memset
+#include <cstring>
+#include <stdexcept>
+#include <limits>
 #include "../../Obj/DenseObj.hpp"
 #include "../../Obj/VectorObj.hpp"
 #include "../utils.hpp"
 
+/**
+ * @namespace basic
+ * @brief Contains fundamental linear algebra operations and matrix factorizations
+ */
 namespace basic {
 
-    // Power Iteration for finding the dominant eigenvector
+    /**
+     * @brief Power iteration method for finding the dominant eigenvector
+     * @tparam TNum Numeric type (float, double, etc.)
+     * @tparam MatrixType Matrix type that supports multiplication with VectorObj
+     * @param A Input matrix
+     * @param b Initial vector, will contain the dominant eigenvector on output
+     * @param max_iter_num Maximum number of iterations
+     * @throws std::invalid_argument if max_iter_num is negative or matrix dimensions are invalid
+     */
     template <typename TNum, typename MatrixType>
-    void powerIter(MatrixType& A, VectorObj<TNum>& b, int max_iter_num) {
-        if (max_iter_num <= 0) return;
+    void powerIter(const MatrixType& A, VectorObj<TNum>& b, int max_iter_num) {
+        if (max_iter_num < 0) {
+            throw std::invalid_argument("Maximum iterations must be non-negative");
+        }
+        
+        if (A.getRows() != A.getCols()) {
+            throw std::invalid_argument("Matrix must be square for power iteration");
+        }
+
+        if (b.size() != A.getCols()) {
+            throw std::invalid_argument("Vector dimension must match matrix dimension");
+        }
+
+        if (max_iter_num == 0) return;
 
         for (int i = 0; i < max_iter_num; ++i) {
             b.normalize(); // Ensure the vector remains normalized
@@ -22,10 +48,30 @@ namespace basic {
         b.normalize(); // Final normalization for stability
     }
 
-    // Rayleigh Quotient for estimating the dominant eigenvalue
+    /**
+     * @brief Computes the Rayleigh quotient to estimate the dominant eigenvalue
+     * @tparam TNum Numeric type (float, double, etc.)
+     * @tparam MatrixType Matrix type that supports multiplication with VectorObj
+     * @param A Input matrix
+     * @param b Input vector
+     * @return Estimated eigenvalue
+     * @throws std::invalid_argument if matrix dimensions are invalid
+     * @throws std::runtime_error if vector norm is zero
+     */
     template <typename TNum, typename MatrixType>
-    double rayleighQuotient(const MatrixType& A, const VectorObj<TNum>& b) {
-        if (b.L2norm() == 0) return 0;
+    TNum rayleighQuotient(const MatrixType& A, const VectorObj<TNum>& b) {
+        if (A.getRows() != A.getCols()) {
+            throw std::invalid_argument("Matrix must be square for Rayleigh quotient");
+        }
+
+        if (b.size() != A.getCols()) {
+            throw std::invalid_argument("Vector dimension must match matrix dimension");
+        }
+
+        const TNum norm = b.L2norm();
+        if (norm < std::numeric_limits<TNum>::epsilon()) {
+            throw std::runtime_error("Vector norm is too close to zero");
+        }
 
         VectorObj<TNum> Ab = A * b;
         TNum dot_product = b * Ab;

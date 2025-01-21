@@ -36,10 +36,12 @@ public:
             throw std::invalid_argument("Invalid Krylov subspace dimension");
         }
 
+        if (usePreconditioner) {
+            preconditioner.compute(A);  // Compute ILU factorization once
+        }
         VectorType r = b - A * x;
         if (usePreconditioner) {
-            preconditioner.compute(A);
-            r = preconditioner.solve(r);
+            r = preconditioner.solve(r);  // Apply M^(-1)(b - Ax)
         }
 
         double beta = r.L2norm();
@@ -61,9 +63,11 @@ public:
             V[0] = r / beta;
             int KryUpdate = KrylovDim;
             for (int j = 0; j < KrylovDim; ++j) {
-                VectorType w = A * V[j];
+                VectorType w;
                 if (usePreconditioner) {
-                    w = preconditioner.solve(w);
+                    w = preconditioner.solve(A * V[j]);  // Apply M^(-1)A to v_j
+                } else {
+                    w = A * V[j];
                 }
 
                 for (int i = 0; i <= j; ++i) {
@@ -97,7 +101,7 @@ public:
             updateSolution(x, H, V, e1, KryUpdate);
             r = b - A * x;
             if (usePreconditioner) {
-                r = preconditioner.solve(r);
+                r = preconditioner.solve(r);  // Apply M^(-1) to the residual
             }
 
             beta = r.L2norm();
