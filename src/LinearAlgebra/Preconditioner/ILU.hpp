@@ -29,7 +29,9 @@ public:
         L = MatrixType(n, n);
         U = MatrixType(n, n);
         
-         // LU Decomposition 
+        // LU Decomposition with improved efficiency for sparse matrices
+        std::vector<TNum> work(n);
+        
         for (int j = 0; j < n; ++j) {
             // Check for singular matrix using a small tolerance
             const TNum epsilon = static_cast<TNum>(1e-12);
@@ -37,18 +39,24 @@ public:
                 throw std::runtime_error("Matrix is singular or nearly singular and cannot be decomposed.");
             }
 
+            // Store column j values in work array for efficient access
+            for (int i = j; i < n; ++i) {
+                work[i] = A(i, j);
+            }
+
             for (int i = j + 1; i < n; ++i) {
-                TNum factor = A(i, j) / A(j, j);
-                // A(i, j) = factor; // Store the factor in place
+                TNum factor = work[i] / work[j];
                 A.addValue(i, j, factor);
-                A.finalize();
                 
+                // Update remaining elements in row i
                 for (int k = j + 1; k < n; ++k) {
-                    // A(i, k) = A(i, k) - factor * A(j, k);
-                    A.addValue(i, k, A(i, k) - factor * A(j, k));
-                    A.finalize();
+                    TNum update = A(i, k) - factor * A(j, k);
+                    if (std::abs(update) > epsilon) {
+                        A.addValue(i, k, update);
+                    }
                 }
             }
+            A.finalize(); // Finalize once per column instead of every update
         }
 
 

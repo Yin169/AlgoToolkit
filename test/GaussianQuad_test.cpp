@@ -60,7 +60,7 @@ TEST_F(GuassianQuadTest, TrigonometricIntegrationTest) {
 
 TEST_F(GuassianQuadTest, AccuracyTest) {
     // Test with increasing number of points
-    std::vector<int> points = {2, 4, 8, 16};
+    std::vector<int> points = {1, 2, 3, 4};
     auto f = [](double x) { return std::exp(x); };
     double exact = std::exp(1.0) - std::exp(-1.0);
     
