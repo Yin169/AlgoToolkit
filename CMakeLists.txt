@@ -75,6 +75,7 @@ set(BENCHMARK_SOURCES
     bench_Solver
     bench_ODE
     MainTest
+    CylinderFlow3D
 )
 
 # Add benchmark executables
@@ -82,7 +83,3 @@ foreach(benchmark_source ${BENCHMARK_SOURCES})
     add_executable(${benchmark_source} benchmark/${benchmark_source}.cpp)
     target_link_libraries(${benchmark_source} PRIVATE benchmark::benchmark OpenBLAS::OpenBLAS)
 endforeach()
-
-# Python module (optional, commented out)
-# pybind11_add_module(fastsolver_pybind python/pybind.cpp)
-# target_link_libraries(fastsolver_pybind PRIVATE ${TEST_DEPENDENCIES} pybind11::module)
