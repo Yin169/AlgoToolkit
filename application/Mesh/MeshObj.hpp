@@ -54,7 +54,7 @@ private:
     
 public:
     MeshObj(const std::array<size_t, D>& dims, T dx_, T threshold = 0.1) 
-        : dimensions(dims), dx(dx_), refinementThreshold(threshold), maxLevel(1) {
+        : dimensions(dims), dx(dx_), refinementThreshold(threshold), maxLevel(3) {
         initializeGrid();
     }
 
@@ -274,17 +274,54 @@ public:
             if(!nodes[i].isActive) continue;
             if(nodes[i].level != nodes[idx].level) continue;
 
-            T dx = nodes[i].position[0] - basePos[0];
-            T dy = nodes[i].position[1] - basePos[1];
+            bool isChild = true;
+            for(size_t d = 0; d < D; d++) {
+                T diff = nodes[i].position[d] - basePos[d];
+                if(diff < 0 || diff >= cellDx) {
+                    isChild = false;
+                    break;
+                }
+            }
 
-            if(dx >= 0 && dx < cellDx && dy >= 0 && dy < cellDx) {
+            if(isChild) {
                 nodes[i].isActive = false;
+                // Remove from boundary nodes if necessary
+                if(nodes[i].isBoundary) {
+                    auto it = std::find(boundaryNodes.begin(), boundaryNodes.end(), i);
+                    if(it != boundaryNodes.end()) {
+                        boundaryNodes.erase(it);
+                    }
+                }
             }
         }
 
         // Reactivate parent node
         nodes[idx].isActive = true;
         nodes[idx].level--;
+        
+        // Preserve boundary status from children
+        bool anyChildBoundary = false;
+        for(size_t i = 0; i < nodes.size(); i++) {
+            if(nodes[i].isBoundary && !nodes[i].isActive) {
+                bool isChild = true;
+                for(size_t d = 0; d < D; d++) {
+                    T diff = nodes[i].position[d] - basePos[d];
+                    if(diff < 0 || diff >= cellDx) {
+                        isChild = false;
+                        break;
+                    }
+                }
+                if(isChild) {
+                    anyChildBoundary = true;
+                    break;
+                }
+            }
+        }
+        
+        if(anyChildBoundary) {
+            nodes[idx].isBoundary = true;
+            boundaryNodes.push_back(idx);
+        }
     }
 
     void updateConnectivity() {
