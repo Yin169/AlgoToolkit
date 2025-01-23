@@ -7,10 +7,10 @@
 
 // Simulation parameters
 constexpr double scale = 1.0;
-constexpr double Re = 20000;            // Reynolds number
-constexpr double Ma = 0.02;            // Mach number
+constexpr double Re = 100;            // Reynolds number
+constexpr double Ma = 0.01;            // Mach number
 const double U0 = Ma * std::sqrt(1.0/3.0); // Inlet velocity (Ma * cs)
-constexpr double D = 80 * scale;              // Cylinder diameter in lattice units
+constexpr double D = 70 * scale;              // Cylinder diameter in lattice units
 const double nu = U0 * D / Re;    // Kinematic viscosity
 constexpr size_t Nx = 800 * scale;            // Domain size in x
 constexpr size_t Ny = 400 * scale;            // Domain size in y
@@ -47,14 +47,16 @@ int main() {
         // solver.setBoundary(i + (Ny-1)*Nx, BoundaryType::NoSlip);     // Top wall
 
         solver.setBoundary(i, BoundaryType::PressureOutlet);
-        solver.setOutletPressure(i, 1.0);
+        solver.setOutletPressure(i, 1.001);
         solver.setBoundary(i + (Ny-1)*Nx, BoundaryType::PressureOutlet);
-        solver.setOutletPressure(i + (Ny-1)*Nx, 1.0);
+        solver.setOutletPressure(i + (Ny-1)*Nx, 1.001);
     }
     
     // Inlet (left boundary)
     for(size_t j = 0; j < Ny; j++) {
         size_t idx = j * Nx;
+        // solver.setBoundary(idx, BoundaryType::PressureOutlet);
+        // solver.setOutletPressure(idx, 1.001);
         solver.setBoundary(idx, BoundaryType::VelocityInlet);
         solver.setInletVelocity(idx, {U0, 0.0});
     }
