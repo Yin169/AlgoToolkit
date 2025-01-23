@@ -53,7 +53,7 @@ private:
 
     void collision() {
         auto& nodes = mesh.getNodes();
-        // #pragma omp parallel for
+        #pragma omp parallel for schedule(dynamic, 128)
         for(size_t i = 0; i < nodes.size(); i++) {
             if(!nodes[i].isActive) continue;
             
@@ -63,7 +63,6 @@ private:
             
             for(size_t k = 0; k < LatticeTraits<D>::Q; k++) {
                 nodes[i].distributions[k] += omega * (feq[k] - nodes[i].distributions[k]);
-                // std::cout << nodes[i].distributions[k] << " " << feq[k] << " " << omega << std::endl;
             }
         }
     }
@@ -72,12 +71,14 @@ private:
         auto& nodes = mesh.getNodes();
         std::vector<std::array<T, LatticeTraits<D>::Q>> temp(nodes.size());
         
-        // First store all distributions
+        // First store all distributions in a cache-friendly manner
+        #pragma omp parallel for schedule(static)
         for(size_t i = 0; i < nodes.size(); i++) {
             temp[i] = nodes[i].distributions;
         }
         
-        // Then stream
+        // Then stream with parallel processing
+        #pragma omp parallel for schedule(dynamic, 128)
         for(size_t i = 0; i < nodes.size(); i++) {
             if(!nodes[i].isActive) continue;
             
@@ -106,13 +107,15 @@ private:
     }
 
     void applyBoundaryConditions() {
-        for(const auto& [nodeIdx, type] : boundaries) {
-            if (type ==  BoundaryType::NoSlip){
-                    applyBounceBack(nodeIdx);
-            } else if (type == BoundaryType::VelocityInlet){
-                    applyZouHeVelocity(nodeIdx, inletVelocities[nodeIdx]);
-            } else if (type == BoundaryType::PressureOutlet){
-                    applyZouHePressure(nodeIdx, outletPressures[nodeIdx]);
+        #pragma omp parallel for schedule(dynamic, 64)
+        for(size_t i = 0; i < boundaries.size(); i++) {
+            const auto& [nodeIdx, type] = boundaries[i];
+            if (type == BoundaryType::NoSlip) {
+                applyBounceBack(nodeIdx);
+            } else if (type == BoundaryType::VelocityInlet) {
+                applyZouHeVelocity(nodeIdx, inletVelocities[nodeIdx]);
+            } else if (type == BoundaryType::PressureOutlet) {
+                applyZouHePressure(nodeIdx, outletPressures[nodeIdx]);
             }
         }
     }
