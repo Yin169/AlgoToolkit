@@ -19,6 +19,25 @@ public:
         file.close();
     }
 
+    static void writeVTKWithScalar(const MeshObj<T,D>& mesh, const std::string& filename,
+                                  const std::vector<T>& scalarField, const std::string& fieldName) {
+        std::ofstream file(filename + ".vtk");
+        file << std::scientific << std::setprecision(6);
+        writeHeader(file);
+        writePoints(file, mesh);
+        writeCells(file, mesh);
+        
+        // Write custom scalar field data
+        const auto& nodes = mesh.getNodes();
+        file << "\nPOINT_DATA " << nodes.size() << "\n";
+        file << "SCALARS " << fieldName << " double 1\n";
+        file << "LOOKUP_TABLE default\n";
+        for(size_t i = 0; i < nodes.size(); i++) {
+            file << scalarField[i] << "\n";
+        }
+        file.close();
+    }
+
 private:
     static void writeHeader(std::ofstream& file) {
         file << "# vtk DataFile Version 2.0\n";

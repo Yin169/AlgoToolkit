@@ -76,6 +76,7 @@ set(BENCHMARK_SOURCES
     bench_ODE
     MainTest
     CylinderFlow2D
+    # JetFlow_2D
 )
 
 # Add benchmark executables

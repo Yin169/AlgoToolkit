@@ -7,3 +7,4 @@ cmake --build .
 
 ctest
 ./CylinderFlow2D
+# ./JetFlow_2D

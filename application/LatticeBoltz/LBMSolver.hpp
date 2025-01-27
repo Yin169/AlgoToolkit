@@ -22,6 +22,15 @@ struct Wall {
 };
 
 template<typename T, size_t D>
+struct IBMNode {
+    std::array<T, D> position;
+    std::array<T, D> velocity;
+    std::array<T, D> force;
+    std::vector<size_t> nearNodes;
+    std::vector<T> weights;
+};
+
+template<typename T, size_t D>
 class LBMSolver {
 private:
     MeshObj<T,D>& mesh;
@@ -39,7 +48,59 @@ private:
     std::unordered_map<size_t, std::array<T,D>> inletVelocities;
     std::unordered_map<size_t, T> outletPressures;
     std::vector<std::array<T, LatticeTraits<D>::Q>> previousDistributions;
+    std::vector<IBMNode<T,D>> ibmNodes;
 
+    void applyIBMForces() {
+        auto& nodes = mesh.getNodes();
+        
+        #pragma omp parallel for schedule(dynamic, 128)
+        for(size_t i = 0; i < ibmNodes.size(); i++) {
+            auto& ibmNode = ibmNodes[i];
+            std::array<T,D> interpolatedVelocity = {};
+            T totalWeight = 0;
+            
+            for(size_t j = 0; j < ibmNode.nearNodes.size(); j++) {
+                size_t nodeIdx = ibmNode.nearNodes[j];
+                if(nodeIdx >= nodes.size() || !nodes[nodeIdx].isActive) continue;
+                
+                T rho = computeDensity(nodes[nodeIdx].distributions);
+                auto u = computeVelocity(nodes[nodeIdx].distributions, rho);
+                T weight = ibmNode.weights[j];
+                
+                for(size_t d = 0; d < D; d++) {
+                    interpolatedVelocity[d] += weight * u[d];
+                }
+                totalWeight += weight;
+            }
+            
+            if(totalWeight > 0) {
+                for(size_t d = 0; d < D; d++) {
+                    interpolatedVelocity[d] /= totalWeight;
+                    ibmNode.force[d] = (ibmNode.velocity[d] - interpolatedVelocity[d]) / deltaT;
+                }
+            }
+        }
+        
+        #pragma omp parallel for schedule(dynamic, 128)
+        for(size_t i = 0; i < ibmNodes.size(); i++) {
+            const auto& ibmNode = ibmNodes[i];
+            for(size_t j = 0; j < ibmNode.nearNodes.size(); j++) {
+                size_t nodeIdx = ibmNode.nearNodes[j];
+                if(nodeIdx >= nodes.size() || !nodes[nodeIdx].isActive) continue;
+                
+                T weight = ibmNode.weights[j];
+                for(size_t k = 0; k < LatticeTraits<D>::Q; k++) {
+                    T force = 0;
+                    for(size_t d = 0; d < D; d++) {
+                        force += ibmNode.force[d] * LatticeTraits<D>::directions[k][d];
+                    }
+                    nodes[nodeIdx].distributions[k] += weight * force * weights[k];
+                }
+            }
+        }
+    }
+
+public:
     void initializeWeights() {
         if constexpr (D == 2) {
             weights = {4.0/9.0,  
@@ -268,8 +329,21 @@ public:
         previousDistributions.resize(nodes.size());
     }
 
+    void addIBMNode(const IBMNode<T,D>& node) {
+        ibmNodes.push_back(node);
+    }
+
+    void addIBMNode(const std::array<T,D>& position, const std::array<T,D>& velocity) {
+        IBMNode<T,D> node;
+        node.position = position;
+        node.velocity = velocity;
+        node.force.fill(0);
+        ibmNodes.push_back(node);
+    }
+
     void collideAndStream() {
         applyBoundaryConditions();
+        applyIBMForces();
         collision();
         streaming();
     }
