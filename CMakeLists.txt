@@ -75,7 +75,7 @@ set(BENCHMARK_SOURCES
     bench_Solver
     bench_ODE
     MainTest
-    CylinderFlow3D
+    CylinderFlow2D
 )
 
 # Add benchmark executables

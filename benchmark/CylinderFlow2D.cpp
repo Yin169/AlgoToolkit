@@ -7,10 +7,10 @@
 
 // Simulation parameters
 constexpr double scale = 1.0;
-constexpr double Re = 20000;            // Reynolds number
-constexpr double Ma = 0.02;            // Mach number
+constexpr double Re = 3900;            // Reynolds number
+constexpr double Ma = 0.1;            // Mach number
 const double U0 = Ma * std::sqrt(1.0/3.0); // Inlet velocity (Ma * cs)
-constexpr double D = 80 * scale;              // Cylinder diameter in lattice units
+constexpr double D = 70 * scale;              // Cylinder diameter in lattice units
 const double nu = U0 * D / Re;    // Kinematic viscosity
 constexpr size_t Nx = 800 * scale;            // Domain size in x
 constexpr size_t Ny = 400 * scale;            // Domain size in y
@@ -18,10 +18,11 @@ constexpr double cx = Nx/6;           // Cylinder center x
 constexpr double cy = Ny/2;           // Cylinder center y
 
 // Function to check if a point is inside the cylinder
+// Fix the isInsideCylinder function
 bool isInsideCylinder(double x, double y) {
     double dx = x - cx;
     double dy = y - cy;
-    return (dx*dx + dy*dy) <= (D*D/4.0);
+    return (dx*dx + dy*dy) <= (D*D/4.0);  // Correct circular check
 }
 
 int main() {
@@ -36,20 +37,15 @@ int main() {
     LBMSolver<double, 2> solver(mesh, nu);
     
     // Initialize flow field
-    solver.initialize();
+    solver.initialize(1.0 , {U0, 0.0});
     
     // Set boundary conditions
     std::cout << "Setting up boundary conditions...\n";
     
     // Top and bottom walls
     for(size_t i = 0; i < Nx; i++) {
-        // solver.setBoundary(i, BoundaryType::NoSlip);                  // Bottom wall
-        // solver.setBoundary(i + (Ny-1)*Nx, BoundaryType::NoSlip);     // Top wall
-
-        solver.setBoundary(i, BoundaryType::PressureOutlet);
-        solver.setOutletPressure(i, 1.0);
-        solver.setBoundary(i + (Ny-1)*Nx, BoundaryType::PressureOutlet);
-        solver.setOutletPressure(i + (Ny-1)*Nx, 1.0);
+        solver.setBoundary(i, BoundaryType::NoSlip);                  // Bottom wall
+        solver.setBoundary(i + (Ny-1)*Nx, BoundaryType::NoSlip);     // Top wall
     }
     
     // Inlet (left boundary)
@@ -62,41 +58,14 @@ int main() {
     // Outlet (right boundary)
     for(size_t j = 0; j < Ny; j++) {
         size_t idx = (Nx-1) + j * Nx;
-        // solver.setBoundary(idx, BoundaryType::VelocityInlet);
-        // solver.setInletVelocity(idx, {0.0, 0.0});
         solver.setBoundary(idx, BoundaryType::PressureOutlet);
         solver.setOutletPressure(idx, 1.0);
     }
     
-    // Create cylinder using IBM nodes
+    // Replace IBM nodes with wall boundary for cylinder
     std::cout << "Creating cylinder boundary...\n";
-    constexpr int numIBMNodes = 120;  // Number of points around cylinder
-    for(int i = 0; i < numIBMNodes; i++) {
-        double theta = 2.0 * M_PI * i / numIBMNodes;
-        IBMNode<double, 2> node;
-        node.position = {cx + D/2.0 * std::cos(theta), 
-                        cy + D/2.0 * std::sin(theta)};
-        node.velocity = {0.0, 0.0};  // Stationary cylinder
-        node.force = {0.0, 0.0};
-        
-        // Find near nodes and compute weights
-        for(int dx = -2; dx <= 2; dx++) {
-            for(int dy = -2; dy <= 2; dy++) {
-                int x = static_cast<int>(node.position[0]) + dx;
-                int y = static_cast<int>(node.position[1]) + dy;
-                if(x >= 0 && x < Nx && y >= 0 && y < Ny) {
-                    size_t idx = x + y * Nx;
-                    double dist = std::sqrt(std::pow(x - node.position[0], 2) + 
-                                          std::pow(y - node.position[1], 2));
-                    if(dist <= 2.0) {
-                        node.nearNodes.push_back(idx);
-                        node.weights.push_back(std::exp(-dist*dist/2.0));
-                    }
-                }
-            }
-        }
-        solver.addIBMNode(node);
-    }
+    // Remove or replace this line as it's incorrect for a cylinder
+    // solver.addWallPlane({cx, cy}, {1.0, 0.0});
     
     // Set nodes inside cylinder as inactive
     auto& nodes = mesh.getNodes();
@@ -107,6 +76,11 @@ int main() {
             }
         }
     }
+
+    // Add stability parameters
+    solver.setDensityLimits(0.1, 2.0);
+    solver.setMaxVelocity(0.15);
+    solver.setSmagorinskyConstant(0.17);
     
     // Simulation parameters
     const int nSteps = 1000000;

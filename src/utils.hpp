@@ -13,10 +13,8 @@ double GenRandom(){
     std::random_device rd;
     std::mt19937 gen(rd());
     
-    // 定义分布范围为 [0.0, 1.0]
     std::uniform_real_distribution<> dis(0.0, 1.0);
 
-    // 生成随机数
     double random_number = dis(gen);
 	return random_number;
 }
