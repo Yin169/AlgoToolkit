@@ -57,9 +57,9 @@ int main() {
     // Set top and bottom walls
     for(size_t i = 0; i < Nx; i++) {
         solver.setBoundary(i, BoundaryType::PressureOutlet);
-        solver.setOutletPressure(i, 1.0);
+        solver.setOutletPressure(i, 1.01);
         solver.setBoundary((Ny-1)*Nx + i, BoundaryType::PressureOutlet);
-        solver.setOutletPressure((Ny-1)*Nx + i, 1.0);
+        solver.setOutletPressure((Ny-1)*Nx + i, 1.01);
     }
     
     // Set nodes inside cylinder as inactive
