@@ -10,8 +10,8 @@ private:
     static constexpr size_t D = 2;
     static constexpr size_t Nx = 400;  // Length
     static constexpr size_t Ny = 400;  // Height
-    static constexpr T Re = 80;       // Reynolds number
-    static constexpr T U0 = 0.0001;       // Jet velocity
+    static constexpr T Re = 40000;       // Reynolds number
+    static constexpr T U0 = 0.1;       // Jet velocity
     static constexpr T JetWidth = 20;  // Jet inlet width
     
     std::array<size_t, D> dims;
@@ -57,14 +57,14 @@ private:
         // Outlet (right boundary)
         for(size_t j = 0; j < Ny; j++) {
             size_t idx = j * Nx + (Nx-1);
-            // solver->setBoundary(idx, BoundaryType::PressureOutlet);
-            // solver->setOutletPressure(idx, 1.0)
-            if(j >= jetStart && j < jetEnd) {
-                solver->setBoundary(idx, BoundaryType::VelocityInlet);
-                solver->setInletVelocity(idx, {-U0, 0.0});
-            } else {
-                solver->setBoundary(idx, BoundaryType::NoSlip);
-            }
+            solver->setBoundary(idx, BoundaryType::PressureOutlet);
+            solver->setOutletPressure(idx, 1.0);
+            // if(j >= jetStart && j < jetEnd) {
+            //     solver->setBoundary(idx, BoundaryType::VelocityInlet);
+            //     solver->setInletVelocity(idx, {-U0, 0.0});
+            // } else {
+            //     solver->setBoundary(idx, BoundaryType::NoSlip);
+            // }
         
         }
         
@@ -103,7 +103,7 @@ private:
     
 public:
     void run(size_t nSteps, size_t saveInterval) {
-        solver->initialize(1.0);
+        solver->initialize();
         
         for(size_t step = 0; step < nSteps; step++) {
             solver->collideAndStream();
