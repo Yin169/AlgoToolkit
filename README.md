@@ -1,40 +1,36 @@
-# FASTSolver: High-Performance Scientific Computing Framework
-
+# FASTSolver: Advanced Scientific Computing Framework
 ## Overview
-FASTSolver is a comprehensive scientific computing framework designed for high-performance numerical solutions, computational fluid dynamics (CFD), linear algebra operations, and scientific visualization.
-
-## Key Features
-
-### Numerical Methods
-- Linear algebra operations
-- Iterative solvers (GMRES, CG)
-- Multi-grid methods
-- ODE solvers
-- Newton Method for Nonlinear Systems
-  - Solves nonlinear systems of equations
-  - Supports custom Jacobian computation
-  - Integration with GMRES for linear system solving
-  - Convergence checks
-
-### CFD Capabilities
-- Lattice Boltzmann Method (LBM)
-  - D2Q9 and D3Q19 models
-  - Various boundary conditions
-  - Immersed Boundary Method (IBM)
-- Flow visualization
-- Performance monitoring
-
-### Tools
-- VTK output generation
-- Real-time flow visualization
-- Performance metrics logging
-
+FASTSolver is a state-of-the-art scientific computing framework that delivers exceptional performance for numerical computations, CFD simulations, matrix operations, and scientific data visualization.
+## Core Capabilities
+### Advanced Numerical Methods
+- Optimized linear algebra computations
+- High-performance iterative solvers
+  - GMRES (Generalized Minimal Residual)
+  - CG (Conjugate Gradient)
+- Adaptive multi-grid algorithms
+- Robust ODE integration
+- Advanced Newton-Raphson Implementation
+  - Efficient nonlinear system resolution
+  - Flexible Jacobian matrix handling
+  - Seamless GMRES integration
+  - Sophisticated convergence monitoring
+### CFD Engine
+- Advanced Lattice Boltzmann Implementation
+  - Full D2Q9 and D3Q19 support
+  - Comprehensive boundary condition library
+  - Integrated IBM capabilities
+- Interactive flow visualization
+- Real-time performance analytics
+### Development Tools
+- Streamlined VTK export
+- Dynamic flow visualization
+- Comprehensive performance tracking
 ![JetFlow](https://github.com/Yin169/FASTSolver/blob/dev/doc/pic_1.png)
-
-## Requirements
-- C++17 or higher
-- CMake 3.15+
-- Python 3.9+ (optional)
+## System Prerequisites
+- Modern C++ (17+)
+- CMake 3.15 or newer
+- Python 3.9+ (for optional features)
+## Quick Start
 
 ## Installation
 
