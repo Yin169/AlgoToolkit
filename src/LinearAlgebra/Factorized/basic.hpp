@@ -233,6 +233,92 @@ namespace basic {
             }
         }
     }
+
+    /**
+     * @brief Singular Value Decomposition (SVD) of matrix A = U*S*V^T
+     * @param A Input matrix (m x n)
+     * @param U Output left singular vectors (m x m)
+     * @param S Output singular values diagonal matrix (m x n)
+     * @param V Output right singular vectors (n x n)
+     * @throws std::invalid_argument if matrix dimensions are invalid
+     */
+    template <typename TNum, typename MatrixType>
+    void SVD(const MatrixType& A, MatrixType& U, MatrixType& S, MatrixType& V) {
+        const int m = A.getRows();
+        const int n = A.getCols();
+        
+        if (m == 0 || n == 0) {
+            throw std::invalid_argument("Matrix dimensions must be positive");
+        }
+        
+        // Initialize matrices
+        U = MatrixType(m, m);
+        S = MatrixType(m, n);
+        V = MatrixType(n, n);
+        
+        // Compute A^T * A and A * A^T
+        MatrixType At = A.Transpose();
+        MatrixType AtA = At * A;
+        MatrixType AAt = A * At;
+        
+        // Get eigenvectors of A^T * A (V) and A * A^T (U)
+        std::vector<VectorObj<TNum>> eigenVectorsV;
+        std::vector<VectorObj<TNum>> eigenVectorsU;
+        std::vector<TNum> eigenValuesV;
+        std::vector<TNum> eigenValuesU;
+        
+        // Use power iteration to find eigenvalues and eigenvectors
+        for (int i = 0; i < n; ++i) {
+            VectorObj<TNum> v(n);
+            // Initialize with random values or unit vector
+            v[i] = TNum(1);
+            powerIter(AtA, v, 100);
+            eigenVectorsV.push_back(v);
+            eigenValuesV.push_back(rayleighQuotient(AtA, v));
+            
+            // Deflate matrix to find next eigenpair
+            if (i < n-1) {
+                MatrixType vv(v, n, 1);
+                MatrixType vvt = vv * vv.Transpose() * eigenValuesV[i];
+                AtA = AtA - vvt;
+            }
+        }
+        
+        // Similar process for U using A * A^T
+        for (int i = 0; i < m; ++i) {
+            VectorObj<TNum> u(m);
+            u[i] = TNum(1);
+            powerIter(AAt, u, 100);
+            eigenVectorsU.push_back(u);
+            eigenValuesU.push_back(rayleighQuotient(AAt, u));
+            
+            if (i < m-1) {
+                MatrixType uu(u, m, 1);
+                MatrixType uut = uu * uu.Transpose() * eigenValuesU[i];
+                AAt = AAt - uut;
+            }
+        }
+        
+        // Construct U, S, and V matrices
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < m; ++j) {
+                U(j, i) = eigenVectorsU[i][j];
+            }
+        }
+        
+        for (int i = 0; i < n; ++i) {
+            for (int j = 0; j < n; ++j) {
+                V(j, i) = eigenVectorsV[i][j];
+            }
+        }
+        
+        // Fill singular values
+        const int min_dim = std::min(m, n);
+        for (int i = 0; i < min_dim; ++i) {
+            S(i, i) = std::sqrt(std::abs(eigenValuesV[i]));
+        }
+    }
+
 } // namespace basic
 
 #endif // BASIC_HPP

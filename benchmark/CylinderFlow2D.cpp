@@ -6,7 +6,7 @@
 #include <chrono>
 
 // Simulation parameters
-constexpr double Re = 250;             // Reynolds number for clear vortex shedding
+constexpr double Re = 150;             // Reynolds number for clear vortex shedding
 constexpr double Ma = 0.13;             // Mach number
 const double U0 = Ma * std::sqrt(1.0/3.0); // Inlet velocity (Ma * cs)
 constexpr double D = 40;               // Cylinder diameter in lattice units
@@ -57,9 +57,9 @@ int main() {
     // Set top and bottom walls
     for(size_t i = 0; i < Nx; i++) {
         solver.setBoundary(i, BoundaryType::PressureOutlet);
-        solver.setOutletPressure(i, 1.01);
+        solver.setOutletPressure(i, 1.2);
         solver.setBoundary((Ny-1)*Nx + i, BoundaryType::PressureOutlet);
-        solver.setOutletPressure((Ny-1)*Nx + i, 1.01);
+        solver.setOutletPressure((Ny-1)*Nx + i, 1.2);
     }
     
     // Set nodes inside cylinder as inactive
