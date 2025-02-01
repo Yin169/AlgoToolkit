@@ -1,124 +1,74 @@
 #include "../application/LatticeBoltz/LBMSolver.hpp"
 #include "../application/PostProcess/Visual.hpp"
-#include <cmath>
+#include <iostream>
 #include <fstream>
-#include <iomanip>
-
-template<typename T>
-class JetFlow {
-private:
-    static constexpr size_t D = 2;
-    static constexpr size_t Nx = 400;  // Length
-    static constexpr size_t Ny = 400;  // Height
-    static constexpr T Re = 40000;       // Reynolds number
-    static constexpr T U0 = 0.1;       // Jet velocity
-    static constexpr T JetWidth = 20;  // Jet inlet width
-    
-    std::array<size_t, D> dims;
-    std::unique_ptr<MeshObj<T,D>> mesh;
-    std::unique_ptr<LBMSolver<T,D>> solver;
-    std::ofstream dataLog;
-    
-public:
-    JetFlow() : dims({Nx, Ny}) {
-        T dx = 0.01;
-        T deltaT = 0.01;
-        T viscosity = U0 * JetWidth / Re;
-        
-        mesh = std::make_unique<MeshObj<T,D>>(dims, dx);
-        solver = std::make_unique<LBMSolver<T,D>>(*mesh, viscosity, dx, deltaT);
-        
-        dataLog.open("jet_data.txt");
-        dataLog << std::scientific << std::setprecision(6);
-        
-        setupBoundaries();
-    }
-    
-    ~JetFlow() {
-        if(dataLog.is_open()) dataLog.close();
-    }
-
-private:
-    void setupBoundaries() {
-        // Inlet (center of left boundary)
-        size_t jetStart = (Ny - JetWidth)/2;
-        size_t jetEnd = jetStart + JetWidth;
-        
-        for(size_t j = 0; j < Ny; j++) {
-            size_t idx = j * Nx;
-            if(j >= jetStart && j < jetEnd) {
-                solver->setBoundary(idx, BoundaryType::VelocityInlet);
-                solver->setInletVelocity(idx, {U0, 0.0});
-            } else {
-                solver->setBoundary(idx, BoundaryType::NoSlip);
-            }
-        }
-        
-        // Outlet (right boundary)
-        for(size_t j = 0; j < Ny; j++) {
-            size_t idx = j * Nx + (Nx-1);
-            solver->setBoundary(idx, BoundaryType::PressureOutlet);
-            solver->setOutletPressure(idx, 1.0);
-            // if(j >= jetStart && j < jetEnd) {
-            //     solver->setBoundary(idx, BoundaryType::VelocityInlet);
-            //     solver->setInletVelocity(idx, {-U0, 0.0});
-            // } else {
-            //     solver->setBoundary(idx, BoundaryType::NoSlip);
-            // }
-        
-        }
-        
-        // Top and bottom walls
-        for(size_t i = 0; i < Nx; i++) {
-            // solver->setBoundary(i, BoundaryType::NoSlip);
-            // solver->setBoundary((Ny-1)*Nx + i, BoundaryType::NoSlip);
-            solver->setBoundary(i, BoundaryType::PressureOutlet);
-            solver->setOutletPressure(i, 1.0);
-            solver->setBoundary((Ny-1)*Nx + i, BoundaryType::PressureOutlet);
-            solver->setOutletPressure((Ny-1)*Nx + i, 1.0);
-        }
-    }
-    
-    void logData(size_t step) {
-        const auto& nodes = mesh->getNodes();
-        T maxVel = 0.0;
-        T centerlineVel = 0.0;
-        
-        // Sample along centerline
-        size_t j = Ny/2;
-        for(size_t i = 0; i < Nx; i++) {
-            size_t idx = j * Nx + i;
-            if(!nodes[idx].isActive) continue;
-            
-            T rho = solver->computeDensity(nodes[idx].distributions);
-            auto vel = solver->computeVelocity(nodes[idx].distributions, rho);
-            T speed = std::sqrt(vel[0]*vel[0] + vel[1]*vel[1]);
-            
-            maxVel = std::max(maxVel, speed);
-            if(i == Nx/2) centerlineVel = speed;
-        }
-        
-        dataLog << step << " " << maxVel << " " << centerlineVel << "\n";
-    }
-    
-public:
-    void run(size_t nSteps, size_t saveInterval) {
-        solver->initialize();
-        
-        for(size_t step = 0; step < nSteps; step++) {
-            solver->collideAndStream();
-            
-            if(step % saveInterval == 0) {
-                std::string filename = "jet_" + std::to_string(step/saveInterval);
-                Visual<T,D>::writeVTK(*mesh, filename);
-                logData(step);
-            }
-        }
-    }
-};
+#include <string>
 
 int main() {
-    JetFlow<double> simulation;
-    simulation.run(10000, 50);  // Run for 50k steps, save every 500 steps
+    // Domain parameters
+    const size_t nx = 400;  // Domain width
+    const size_t ny = 200;  // Domain height
+    const double dx = 1.0;  // Grid spacing
+    const double dt = 1.0;  // Time step
+    const double viscosity = 0.01;  // Fluid viscosity
+    const double jetVelocity = 2.0;  // Inlet jet velocity
+    const size_t maxSteps = 10000;   // Maximum simulation steps
+    const size_t saveInterval = 100;  // Save results every N steps
+
+    // Create mesh
+    MeshObj<double, 2> mesh({nx, ny}, 1.0);
+    
+    // Initialize LBM solver
+    LBMSolver<double, 2> solver(mesh, viscosity, dx, dt);
+    
+    // Enable Smagorinsky turbulence model
+    solver.setSmagorinskyConstant(0.17);  // Typical value for Cs
+
+    // Set initial conditions (fluid at rest)
+    solver.initialize(1.0, {0.0, 0.0});
+    
+    // Set up jet inlet (middle portion of left boundary)
+    const size_t jetStart = ny/3;
+    const size_t jetEnd = 2*ny/3;
+    for(size_t j = 0; j < ny; j++) {
+        size_t idx = j * nx;
+        if (j >= jetStart && j <= jetEnd) {
+            solver.setBoundary(idx, BoundaryType::VelocityInlet);
+            solver.setInletVelocity(idx, {jetVelocity, 0.0});
+        } else {
+            solver.setBoundary(idx, BoundaryType::NoSlip);
+        }
+    }
+    
+    // Set up outlet (right boundary)
+    for(size_t j = 0; j < ny; j++) {
+        size_t idx = j * nx + (nx-1);
+        solver.setBoundary(idx, BoundaryType::PressureOutlet);
+        solver.setOutletPressure(idx, 1.0);
+    }
+    
+    // Set up walls (top and bottom boundaries)
+    for(size_t i = 0; i < nx; i++) {
+        // Bottom wall
+        solver.setBoundary(i, BoundaryType::PressureOutlet);
+        solver.setOutletPressure(i, 1.0);
+        // Top wall
+        solver.setBoundary((ny-1) * nx + i, BoundaryType::PressureOutlet);
+        solver.setOutletPressure((ny-1) * nx + i, 1.0);
+    }
+
+    // Simulation loop
+    for(size_t step = 0; step < maxSteps; step++) {
+        solver.collideAndStream();
+        
+        // Save results periodically in VTK format
+        if(step % saveInterval == 0) {
+            std::string filename = "jetflow_" + std::to_string(step);
+            Visual<double, 2>::writeVTK(mesh, filename);
+            
+            std::cout << "Step " << step << " completed\n";
+        }
+    }
+    
     return 0;
 }
