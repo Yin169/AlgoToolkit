@@ -42,6 +42,7 @@ namespace basic {
         if (max_iter_num == 0) return;
 
         for (int i = 0; i < max_iter_num; ++i) {
+            if (b.L2norm() == 0) return;
             b.normalize(); // Ensure the vector remains normalized
             b = A * b;     // Compute A * b
         }
@@ -255,70 +256,93 @@ namespace basic {
         U = MatrixType(m, m);
         S = MatrixType(m, n);
         V = MatrixType(n, n);
+
+        // Check if A is a zero matrix
+        bool isZeroMatrix = true;
+        for (int i = 0; i < m && isZeroMatrix; ++i) {
+            for (int j = 0; j < n && isZeroMatrix; ++j) {
+                if (std::abs(A(i, j)) > std::numeric_limits<TNum>::epsilon()) {
+                    isZeroMatrix = false;
+                }
+            }
+        }
+
+        if (isZeroMatrix) {
+            // For zero matrix, U and V are identity matrices, S is zero
+            for (int i = 0; i < m; ++i) U(i, i) = TNum(1);
+            for (int i = 0; i < n; ++i) V(i, i) = TNum(1);
+            return;
+        }
         
-        // Compute A^T * A and A * A^T
+        // Compute A^T * A and A * A^T for eigendecomposition
         MatrixType At = A.Transpose();
-        MatrixType AtA = At * A;
-        MatrixType AAt = A * At;
+        MatrixType AtA = At * A;  // For right singular vectors
+        MatrixType AAt = A * At;  // For left singular vectors
         
-        // Get eigenvectors of A^T * A (V) and A * A^T (U)
-        std::vector<VectorObj<TNum>> eigenVectorsV;
-        std::vector<VectorObj<TNum>> eigenVectorsU;
-        std::vector<TNum> eigenValuesV;
-        std::vector<TNum> eigenValuesU;
+        std::vector<VectorObj<TNum>> eigenVectorsV(n);
+        std::vector<VectorObj<TNum>> eigenVectorsU(m);
+        std::vector<TNum> singularValues(std::min(m, n));
         
-        // Use power iteration to find eigenvalues and eigenvectors
+        // Compute right singular vectors (V)
         for (int i = 0; i < n; ++i) {
-            VectorObj<TNum> v(n);
-            // Initialize with random values or unit vector
-            v[i] = TNum(1);
-            powerIter(AtA, v, 100);
-            eigenVectorsV.push_back(v);
-            eigenValuesV.push_back(rayleighQuotient(AtA, v));
+            VectorObj<TNum> v(n, TNum(0));
+            v[i] = TNum(1);  // Initial guess
             
-            // Deflate matrix to find next eigenpair
-            if (i < n-1) {
-                MatrixType vv(v, n, 1);
-                MatrixType vvt = vv * vv.Transpose() * eigenValuesV[i];
-                AtA = AtA - vvt;
+            // Power iteration with increased stability
+            powerIter(AtA, v, 300);
+            // Gram-Schmidt orthogonalization
+            for (int j = 0; j < i; ++j) {
+                v = subtProj(v, eigenVectorsV[j]);
+                v.normalize();
             }
-        }
-        
-        // Similar process for U using A * A^T
-        for (int i = 0; i < m; ++i) {
-            VectorObj<TNum> u(m);
-            u[i] = TNum(1);
-            powerIter(AAt, u, 100);
-            eigenVectorsU.push_back(u);
-            eigenValuesU.push_back(rayleighQuotient(AAt, u));
             
-            if (i < m-1) {
-                MatrixType uu(u, m, 1);
-                MatrixType uut = uu * uu.Transpose() * eigenValuesU[i];
-                AAt = AAt - uut;
+            TNum lambda = rayleighQuotient(AtA, v);
+            eigenVectorsV[i] = v; 
+            
+            // Matrix deflation
+            if (i < n - 1) {
+                MatrixType vvt(v, n, 1);
+                AtA = AtA - (vvt * vvt.Transpose()) * lambda;
             }
+            
+            singularValues[i] = std::sqrt(std::abs(lambda));
         }
         
-        // Construct U, S, and V matrices
+        // Compute left singular vectors (U)
         for (int i = 0; i < m; ++i) {
-            for (int j = 0; j < m; ++j) {
-                U(j, i) = eigenVectorsU[i][j];
+            VectorObj<TNum> u(m, TNum(0));
+            u[i] = TNum(1);  // Initial guess
+            
+            powerIter(AAt, u, 300);
+            
+            // Gram-Schmidt orthogonalization
+            for (int j = 0; j < i; ++j) {
+                u = subtProj(u, eigenVectorsU[j]);
+                u.normalize();
+            }
+            TNum lambda = rayleighQuotient(AAt, u);
+            eigenVectorsU[i] = u;
+            if(u[0] < TNum(0)) eigenVectorsU[i] = u * TNum(-1);
+            
+            // Matrix deflation
+            if (i < m - 1) {
+                MatrixType uut(u, m, 1);
+                AAt = AAt - (uut * uut.Transpose()) * (i < singularValues.size() ? 
+                    singularValues[i] * singularValues[i] : TNum(0));
             }
         }
         
-        for (int i = 0; i < n; ++i) {
-            for (int j = 0; j < n; ++j) {
-                V(j, i) = eigenVectorsV[i][j];
-            }
-        }
+        // Construct final matrices
+        U = MatrixType(eigenVectorsU, m, m);
+        V = MatrixType(eigenVectorsV, n, n);
+        S.zero();
         
-        // Fill singular values
-        const int min_dim = std::min(m, n);
-        for (int i = 0; i < min_dim; ++i) {
-            S(i, i) = std::sqrt(std::abs(eigenValuesV[i]));
+        // Set singular values with numerical stability check
+        const TNum epsilon = std::numeric_limits<TNum>::epsilon() * 100;
+        for (size_t i = 0; i < singularValues.size(); ++i) {
+            S(i, i) = singularValues[i] > epsilon ? singularValues[i] : TNum(0);
         }
     }
-
 } // namespace basic
 
 #endif // BASIC_HPP
