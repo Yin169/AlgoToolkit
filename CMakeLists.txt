@@ -13,6 +13,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Preconditioner
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Solver
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Krylov
+    ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/FastMultipole
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Nonlinear
     ${PROJECT_SOURCE_DIR}/src/ODE
     ${PROJECT_SOURCE_DIR}/src/PDEs
@@ -57,6 +58,7 @@ set(TEST_SOURCES
     MeshObj_test
     Visual_test
     SVD_test
+    FMM_test
 )
 
 # Add test executables
