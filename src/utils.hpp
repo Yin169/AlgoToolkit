@@ -2,6 +2,7 @@
 #define UTILS_HPP
 
 #include <fstream>
+#include <iostream>
 #include <random>
 #include <algorithm>
 #include "Obj/DenseObj.hpp"
@@ -26,7 +27,7 @@ void setMatrixValue(MatrixType& H, int i, int j, T value) {
 }
 
 template <typename T, typename MatrixType>
-void readfile(std::string filename, MatrixType& matrix) {
+void readMatrixMarket(std::string filename, MatrixType& matrix) {
 	// Open the file:
 	std::ifstream fin(filename);
     if (!fin.is_open()) {
