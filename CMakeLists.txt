@@ -56,6 +56,7 @@ set(TEST_SOURCES
     NewtonMethod_test
     MeshObj_test
     Visual_test
+    SVD_test
 )
 
 # Add test executables
@@ -76,7 +77,7 @@ set(BENCHMARK_SOURCES
     bench_ODE
     MainTest
     # CylinderFlow2D
-    JetFlow_2D
+    # JetFlow_2D
 )
 
 # Add benchmark executables
