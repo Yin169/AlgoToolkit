@@ -8,7 +8,7 @@
 #include <limits>
 #include "../../Obj/DenseObj.hpp"
 #include "../../Obj/VectorObj.hpp"
-#include "../utils.hpp"
+#include "../../utils.hpp"
 
 /**
  * @namespace basic

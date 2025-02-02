@@ -4,11 +4,9 @@
 #include "../src/Obj/SparseObj.hpp"
 #include "../src/Obj/DenseObj.hpp"
 #include "../src/Obj/VectorObj.hpp"
-#include "../src/Obj/MatrixObj.hpp"
 #include "../src/Intergal/GaussianQuad.hpp"
 #include "../src/ODE/RungeKutta.hpp"
-#include "../src/PDEs/SpectralElementMethod.hpp"
-#include "../src/LinearAlgebra/Preconditioner/LU.hpp"
+#include "../src/LinearAlgebra/Preconditioner/ILU.hpp"
 #include "../src/LinearAlgebra/Preconditioner/MultiGrid.hpp"
 #include "../src/LinearAlgebra/Krylov/ConjugateGradient.hpp"
 #include "../src/LinearAlgebra/Krylov/GMRES.hpp"
@@ -46,6 +44,16 @@ PYBIND11_MODULE(fastsolver, m) {
           "Arnoldi iteration for generating an orthogonal basis of the Krylov subspace.",
           py::arg("A"), py::arg("Q"), py::arg("H"), py::arg("tol"));
 
+    // Matrix-Vector Multiplication
+    m.def("matvec_mul", [](const SparseMatrixCSC<double> &A, const VectorObj<double> &x) {
+        return A * x;
+    }, "Matrix-vector multiplication", py::arg("A"), py::arg("x"));
+
+    // Matrix-Matrix Multiplication
+    m.def("matmat_mul", [](const SparseMatrixCSC<double> &A, const SparseMatrixCSC<double> &B) {
+        return A * B;
+    }, "Matrix-matrix multiplication", py::arg("A"), py::arg("B"));
+
     // Conjugate Gradient Solver
     py::class_<ConjugateGrad<double, SparseMatrixCSC<double>, VectorObj<double>>>(m, "ConjugateGrad")
         .def(py::init<const SparseMatrixCSC<double>&, const VectorObj<double>&, int, double>())
@@ -66,7 +74,7 @@ PYBIND11_MODULE(fastsolver, m) {
              py::arg("A"), py::arg("b"), py::arg("x"), py::arg("levels"), py::arg("smoothingSteps"), py::arg("theta"));
 
     // LU Factorization
-    m.def("pivot_lu", &LU::PivotLU<double, DenseObj<double>>, 
+    m.def("pivot_lu", &basic::PivotLU<double, DenseObj<double>>, 
         "Perform LU decomposition with partial pivoting.",
         py::arg("A"), py::arg("P"));
 
@@ -91,9 +99,9 @@ PYBIND11_MODULE(fastsolver, m) {
     py::class_<RungeKutta<double, VectorObj<double>, VectorObj<double>>>(m, "RK4")
         .def(py::init<>())
         .def("solve", &RungeKutta<double, VectorObj<double>, VectorObj<double>>::solve, 
-            py::arg("y"), py::arg("f"), py::arg("h"), py::arg("n"), py::arg("callback") = nullptr)
-        .def("solve_adaptive", &RungeKutta<double, VectorObj<double>, VectorObj<double>>::solveAdaptive, 
-            py::arg("y"), py::arg("f"), py::arg("h"), py::arg("tol"), py::arg("max_steps"));
+            py::arg("y"), py::arg("f"), py::arg("h"), py::arg("n"), py::arg("callback") = nullptr);
+        // .def("solve_adaptive", &RungeKutta<double, VectorObj<double>, VectorObj<double>>::solveAdaptive, 
+        //     py::arg("y"), py::arg("f"), py::arg("h"), py::arg("tol"), py::arg("max_steps"));
 
     // Matrix/Vector Operations
     py::class_<VectorObj<double>>(m, "Vector")
@@ -133,4 +141,18 @@ PYBIND11_MODULE(fastsolver, m) {
         .def("finalize", &SparseMatrixCSC<double>::finalize)
         .def("rows", &SparseMatrixCSC<double>::getRows)
         .def("cols", &SparseMatrixCSC<double>::getCols);
+
+    // Matrix Market File IO
+    m.def("read_matrix_market", [](const std::string& filename, py::object matrix) {
+        if (py::isinstance<DenseObj<double>>(matrix)) {
+            auto& mat = matrix.cast<DenseObj<double>&>();
+            utils::readMatrixMarket<double, DenseObj<double>>(filename, mat);
+        } else if (py::isinstance<SparseMatrixCSC<double>>(matrix)) {
+            auto& mat = matrix.cast<SparseMatrixCSC<double>&>();
+            utils::readMatrixMarket<double, SparseMatrixCSC<double>>(filename, mat);
+        } else {
+            throw fastsolverError("Unsupported matrix type");
+        }
+    }, "Read matrix from Matrix Market format file",
+       py::arg("filename"), py::arg("matrix"));
 }
