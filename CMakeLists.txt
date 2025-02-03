@@ -46,6 +46,7 @@ set(TEST_SOURCES
     debuglogger
     itersolver_test
     LU_test
+    Cholesky_test
     KrylovSubspace_test
     MultiGrid_test
     ConjugateGradient_test

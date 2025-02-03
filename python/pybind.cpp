@@ -81,6 +81,8 @@ PYBIND11_MODULE(fastsolver, m) {
     // GMRES Solver
     py::class_<GMRES<double, SparseMatrixCSC<double>, VectorObj<double>>>(m, "GMRES")
         .def(py::init<>())
+        .def("enablePreconditioner", &GMRES<double, SparseMatrixCSC<double>, VectorObj<double>>::enablePreconditioner,
+             "Enable preconditioning for GMRES.")
         .def("solve", &GMRES<double, SparseMatrixCSC<double>, VectorObj<double>>::solve,
              "Solve the linear system using GMRES.",
              py::arg("A"), py::arg("b"), py::arg("x"), py::arg("maxIter"), py::arg("KrylovDim"), py::arg("tol"));

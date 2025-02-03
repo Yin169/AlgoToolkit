@@ -184,6 +184,52 @@ namespace basic {
         return x;
     }
 
+    // Cholesky factorization    
+    template <typename TNum = double , typename MatrixType = DenseObj<TNum>>
+    void Cholesky(const MatrixType& A, MatrixType& L) {
+        int n = A.getRows();
+        
+        // Check if matrix is square
+        if (n != A.getCols()) {
+            throw std::invalid_argument("Matrix must be square for Cholesky decomposition");
+        }
+        
+        L = MatrixType(n, n);
+        
+        for (int j = 0; j < n; j++) {
+            TNum sum = TNum(0);
+            // Calculate diagonal element
+            for (int k = 0; k < j; k++) {
+                sum += L(j, k) * L(j, k);
+            }
+            
+            // Check if matrix is positive definite
+            if (A(j,j) - sum <= TNum(0)) {
+                throw std::runtime_error("Matrix is not positive definite");
+            }
+            
+            L.addValue(j, j, std::sqrt(A(j,j) - sum));
+            L.finalize();
+            
+            // Calculate non-diagonal elements
+            for (int i = j + 1; i < n; i++) {
+                sum = TNum(0);
+                for (int k = 0; k < j; k++) {
+                    sum += L(i, k) * L(j, k);
+                }
+                
+                // Check for division by zero
+                if (std::abs(L(j, j)) < std::numeric_limits<TNum>::epsilon()) {
+                    throw std::runtime_error("Division by zero in Cholesky decomposition");
+                }
+                
+                L.addValue(i, j, (A(i,j) - sum) / L(j, j));
+                L.finalize();
+            }
+        }
+        L.finalize();
+    }
+
     template <typename TNum, typename MatrixType>
     void PivotLU(MatrixType& A, std::vector<int>& P) {
         int n = A.getRows();
