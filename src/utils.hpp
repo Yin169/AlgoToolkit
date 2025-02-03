@@ -25,42 +25,52 @@ void setMatrixValue(MatrixType& H, int i, int j, T value) {
     H.addValue(i, j, value);
     H.finalize();
 }
-
 template <typename T, typename MatrixType>
 void readMatrixMarket(std::string filename, MatrixType& matrix) {
-	// Open the file:
-	std::ifstream fin(filename);
+    // Open the file:
+    std::ifstream fin(filename, std::ios::binary);
     if (!fin.is_open()) {
         std::cerr << "Unable to open" << std::endl;
         return;
     }
 
-	// Declare variables:
-	int M, N, L;
+    // Declare variables:
+    int M, N, L;
 
-	// Ignore headers and comments:
-	while (fin.peek() == '%') fin.ignore(2048, '\n');
+    // Ignore headers and comments:
+    while (fin.peek() == '%') fin.ignore(2048, '\n');
 
-	// Read defining parameters:
-	fin >> M >> N >> L;
+    // Read defining parameters:
+    fin >> M >> N >> L;
 
-	std::cout << "M: " << M << " N: " << N << " L: " << L << std::endl;	
-	// Create your matrix:
+    std::cout << "M: " << M << " N: " << N << " L: " << L << std::endl;    
+    
+    // Create your matrix:
+    matrix = MatrixType(M, N);
+    std::cout << "Matrix created " << matrix.getRows() << " " << matrix.getCols() << std::endl;
 
-	matrix = MatrixType(M, N);
-	std::cout << "Matrix created " << matrix.getRows() << " " << matrix.getCols() << std::endl; 
+    // Pre-allocate vectors for batch processing
+    std::vector<int> rows, cols;
+    std::vector<T> values;
+    rows.reserve(L);
+    cols.reserve(L);
+    values.reserve(L);
 
-	// Read the data
-	for (int l = 0; l < L; l++)
-	{	if (l%1000 == 0){
-			std::cout << "Reading line: " << l << std::endl;
-		}
-		int m, n;
-		double data;
-		fin >> m >> n >> data;
-		setMatrixValue(matrix, m-1, n-1, data);
-	}
-	fin.close();
+    // Read all data at once
+    for (int l = 0; l < L; l++) {
+        int m, n;
+        T data;
+        fin >> m >> n >> data;
+        rows.push_back(m-1);
+        cols.push_back(n-1);
+        values.push_back(data);
+    }
+    fin.close();
+
+    // Batch process the matrix values
+    for (size_t i = 0; i < rows.size(); ++i) {
+        setMatrixValue(matrix, rows[i], cols[i], values[i]);
+    }
 }
 
 } // namespace utils

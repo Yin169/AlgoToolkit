@@ -13,3 +13,4 @@ bazel-bin
 *.txt
 *.cmake
 /build
+*.ipynb
