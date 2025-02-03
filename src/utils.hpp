@@ -25,6 +25,8 @@ void setMatrixValue(MatrixType& H, int i, int j, T value) {
     H.addValue(i, j, value);
     H.finalize();
 }
+
+
 template <typename T, typename MatrixType>
 void readMatrixMarket(std::string filename, MatrixType& matrix) {
     // Open the file:
@@ -61,16 +63,11 @@ void readMatrixMarket(std::string filename, MatrixType& matrix) {
         int m, n;
         T data;
         fin >> m >> n >> data;
-        rows.push_back(m-1);
-        cols.push_back(n-1);
-        values.push_back(data);
+        matrix.addValue(m-1, n-1, data);
     }
+    matrix.finalize();
     fin.close();
 
-    // Batch process the matrix values
-    for (size_t i = 0; i < rows.size(); ++i) {
-        setMatrixValue(matrix, rows[i], cols[i], values[i]);
-    }
 }
 
 } // namespace utils
