@@ -8,9 +8,13 @@
 #include <numeric>
 #include <unordered_map>
 #include "VectorObj.hpp"
+#include "DenseObj.hpp"
 
 template<typename TObj>
 class VectorObj;
+
+template<typename TObj>
+class DenseObj;
 
 template <typename TObj>
 class SparseMatrixCSC {
@@ -35,6 +39,16 @@ public:
 
     SparseMatrixCSC() : _n(0), _m(0) {}
     SparseMatrixCSC(int rows, int cols) : _n(rows), _m(cols), col_ptr(cols + 1, 0) {}
+    SparseMatrixCSC(const DenseObj<TObj>& dense) : _n(dense.getRows()), _m(dense.getCols()), col_ptr(dense.getCols() + 1, 0) {
+        for (size_t i=0; i<dense.getRows(); ++i){
+            for (size_t j=0; j<dense.getCols(); ++j){
+                if (dense(i, j)!= TObj(0)) {
+                    addValue(i, j, dense(i, j));
+                }
+            }
+        }
+        finalize();
+    }
     ~SparseMatrixCSC() = default;
 
     void addValue(int row, int col, TObj value) {
