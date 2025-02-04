@@ -25,52 +25,57 @@ public:
             throw std::invalid_argument("Matrix must be square for ILU factorization");
         }
 
-        // Initialize L and U with the same sparsity pattern as A
+        // Initialize L and U matrices
         L = MatrixType(n, n);
         U = MatrixType(n, n);
         
-        // LU Decomposition with improved efficiency for sparse matrices
+        // Temporary storage for column values
         std::vector<TNum> work(n);
+        const TNum epsilon = static_cast<TNum>(1e-12);
         
+        // Perform ILU factorization
         for (int j = 0; j < n; ++j) {
-            // Check for singular matrix using a small tolerance
-            const TNum epsilon = static_cast<TNum>(1e-12);
+            // Check for numerical stability
             if (std::abs(A(j, j)) < epsilon) {
-                throw std::runtime_error("Matrix is singular or nearly singular and cannot be decomposed.");
+                throw std::runtime_error("Matrix is numerically singular");
             }
 
-            // Store column j values in work array for efficient access
+            // Cache column j for better memory access
             for (int i = j; i < n; ++i) {
                 work[i] = A(i, j);
             }
 
+            // Compute multipliers and update matrix
             for (int i = j + 1; i < n; ++i) {
                 TNum factor = work[i] / work[j];
-                A.addValue(i, j, factor);
-                
-                // Update remaining elements in row i
-                for (int k = j + 1; k < n; ++k) {
-                    TNum update = A(i, k) - factor * A(j, k);
-                    if (std::abs(update) > epsilon) {
-                        A.addValue(i, k, update);
+                if (std::abs(factor) > epsilon) {
+                    A.addValue(i, j, factor);
+                    
+                    // Update remaining elements using Gaussian elimination
+                    for (int k = j + 1; k < n; ++k) {
+                        TNum update = A(i, k) - factor * A(j, k);
+                        if (std::abs(update) > epsilon) {
+                            A.addValue(i, k, update);
+                        }
                     }
                 }
             }
-            A.finalize(); // Finalize once per column instead of every update
+            A.finalize();
         }
 
-
+        // Extract L and U factors
         for (int i = 0; i < n; ++i) {
+            L.addValue(i, i, TNum(1.0)); // Diagonal of L is always 1
             for (int j = 0; j < n; ++j) {
-                if (i > j) {
-                    // L(i, j) = A(i, j); // Lower triangular part
-                    L.addValue(i, j, A(i, j));
-                } else {
-                    // U(i, j) = A(i, j); // Upper triangular part
-                    U.addValue(i, j, A(i, j));
+                TNum value = A(i, j);
+                if (std::abs(value) > epsilon) {
+                    if (i > j) {
+                        L.addValue(i, j, value);
+                    } else if (i <= j) {
+                        U.addValue(i, j, value);
+                    }
                 }
             }
-            L.addValue(i, i, TNum(1.0)); // Set diagonal elements of L to 1
         }
 
         L.finalize();
@@ -93,7 +98,7 @@ public:
             for (int j = 0; j < i; ++j) {
                 sum += L(i,j) * y[j];
             }
-            y[i] = b[i] - sum;  // L has 1's on diagonal
+            y[i] = b[i] - sum;
         }
 
         // Back substitution (Ux = y)
@@ -109,7 +114,6 @@ public:
         return x;
     }
 
-    // Get the L and U factors for debugging or analysis
     const MatrixType& getLFactor() const { return L; }
     const MatrixType& getUFactor() const { return U; }
 };

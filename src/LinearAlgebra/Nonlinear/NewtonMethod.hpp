@@ -52,7 +52,8 @@ public:
             VectorType rhs = residual * T(-1.0); // Right-hand side of the linear system
             delta_x = VectorType(x.size(), T(0.0)); // Initialize delta_x to zero
 
-            linear_solver.solve(J_x, rhs, delta_x, max_iter, std::min(J_x.getRows(), J_x.getCols()), tol);
+            // linear_solver.enablePreconditioner();
+            linear_solver.solve(J_x, rhs, delta_x, 100, std::min(J_x.getRows(), J_x.getCols()), tol);
 
             // Update the solution: x = x + alpha * delta_x
             x = x + delta_x * alpha;

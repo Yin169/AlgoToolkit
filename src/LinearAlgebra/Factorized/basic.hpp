@@ -148,7 +148,7 @@ namespace basic {
 
     // QR factorization using Householder reflections
     template <typename TNum, typename MatrixType>
-    void qrFactorization(const MatrixType& A, MatrixType& Q, MatrixType& R) {
+    void QR(const MatrixType& A, MatrixType& Q, MatrixType& R) {
         int n = A.getRows(), m = A.getCols();
         R = A;
         Q = genUnitMat<TNum, MatrixType>(n);

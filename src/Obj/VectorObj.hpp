@@ -44,6 +44,7 @@ public:
         return data[index];
     }
 
+    inline TObj* element() { return data.data(); }
     inline const TObj* element() const { return data.data(); }
     inline size_t size() const { return _size; }
 

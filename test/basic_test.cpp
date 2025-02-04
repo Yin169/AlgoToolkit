@@ -88,7 +88,7 @@ TEST_F(MyTest, HouseholderTransformTest) {
 
 TEST_F(MyTest, QrFactorizationTest) {
     DenseObj<double> Q, R;
-    basic::qrFactorization<double, DenseObj<double>>(A, Q, R);
+    basic::QR<double, DenseObj<double>>(A, Q, R);
 
     // Check if R is upper triangular
     for (int i = 1; i < A.getCols(); ++i) {

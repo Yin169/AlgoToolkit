@@ -14,6 +14,7 @@
 #include "../src/LinearAlgebra/Solver/IterSolver.hpp"
 #include "../src/LinearAlgebra/Factorized/basic.hpp"
 #include "../src/utils.hpp"
+#include <pybind11/numpy.h>
 
 using namespace Quadrature;
 namespace py = pybind11;
@@ -106,8 +107,24 @@ PYBIND11_MODULE(fastsolver, m) {
         //     py::arg("y"), py::arg("f"), py::arg("h"), py::arg("tol"), py::arg("max_steps"));
 
     // Matrix/Vector Operations
+    // Update Vector bindings with numpy compatibility
     py::class_<VectorObj<double>>(m, "Vector")
         .def(py::init<int>())
+        .def(py::init([](py::array_t<double> array) {
+            auto buf = array.request();
+            if (buf.ndim != 1) {
+                throw std::runtime_error("Number of dimensions must be 1");
+            }
+            VectorObj<double> vec(buf.shape[0]);
+            std::memcpy(vec.element(), buf.ptr, buf.shape[0] * sizeof(double));
+            return vec;
+        }))
+        .def("__array__", [](const VectorObj<double> &vec) {
+            return py::array_t<double>({vec.size()}, {sizeof(double)}, vec.element());
+        })
+        .def("to_numpy", [](const VectorObj<double> &vec) {
+            return py::array_t<double>({vec.size()}, {sizeof(double)}, vec.element());
+        })
         .def("__getitem__", [](const VectorObj<double> &self, size_t index) -> double {
             if (index >= self.size()) {
                 throw py::index_error("Index out of range");
@@ -123,9 +140,16 @@ PYBIND11_MODULE(fastsolver, m) {
         .def("size", &VectorObj<double>::size)
         .def("norm", &VectorObj<double>::L2norm, "Compute the L2 norm of the vector.");
 
-    // Dense Matrix
+    // Add Cholesky decomposition
+    m.def("cholesky", &basic::Cholesky<double, DenseObj<double>>,
+          "Perform Cholesky decomposition of a symmetric positive definite matrix",
+          py::arg("A"), py::arg("L"));
+
+    // Update Dense Matrix bindings
     py::class_<DenseObj<double>>(m, "DenseMatrix")
         .def(py::init<int, int>())
+        .def(py::init<const VectorObj<double>&, int, int>())
+        .def(py::init<const std::vector<VectorObj<double>>&, int, int>())
         .def("__setitem__", [](DenseObj<double> &self, std::pair<int, int> idx, double value) {
             self(idx.first, idx.second) = value;
         })
@@ -134,15 +158,37 @@ PYBIND11_MODULE(fastsolver, m) {
         })
         .def("rows", &DenseObj<double>::getRows)
         .def("cols", &DenseObj<double>::getCols)
-        .def("__len__", &DenseObj<double>::getRows);  // 返回矩阵的行数
+        .def("__len__", &DenseObj<double>::getRows)
+        .def("resize", &DenseObj<double>::resize)
+        .def("transpose", &DenseObj<double>::Transpose)
+        .def("__mul__", [](const DenseObj<double>& self, const DenseObj<double>& other) {
+            return self * other;
+        })
+        .def("__mul__", [](const DenseObj<double>& self, double scalar) {
+            return self * scalar;
+        });
 
-    // Sparse Matrix
+    // Update Sparse Matrix bindings
     py::class_<SparseMatrixCSC<double>>(m, "SparseMatrix")
         .def(py::init<int, int>())
+        .def(py::init<const DenseObj<double>&>())
         .def("addValue", &SparseMatrixCSC<double>::addValue)
         .def("finalize", &SparseMatrixCSC<double>::finalize)
         .def("rows", &SparseMatrixCSC<double>::getRows)
-        .def("cols", &SparseMatrixCSC<double>::getCols);
+        .def("cols", &SparseMatrixCSC<double>::getCols)
+        .def("transpose", &SparseMatrixCSC<double>::Transpose)
+        .def("__mul__", [](const SparseMatrixCSC<double>& self, const VectorObj<double>& vec) {
+            return self * vec;
+        })
+        .def("__mul__", [](const SparseMatrixCSC<double>& self, const SparseMatrixCSC<double>& other) {
+            return self * other;
+        })
+        .def("__mul__", [](const SparseMatrixCSC<double>& self, double scalar) {
+            return self * scalar;
+        })
+        .def("__call__", [](const SparseMatrixCSC<double>& self, int i, int j) {
+            return self(i, j);
+        });
 
     // Matrix Market File IO
     m.def("read_matrix_market", [](const std::string& filename, py::object matrix) {
