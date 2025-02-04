@@ -78,7 +78,6 @@ set(BENCHMARK_SOURCES
     bench_LU
     bench_Solver
     bench_ODE
-    MainTest
     # CylinderFlow2D
     # JetFlow_2D
 )
