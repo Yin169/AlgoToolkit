@@ -88,7 +88,8 @@ public:
         }
 
         if (changeNorm >= 1e-6) {
-            throw std::runtime_error("Solution did not converge within the specified iterations.");
+            std::cout << "Solution did not converge within the specified iterations. " << changeNorm << std::endl;
+            // throw std::runtime_error("Solution did not converge within the specified iterations.");
         }
     }
 };

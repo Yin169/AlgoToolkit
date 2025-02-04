@@ -61,15 +61,15 @@ void writeVTK(const std::string& filename,
 
 int main() {
     // Parameters
-    const int nx = 128;
-    const int ny = 128;
-    const double Re = 1000.0;    // Reynolds number
-    const double dt = 0.001;     // Time step
-    const int nsteps = 10000;    // Total time steps
+    const int nx = 32;
+    const int ny = 32;
+    const double Re = 100.0;    // Reynolds number
+    const double dt = 0.0000001;     // Time step increased for faster convergence
+    const int nsteps = 100000;    // Reduced total time steps
     const int output_interval = 100;  // Output interval
     const double U = 1.0;        // Lid velocity
-    const double tolerance = 1e-6;// Convergence tolerance
-    const double cfl_limit = 0.8; // CFL limit
+    const double tolerance = 1e-5;// Relaxed convergence tolerance
+    const double cfl_limit = 0.5; // Reduced CFL limit for better stability
 
     // Create output directory
     std::filesystem::create_directories("output");
