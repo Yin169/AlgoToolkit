@@ -58,7 +58,7 @@ TEST(StaticIterMethodTest, JacobiMethodConvergence) {
     x[0] = 0.0;
     x[1] = 0.0;
     x[2] = 0.0;
-    StaticIterMethod<double, SparseMatrixCSC<double>, VectorObj<double>> solver(A, b, 1000, 0.5);
+    SOR<double, SparseMatrixCSC<double>, VectorObj<double>> solver(A, b, 1000, 0.5);
 
     // Solve the system
     solver.solve(x);

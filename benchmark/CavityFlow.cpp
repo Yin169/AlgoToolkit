@@ -1,79 +1,107 @@
-#include "../src/LinearAlgebra/Solver/VorticityStreamSolver.hpp"
+#include "../application/CFD/VorticityStreamSolver.hpp"
 #include <fstream>
 #include <iomanip>
 #include <sstream>
-#include <string>	
+#include <string>
+#include <filesystem>
 
 template<typename T>
 void writeVTK(const std::string& filename,
               const VectorObj<T>& vorticity,
               const VectorObj<T>& streamFunction,
+              const VectorObj<T>& u_velocity,
+              const VectorObj<T>& v_velocity,
               int nx, int ny,
               double dx, double dy) {
     std::ofstream file(filename);
-    file << std::scientific << std::setprecision(6);  // 添加精度控制
+    file << std::scientific << std::setprecision(6);
     
-    // 写入 VTK 文件头
+    // Write VTK header
     file << "# vtk DataFile Version 3.0\n";
     file << "Cavity Flow Solution\n";
     file << "ASCII\n";
     file << "DATASET STRUCTURED_GRID\n";
     
-    // 写入网格尺寸
-    file << "\nDIMENSIONS " << nx << " " << ny << " 1\n";
+    // Write dimensions
+    file << "DIMENSIONS " << nx << " " << ny << " 1\n";
     
-    // 写入点坐标
-    file << "\nPOINTS " << nx * ny << " double\n";  // 使用double而不是float
+    // Write points
+    file << "POINTS " << nx * ny << " double\n";
     for (int j = 0; j < ny; ++j) {
         for (int i = 0; i < nx; ++i) {
             file << i * dx << " " << j * dy << " 0.0\n";
         }
     }
     
-    // 写入点数据
+    // Write point data
     file << "\nPOINT_DATA " << nx * ny << "\n";
     
-    // 写入涡量场
-    file << "SCALARS vorticity double 1\n";  // 使用double而不是float
+    // Write vorticity field
+    file << "SCALARS vorticity double 1\n";
     file << "LOOKUP_TABLE default\n";
     for (int i = 0; i < nx * ny; ++i) {
         file << vorticity[i] << "\n";
     }
     
-    // 写入流函数
-    file << "\nSCALARS streamFunction double 1\n";  // 使用double而不是float
+    // Write stream function
+    file << "\nSCALARS streamFunction double 1\n";
     file << "LOOKUP_TABLE default\n";
     for (int i = 0; i < nx * ny; ++i) {
         file << streamFunction[i] << "\n";
     }
     
+    // Write velocity field
+    file << "\nVECTORS velocity double\n";
+    for (int i = 0; i < nx * ny; ++i) {
+        file << u_velocity[i] << " " << v_velocity[i] << " 0.0\n";
+    }
+    
     file.close();
 }
 
-
 int main() {
-    // 设置参数
+    // Parameters
     const int nx = 128;
     const int ny = 128;
-    const double Re = 1000.0;  // 雷诺数
-    const double dt = 0.001;   // 时间步长
-    const int nsteps = 1000;   // 总时间步数
-    const int output_interval = 100;  // 输出间隔
+    const double Re = 1000.0;    // Reynolds number
+    const double dt = 0.001;     // Time step
+    const int nsteps = 10000;    // Total time steps
+    const int output_interval = 100;  // Output interval
+    const double U = 1.0;        // Lid velocity
+    const double tolerance = 1e-6;// Convergence tolerance
+    const double cfl_limit = 0.8; // CFL limit
 
-    // 创建求解器
-    VorticityStreamSolver<double> solver(nx, ny, Re);
+    // Create output directory
+    std::filesystem::create_directories("output");
 
-    // 求解并定期输出结果
-    for (int step = 0; step < nsteps; ++step) {
-        solver.solve(dt, 1);
+    // Create solver
+    VorticityStreamSolver<double> solver(nx, ny, Re, U, tolerance, cfl_limit);
+
+    // Solve and output results periodically
+    bool converged = false;
+    for (int step = 0; step < nsteps && !converged; ++step) {
+        converged = solver.solve(dt, 1);
 
         if (step % output_interval == 0) {
-            std::stringstream ss;
-			std::string filename = "cavity_flow_" + std::to_string(step) + ".vtk";
-            writeVTK<double>(filename, solver.getVorticity(), solver.getStreamFunction(), nx, ny, 1.0/nx, 1.0/ny);         
-
+            std::string filename = "output/cavity_flow_" + std::to_string(step) + ".vtk";
+            
+            writeVTK<double>(filename, 
+                          solver.getVorticity(),
+                          solver.getStreamFunction(),
+                          solver.getUVelocity(),
+                          solver.getVVelocity(),
+                          nx, ny,
+                          solver.getDx(),
+                          solver.getDy());
+            
             std::cout << "Step " << step << " completed." << std::endl;
         }
+    }
+
+    if (converged) {
+        std::cout << "Simulation converged successfully!" << std::endl;
+    } else {
+        std::cout << "Maximum iterations reached without convergence." << std::endl;
     }
 
     return 0;

@@ -91,12 +91,12 @@ public:
     // Recursive AMG V-cycle
     void amgVCycle(const SparseMatrixCSC<TNum>& A, const VectorType& b, VectorType& x, int levels, int smoothingSteps, TNum theta) {
         if (levels == 1) {
-            StaticIterMethod<TNum, SparseMatrixCSC<TNum>, VectorType>(A, b, smoothingSteps).solve(x);
+            SOR<TNum, SparseMatrixCSC<TNum>, VectorType>(A, b, smoothingSteps).solve(x);
             return;
         }
 
         // Pre-smoothing
-        StaticIterMethod<TNum, SparseMatrixCSC<TNum>, VectorType>(A, b, smoothingSteps).solve(x);
+        SOR<TNum, SparseMatrixCSC<TNum>, VectorType>(A, b, smoothingSteps).solve(x);
 
         // Compute residual r = b - A * x
         VectorType r = b - (const_cast<SparseMatrixCSC<TNum>&>(A) * x);
@@ -118,7 +118,7 @@ public:
         x = x + correction;
 
         // Post-smoothing
-        StaticIterMethod<TNum, SparseMatrixCSC<TNum>, VectorType>(A, b, smoothingSteps).solve(x);
+        SOR<TNum, SparseMatrixCSC<TNum>, VectorType>(A, b, smoothingSteps).solve(x);
     }
 };
 

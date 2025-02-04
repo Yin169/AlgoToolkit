@@ -46,7 +46,7 @@ public:
 
 // Static Iterative Method (e.g., Jacobi or Gauss-Seidel) with Relaxation and Convergence Check
 template <typename TNum, typename SparseMatrixType, typename VectorType>
-class StaticIterMethod {
+class SOR {
 private:
     const SparseMatrixType& A;
     const VectorType& b;
@@ -54,7 +54,7 @@ private:
     TNum omega; // Relaxation factor for methods like SOR
 
 public:
-    StaticIterMethod(const SparseMatrixType& matrix, const VectorType& rhs, int iterations, TNum relaxation = 1.0)
+    SOR(const SparseMatrixType& matrix, const VectorType& rhs, int iterations, TNum relaxation = 1.0)
         : A(matrix), b(rhs), maxIter(iterations), omega(relaxation) {}
 
     void solve(VectorType& x) {
