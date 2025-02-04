@@ -4,11 +4,15 @@ FASTSolver is a state-of-the-art scientific computing framework that delivers ex
 ## Core Capabilities
 ### Advanced Numerical Methods
 - Optimized linear algebra computations
+  - LU Decomposition
+  - Cholesky Decomposition
+  - ILU (Incomplete LU) Factorization
 - High-performance iterative solvers
   - GMRES (Generalized Minimal Residual)
   - CG (Conjugate Gradient)
 - Adaptive multi-grid algorithms
 - Robust ODE integration
+  - Runge-Kutta Methods
 - Advanced Newton-Raphson Implementation
   - Efficient nonlinear system resolution
   - Flexible Jacobian matrix handling
@@ -54,31 +58,27 @@ python setup.py install
 Here's an example of how to use the `FASTSolver` module in Python:
 
 ```python
-import fastsolver as fs
+iimport fastsolver as fs
+import numpy as np
 
-A = fs.SparseMatrix(2, 2)
-A.addValue(0, 0, 4.0)
-A.addValue(0, 1, 1.0)
-A.addValue(1, 0, 1.0)
-A.addValue(1, 1, 3.0)
-A.finalize()
 
-b = fs.Vector(2)
-b[0] = 1.0
-b[1] = 2.0
+matrix = fs.SparseMatrix(1, 1)
+fs.read_matrix_market("../data/bcsstk08/bcsstk08.mtx", matrix)
 
-x = fs.Vector(2)
-x[0] = 0.0
-x[1] = 0.0
+# Generate a random exact solution
 
-amg = fs.AlgebraicMultiGrid()
+x_ext = fs.Vector(np.random.rand(matrix.cols()))
 
-levels = 2
-smoothing_steps = 10
-theta = 0.5
-amg.amgVCycle(A, b, x, levels, smoothing_steps, theta)
+# # Generate a random right-hand side
+b = matrix * x_ext
+x = fs.Vector(matrix.cols())
+# # Solve the system using GMRES
+gmres = fs.GMRES()
 
-print("Solution x:", [x[i] for i in range(x.size())])
+max_iter = 100
+krylov_dim = 300
+tol = 1e-6
+gmres.solve(matrix, b, x, max_iter, krylov_dim, tol)
 ```
 
 ## Project Structure
@@ -95,18 +95,7 @@ FASTSolver
 │   │   └── MeshObj.hpp
 │   └── PostProcess
 │       └── Visual.hpp
-├── code
-│   ├── test.ipynb
-│   └── test.py
 ├── conanfile.txt
-├── data
-│   ├── Chem97ZtZ
-│   │   └── Chem97ZtZ.mtx
-│   └── Chem97ZtZ.tar
-├── examples
-│   ├── CylinderFlow.cpp
-│   ├── JetFlow_2D.cpp
-│   └── JetFlow_3D.cpp
 ├── python
 │   └── pybind.cpp
 ├── script_test.sh
@@ -136,25 +125,7 @@ FASTSolver
 │   │   └── SpectralElementMethod.hpp
 │   └── utils.hpp
 └── test
-    ├── ConjugateGradient_test.cpp
-    ├── GMRES_test.cpp
-    ├── GaussianQuad_test.cpp
-    ├── KrylovSubspace_test.cpp
-    ├── LBMSolver_test.cpp
-    ├── LU_test.cpp
-    ├── MeshObj_test.cpp
-    ├── MultiGrid_test.cpp
-    ├── RungeKutta_test.cpp
-    ├── SparseMatrixCSCTest.cpp
-    ├── SpectralElementMethod_test.cpp
-    ├── Visual_test.cpp
-    ├── basic_test.cpp
-    ├── debuglogger.cpp
-    ├── demo.cpp
-    ├── itersolver_test.cpp
-    ├── matrix_obj_test.cpp
-    ├── test.cpp
-    └── testfile.cpp
+ 
 ```
 
 ## Contributing
