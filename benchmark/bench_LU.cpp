@@ -60,7 +60,7 @@ static void BM_QRFactorization(benchmark::State& state) {
     }
 
     for (auto _ : state) {
-        basic::qrFactorization<double, DenseObj<double>>(A, Q, R);
+        basic::QR<double, DenseObj<double>>(A, Q, R);
         benchmark::DoNotOptimize(Q); // Prevent compiler optimizations
         benchmark::DoNotOptimize(R); // Prevent compiler optimizations
     }
