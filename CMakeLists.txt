@@ -78,6 +78,7 @@ set(BENCHMARK_SOURCES
     bench_LU
     bench_Solver
     bench_ODE
+    CavityFlow
     # CylinderFlow2D
     # JetFlow_2D
 )

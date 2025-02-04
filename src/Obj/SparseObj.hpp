@@ -20,9 +20,10 @@ template <typename TObj>
 class SparseMatrixCSC {
 public:
     int _n, _m;
-    std::vector<TObj> values;      // Non-zero values
-    std::vector<int> row_indices; // Row indices of non-zeros
-    std::vector<int> col_ptr;     // Column pointers
+    // Add cache-aligned storage
+    alignas(64) std::vector<TObj> values;
+    alignas(64) std::vector<int> row_indices;
+    alignas(64) std::vector<int> col_ptr;
 
     // Helper struct for construction
     struct Entry {
