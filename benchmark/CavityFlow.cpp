@@ -63,13 +63,13 @@ int main() {
     // Parameters
     const int nx = 32;
     const int ny = 32;
-    const double Re = 100.0;    // Reynolds number
-    const double dt = 1/32;     // Time step increased for faster convergence
-    const int nsteps = 100000;    // Reduced total time steps
+    const double Re = 100.0;     // Reynolds number
+    const double dt = 1.0/32;    // Use floating-point division for dt
+    const int nsteps = 100000;   // Total number of steps
     const int output_interval = 100;  // Output interval
     const double U = 1.0;        // Lid velocity
     const double tolerance = 1e-5;// Relaxed convergence tolerance
-    const double cfl_limit = 0.5; // Reduced CFL limit for better stability
+    const double cfl_limit = 0.5; // Reduced CFL limit for stability
 
     // Create output directory
     std::filesystem::create_directories("output");
@@ -86,13 +86,13 @@ int main() {
             std::string filename = "output/cavity_flow_" + std::to_string(step) + ".vtk";
             
             writeVTK<double>(filename, 
-                          solver.getVorticity(),
-                          solver.getStreamFunction(),
-                          solver.getUVelocity(),
-                          solver.getVVelocity(),
-                          nx, ny,
-                          solver.getDx(),
-                          solver.getDy());
+                             solver.getVorticity(),
+                             solver.getStreamFunction(),
+                             solver.getUVelocity(),
+                             solver.getVVelocity(),
+                             nx, ny,
+                             solver.getDx(),
+                             solver.getDy());
             
             std::cout << "Step " << step << " completed." << std::endl;
         }
