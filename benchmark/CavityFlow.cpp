@@ -64,7 +64,7 @@ int main() {
     const int nx = 32;
     const int ny = 32;
     const double Re = 100.0;    // Reynolds number
-    const double dt = 0.0000001;     // Time step increased for faster convergence
+    const double dt = 1/32;     // Time step increased for faster convergence
     const int nsteps = 100000;    // Reduced total time steps
     const int output_interval = 100;  // Output interval
     const double U = 1.0;        // Lid velocity
@@ -80,7 +80,7 @@ int main() {
     // Solve and output results periodically
     bool converged = false;
     for (int step = 0; step < nsteps && !converged; ++step) {
-        converged = solver.solve(dt, 1);
+        converged = solver.solve(dt, 1000);
 
         if (step % output_interval == 0) {
             std::string filename = "output/cavity_flow_" + std::to_string(step) + ".vtk";

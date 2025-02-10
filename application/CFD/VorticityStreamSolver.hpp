@@ -22,7 +22,7 @@ private:
     TNum cfl_limit;
 
     // Field variables
-    SparseMatrixCSC<TNum> laplacian; // For Poisson equation of Stream function
+    SparseMatrixCSC<TNum> laplacian; // For Poisson equation of stream function
     SparseMatrixCSC<TNum> diffusion_matrix; // For implicit diffusion term in vorticity equation
     VectorObj<TNum> vorticity;
     VectorObj<TNum> streamFunction;
@@ -31,8 +31,8 @@ private:
 
     // Solver components
     AlgebraicMultiGrid<TNum, VectorObj<TNum>> multigrid;
-    int mg_levels = 3;
-    int mg_smoothing_steps = 7000;
+    int mg_levels = 7;
+    int mg_smoothing_steps = 1000;
     TNum mg_theta = 0.3;
     int mg_max_cycles = 150;
     TNum mg_tolerance = 1e-5;
@@ -60,11 +60,10 @@ private:
                     laplacian.addValue(idx, idx-nx, dy2i);
                     laplacian.addValue(idx, idx+nx, dy2i);
 
-                    // For implicit diffusion: I - 0.5*dt*re_inv*Laplacian (Approximation in matrix build, dt, Re factored out)
+                    // For implicit diffusion: I - 0.5*dt*Re*Laplacian 
                     const TNum diff_scale_diag = 1.0 - 0.5 * Re * (-laplacian_scale); // Modified diagonal
-                    const TNum diff_scale_off_diag = -0.5 * Re * (dx2i); // Modified off-diagonals (dx direction)
-                    const TNum diff_scale_off_diag_y = -0.5 * Re * (dy2i); // Modified off-diagonals (dy direction)
-
+                    const TNum diff_scale_off_diag = -0.5 * Re * (dx2i);             // Modified off-diagonals (x direction)
+                    const TNum diff_scale_off_diag_y = -0.5 * Re * (dy2i);           // Modified off-diagonals (y direction)
 
                     diffusion_matrix.addValue(idx, idx, diff_scale_diag);
                     diffusion_matrix.addValue(idx, idx-1, diff_scale_off_diag);
@@ -97,7 +96,7 @@ private:
     }
 
     void updateBoundaryConditions() {
-        // Stream function boundary conditions
+        // Update stream function BCs
         for (int i = 0; i < nx; ++i) {
             streamFunction[i] = 0.0;
             streamFunction[i + (ny-1)*nx] = 0.0;
@@ -110,18 +109,18 @@ private:
         const TNum dy2i = 1.0/(dy*dy);
         const TNum dx2i = 1.0/(dx*dx);
 
-        // Top wall (moving lid) - second order accurate
+        // Top wall (moving lid) - second order accurate for vorticity
         for (int i = 1; i < nx-1; ++i) {
             const int top_idx = i + (ny-1)*nx;
             vorticity[top_idx] = (-3.0*streamFunction[top_idx] + 4.0*streamFunction[top_idx-nx] - streamFunction[top_idx-2*nx])/(2.0*dy*dy) - 3.0*U/(2.0*dy);
         }
 
-        // Bottom wall - second order accurate
+        // Bottom wall - second order accurate for vorticity
         for (int i = 1; i < nx-1; ++i) {
             vorticity[i] = (-3.0*streamFunction[i] + 4.0*streamFunction[i+nx] - streamFunction[i+2*nx])/(2.0*dy*dy);
         }
 
-        // Vertical walls - second order accurate
+        // Vertical walls - second order accurate for vorticity
         for (int j = 1; j < ny-1; ++j) {
             const int left_idx = j*nx;
             const int right_idx = (j+1)*nx-1;
@@ -144,10 +143,8 @@ private:
         for (int j = 1; j < ny-1; ++j) {
             for (int i = 1; i < nx-1; ++i) {
                 const int idx = i + j*nx;
-
-                const TNum dwdx = (w[idx+1] - w[idx-1])/dx2;
-                const TNum dwdy = (w[idx+nx] - w[idx-nx])/dy2;
-
+                const TNum dwdx = (w[idx+1] - w[idx-1]) / dx2;
+                const TNum dwdy = (w[idx+nx] - w[idx-nx]) / dy2;
                 convection[idx] = u_velocity[idx]*dwdx + v_velocity[idx]*dwdy;
             }
         }
@@ -162,14 +159,13 @@ private:
         for (int j = 1; j < ny-1; ++j) {
             for (int i = 1; i < nx-1; ++i) {
                 const int idx = i + j*nx;
-                const TNum d2wdx2 = (w[idx+1] - 2.0*w[idx] + w[idx-1])*dx2i;
-                const TNum d2wdy2 = (w[idx+nx] - 2.0*w[idx] + w[idx-nx])*dy2i;
+                const TNum d2wdx2 = (w[idx+1] - 2.0*w[idx] + w[idx-1]) * dx2i;
+                const TNum d2wdy2 = (w[idx+nx] - 2.0*w[idx] + w[idx-nx]) * dy2i;
                 diffusion[idx] = d2wdx2 + d2wdy2;
             }
         }
         return diffusion;
     }
-
 
     TNum computeCFL(TNum dt) const {
         TNum max_vel = 0.0;
@@ -194,14 +190,12 @@ private:
             l2_err += diff * diff;
             l2_val += val * val;
         }
-
-        // Use both max norm and L2 norm for convergence check
-        return (max_err/max_val < tolerance) && (std::sqrt(l2_err/l2_val) < tolerance);
+        return (max_err / max_val < tolerance) && (std::sqrt(l2_err/l2_val) < tolerance);
     }
 
 public:
     VorticityStreamSolver(int nx_, int ny_, TNum Re_, TNum U_ = 1.0,
-                            TNum tol = 1e-6, TNum cfl = 0.4) // Using suggested cfl_limit = 0.4
+                            TNum tol = 1e-6, TNum cfl = 0.4)
         : nx(nx_), ny(ny_), Re(Re_), U(U_), tolerance(tol), cfl_limit(cfl) {
 
         if (nx < 3 || ny < 3) throw std::invalid_argument("Grid size must be at least 3x3");
@@ -226,89 +220,90 @@ public:
         VectorObj<TNum> convection_term_vec(nx*ny);
         VectorObj<TNum> rhs_vorticity(nx*ny);
 
-
-        const TNum under_relax = 0.5; // You can try removing or adjusting this later if needed
-
         for (int step = 0; step < max_steps; ++step) {
+            // --- Poisson Solver for streamFunction ---
+            // Update rhs based on current vorticity
             poisson_rhs = vorticity * -1.0;
 
-            TNum initial_res_norm = 0.0;
             residual = poisson_rhs - (laplacian * streamFunction);
+            TNum initial_res_norm = 0.0;
             for (size_t i = 0; i < residual.size(); ++i) {
                 initial_res_norm = std::max(initial_res_norm, std::abs(residual[i]));
             }
 
             bool poisson_converged = false;
+            int poisson_cycles = 0;
             for (int cycle = 0; cycle < mg_max_cycles; ++cycle) {
                 multigrid.amgVCycle(laplacian, poisson_rhs, streamFunction,
-                                            mg_levels, mg_smoothing_steps, mg_theta);
+                                    mg_levels, mg_smoothing_steps, mg_theta);
+                poisson_cycles++;
 
                 residual = poisson_rhs - (laplacian * streamFunction);
                 TNum res_norm = 0.0;
                 for (size_t i = 0; i < residual.size(); ++i) {
                     res_norm = std::max(res_norm, std::abs(residual[i]));
                 }
-
-                if (res_norm < mg_tolerance * initial_res_norm) {
+                if (res_norm / initial_res_norm < mg_tolerance) {
                     poisson_converged = true;
                     break;
                 }
             }
-
             if (!poisson_converged) {
-                throw std::runtime_error("Poisson solver did not converge");
+                throw std::runtime_error("Poisson solver did not converge after " +
+                                            std::to_string(poisson_cycles) + " cycles");
             }
 
+            // Update velocity and boundary conditions after solving stream function
             computeVelocityField();
-            updateBoundaryConditions(); // Update BCs after stream function and velocity are updated
+            updateBoundaryConditions();
 
+            // --- Time step modification based on CFL condition ---
             const TNum cfl = computeCFL(dt);
             if (cfl > cfl_limit) {
-                dt *= 0.5 * cfl_limit / cfl; // Using less aggressive reduction (0.5)
+                dt *= 0.5 * cfl_limit / cfl;
                 continue;
             }
 
+            // --- Convection update (explicit) ---
             const VectorObj<TNum> old_vorticity = vorticity;
-
-            // IMEX - Implicit Diffusion, Explicit Convection
             convection_term_vec = computeConvectionTerm(vorticity);
             rhs_vorticity = old_vorticity + convection_term_vec * dt;
 
-
-            // **Modified Multigrid parameters for DIFFUSION SOLVER**
-            int diffusion_mg_max_cycles = 200; // Increased cycles
-            int diffusion_mg_smoothing_steps = 60; // Increased smoothing
-
-            bool diffusion_converged = false;
-            TNum initial_diff_res_norm = 0.0;
+            // --- Diffusion Solver for vorticity ---
+            int diffusion_mg_max_cycles = 200; // Increased cycles for diffusion solver
+            int diffusion_mg_smoothing_steps = 100; // Increased smoothing steps
             residual.zero();
             residual = rhs_vorticity - (diffusion_matrix * vorticity);
+            TNum initial_diff_res_norm = 0.0;
             for (size_t i = 0; i < residual.size(); ++i) {
                 initial_diff_res_norm = std::max(initial_diff_res_norm, std::abs(residual[i]));
             }
-
+            bool diffusion_converged = false;
+            int diffusion_cycles = 0;
             for (int cycle = 0; cycle < diffusion_mg_max_cycles; ++cycle) {
                 multigrid.amgVCycle(diffusion_matrix, rhs_vorticity, vorticity,
-                                            mg_levels, diffusion_mg_smoothing_steps, mg_theta);
+                                    mg_levels, diffusion_mg_smoothing_steps, mg_theta);
+                diffusion_cycles++;
 
                 residual = rhs_vorticity - (diffusion_matrix * vorticity);
                 TNum res_norm = 0.0;
                 for (size_t i = 0; i < residual.size(); ++i) {
                     res_norm = std::max(res_norm, std::abs(residual[i]));
                 }
-                if (res_norm < mg_tolerance * initial_diff_res_norm) {
+                if (res_norm / initial_diff_res_norm < mg_tolerance) {
                     diffusion_converged = true;
                     break;
                 }
             }
             if (!diffusion_converged) {
-                throw std::runtime_error("Diffusion solver did not converge");
+                throw std::runtime_error("Diffusion solver did not converge after " +
+                                            std::to_string(diffusion_cycles) + " cycles");
             }
 
-
+            // Update boundary conditions after diffusion
             updateBoundaryConditions();
 
-
+            // --- Convergence check ---
             if (step % 100 == 0) {
                 if (checkConvergence(old_vorticity)) {
                     std::cout << "Converged after " << step << " steps\n";
