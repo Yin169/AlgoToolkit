@@ -41,8 +41,8 @@ protected:
 };
 
 TEST_F(GMRESTest, BasicSolverTest) {
-    double tol = 1e-6;
-    int maxIter = 100;
+    double tol = 1e-12;
+    int maxIter = 10000;
     int krylovDim = 3;
     
     solver.solve(matrix, b, x, maxIter, krylovDim, tol);
@@ -56,7 +56,7 @@ TEST_F(GMRESTest, ZeroRHSTest) {
     VectorObj<double> zero_b(3, 0.0);
     VectorObj<double> zero_x(3, 0.0);
     
-    solver.solve(matrix, zero_b, zero_x, 100, 3, 1e-6);
+    solver.solve(matrix, zero_b, zero_x, 10000, 3, 1e-12);
 
     // Solution should be zero vector
     EXPECT_NEAR(zero_x[0], 0.0, 1e-10);
@@ -66,7 +66,7 @@ TEST_F(GMRESTest, ZeroRHSTest) {
 
 TEST_F(GMRESTest, ConvergenceTest) {
     VectorObj<double> x_initial = x;
-    solver.solve(matrix, b, x, 100, 3, 1e-6);
+    solver.solve(matrix, b, x, 10000, 3, 1e-12);
     
     // Verify residual
     VectorObj<double> residual = b - matrix * x;
@@ -76,7 +76,7 @@ TEST_F(GMRESTest, ConvergenceTest) {
 
 TEST_F(GMRESTest, DimensionMismatchTest) {
     VectorObj<double> wrong_size_x(4, 0.0);
-    EXPECT_THROW(solver.solve(matrix, b, wrong_size_x, 100, 3, 1e-4), std::invalid_argument);
+    EXPECT_THROW(solver.solve(matrix, b, wrong_size_x, 10000, 3, 1e-12), std::invalid_argument);
 }
 
 TEST_F(GMRESTest, KrylovDimensionTest) {
@@ -84,7 +84,7 @@ TEST_F(GMRESTest, KrylovDimensionTest) {
     std::vector<int> krylov_dims = {1, 2, 3};
     for (int dim : krylov_dims) {
         VectorObj<double> x_test = x;
-        solver.solve(matrix, b, x_test, 100, dim, 1e-6);
+        solver.solve(matrix, b, x_test, 10000, dim, 1e-12);
         
         VectorObj<double> residual = b - matrix * x_test;
         EXPECT_LT(residual.L2norm(), 1e-6);

@@ -70,22 +70,19 @@ public:
                     w = A * V[j];
                 }
 
-                for (int i = 0; i <= j; ++i) {
+                for (int i = 0; i < j; ++i) {
                     TNum w_dot_v = V[i] * w;
-                    if (i == j && std::abs(w_dot_v) < tol) {
-                        KryUpdate = j;
-                        break;
-                    }
                     setMatrixValue(H, i, j, w_dot_v);
-                    w = w - V[i] * H(i, j);
+                    w = w - V[i] * w_dot_v;
                 }
+                
                 TNum w_norm = w.L2norm();
-                setMatrixValue(H, j + 1, j, w_norm);
                 if (w_norm < tol) {
                     KryUpdate = j;
-                    std::cout << "Happy breakdown at iteration " << iter << std::endl;
+                    std::cout << "KrylovUpdate : " << KryUpdate << std::endl;
                     break;
                 }
+                setMatrixValue(H, j + 1, j, w_norm);
                 V[j + 1] = w / H(j + 1, j);
 
                 // Apply Givens rotations
@@ -142,19 +139,32 @@ private:
 
     void generateGivensRotation(TNum dx, TNum dy, TNum& cs, TNum& sn, TNum& rho) {
         rho = std::sqrt(dx * dx + dy * dy);
-        cs = dx / rho;
-        sn = dy / rho;
+        // Protect against division by zero
+        if (std::abs(rho) < std::numeric_limits<TNum>::epsilon()) {
+            cs = TNum(1);
+            sn = TNum(0);
+            rho = TNum(0);
+        } else {
+            cs = dx / rho;
+            sn = dy / rho;
+        }
     }
 
     void updateSolution(VectorType& x, const MatrixType& H, const std::vector<VectorType>& V, const VectorType& e1, int k) {
         VectorType y(k, TNum(0));
+        // Back substitution for solving upper triangular system Hy = e1
         for (int i = k - 1; i >= 0; --i) {
             y[i] = e1[i];
             for (int j = i + 1; j < k; ++j) {
                 y[i] = y[i] - H(i, j) * y[j];
             }
+            // Check for zero diagonal element to avoid division by zero
+            if (std::abs(H(i, i)) < std::numeric_limits<TNum>::epsilon()) {
+                throw std::runtime_error("GMRES updateSolution: Zero diagonal element encountered in H.");
+            }
             y[i] = y[i] / H(i, i);
         }
+        // Update solution: x = x + sum_i {V[i] * y[i]}
         for (int i = 0; i < k; ++i) {
             x = x + (V[i] * y[i]);
         }
