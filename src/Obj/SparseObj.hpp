@@ -309,6 +309,16 @@ public:
 
         finalize();
     }
+
+    void appendColumn(const VectorObj<TObj>& column){
+        if (column.size() != _n){
+            throw std::invalid_argument("Column size does not match matrix rows.");
+        }
+        for (int i = 0; i < _n; ++i){
+            addValue(i, _m, column[i]);
+        }
+        finalize();
+    }
 };
 
 #endif // SPARSEOBJ_HPP

@@ -16,10 +16,10 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/FastMultipole
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Nonlinear
     ${PROJECT_SOURCE_DIR}/src/ODE
-    ${PROJECT_SOURCE_DIR}/src/PDEs
     ${PROJECT_SOURCE_DIR}/src/Intergal
     ${PROJECT_SOURCE_DIR}/src/Obj
     ${PROJECT_SOURCE_DIR}/src/Mesh
+    ${PROJECT_SOURCE_DIR}/src/Regression
     ${PROJECT_SOURCE_DIR}/application
     ${PROJECT_SOURCE_DIR}/application/Mesh
     ${PROJECT_SOURCE_DIR}/application/PostProcess
@@ -60,11 +60,12 @@ set(TEST_SOURCES
     Visual_test
     SVD_test
     FMM_test
+    test_linearRegress
 )
 
 # Add test executables
 foreach(test_source ${TEST_SOURCES})
-    add_executable(${test_source} test/${test_source}.cpp)
+    add_executable(${test_source} tests/${test_source}.cpp)
     target_link_libraries(${test_source} PRIVATE ${TEST_DEPENDENCIES})
     add_test(NAME ${test_source} COMMAND ${test_source})
 endforeach()
@@ -78,7 +79,7 @@ set(BENCHMARK_SOURCES
     bench_LU
     bench_Solver
     bench_ODE
-    CavityFlow
+    # CavityFlow
     # CylinderFlow2D
     # JetFlow_2D
 )

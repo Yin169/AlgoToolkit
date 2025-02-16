@@ -215,6 +215,16 @@ public:
     }
 
     void finalize() {}
+
+    void appendColumn(const VectorObj<TObj>& column){
+        if (column.size() != _n){
+            throw std::invalid_argument("Column size does not match matrix rows.");
+        }
+        for (int i = 0; i < _n; ++i){
+            arr.push_back(column[i]);
+        }
+        _m++;
+    }
 };
 
 #endif // MATRIXOBJ_HPP
