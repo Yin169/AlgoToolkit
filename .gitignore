@@ -14,3 +14,5 @@ bazel-bin
 *.cmake
 /build
 *.ipynb
+*.egg
+*.egg-info/
