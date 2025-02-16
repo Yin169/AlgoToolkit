@@ -71,7 +71,7 @@ protected:
         x = VectorObj<double>(5, 0.5);
 
         // Create NewtonMethod object with stricter tolerance
-        newton = NewtonMethod<double, DenseObj<double>>(1e-8, 2000, 0.8);
+        newton = NewtonMethod<double, DenseObj<double>>(1e-10, 2000, 0.8);
     }
 
     VectorObj<double> x;
