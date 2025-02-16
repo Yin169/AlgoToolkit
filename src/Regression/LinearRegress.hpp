@@ -40,6 +40,7 @@ class LinearRegress{
 		}
 		return result;
 	}
+
 };
 
 #endif // "LINEARREGRESS_HPP"

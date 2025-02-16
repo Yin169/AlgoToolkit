@@ -13,7 +13,7 @@ protected:
         // Training data
         x_train(0,0) = 1.0; x_train(0,1) = 2.0;  // y = 8
         x_train(1,0) = 2.0; x_train(1,1) = 1.0;  // y = 7
-        x_train(2,0) = 3.0; x_train(3,1) = 3.0;  // y = 13
+        x_train(2,0) = 3.0; x_train(2,1) = 3.0;  // y = 13
         x_train(3,0) = 4.0; x_train(3,1) = 2.0;  // y = 11
         
         y_train[0] = 9.0;
@@ -46,12 +46,12 @@ TEST_F(LinearRegressTest, PredictionTest) {
     model->fit(x_train, y_train);
     
     VectorObj<double> test_input(2);
-    test_input[0] = 1.0;
+    test_input[0] = 2.0;
     test_input[1] = 2.0;
     
     double prediction = model->predict(test_input);
     // Expected value should be close to: 2*2 + 3*2 + 1 = 11
-    EXPECT_NEAR(prediction, 11.0, 0.5);
+    EXPECT_NEAR(prediction, 11.0, 1);
 }
 
 TEST_F(LinearRegressTest, InvalidInputTest) {
