@@ -32,16 +32,16 @@ PYBIND11_MODULE(fastsolver, m) {
     py::register_exception<fastsolverError>(m, "fastsolverError");
 
     // Basic Operations
-    m.def("power_iter", &basic::powerIter<double, DenseObj<double>>, 
+    m.def("power_iter", &basic::powerIter<double, DenseObj<double>>,
           "Power iteration method for computing the dominant eigenvalue of a matrix.",
           py::arg("A"), py::arg("b"), py::arg("max_iter"));
 
-    m.def("rayleigh_quotient", &basic::rayleighQuotient<double, DenseObj<double>>, 
+    m.def("rayleigh_quotient", &basic::rayleighQuotient<double, DenseObj<double>>,
           "Compute the Rayleigh quotient for a given matrix and vector.",
           py::arg("A"), py::arg("b"));
 
     // Krylov Subspace
-    m.def("arnoldi", &Krylov::Arnoldi<double, DenseObj<double>, VectorObj<double>>, 
+    m.def("arnoldi", &Krylov::Arnoldi<double, DenseObj<double>, VectorObj<double>>,
           "Arnoldi iteration for generating an orthogonal basis of the Krylov subspace.",
           py::arg("A"), py::arg("Q"), py::arg("H"), py::arg("tol"));
 
@@ -57,15 +57,17 @@ PYBIND11_MODULE(fastsolver, m) {
 
     // Conjugate Gradient Solver
     py::class_<ConjugateGrad<double, SparseMatrixCSC<double>, VectorObj<double>>>(m, "ConjugateGrad")
-        .def(py::init<const SparseMatrixCSC<double>&, const VectorObj<double>&, int, double>())
+        .def(py::init<const SparseMatrixCSC<double>&, const VectorObj<double>&, int, double>(),
+            py::arg("A"), py::arg("b"), py::arg("max_iter"), py::arg("tol"))
         .def("solve", &ConjugateGrad<double, SparseMatrixCSC<double>, VectorObj<double>>::solve,
-             "Solve the linear system using the Conjugate Gradient method.");
+             "Solve the linear system using the Conjugate Gradient method.",py::arg("x"));
 
     // Iterative Solvers
     py::class_<GradientDescent<double, SparseMatrixCSC<double>, VectorObj<double>>>(m, "GradientDescent")
-        .def(py::init<const SparseMatrixCSC<double>&, const VectorObj<double>&, int, double>())
+        .def(py::init<const SparseMatrixCSC<double>&, const VectorObj<double>&, int, double>(),
+              py::arg("A"), py::arg("b"), py::arg("max_iter"), py::arg("tol"))
         .def("solve", &GradientDescent<double, SparseMatrixCSC<double>, VectorObj<double>>::solve,
-             "Solve the linear system using Gradient Descent.");
+             "Solve the linear system using Gradient Descent.", py::arg("x"));
 
     // MultiGrid Solver
     py::class_<AlgebraicMultiGrid<double, VectorObj<double>>>(m, "AlgebraicMultiGrid")
@@ -75,7 +77,7 @@ PYBIND11_MODULE(fastsolver, m) {
              py::arg("A"), py::arg("b"), py::arg("x"), py::arg("levels"), py::arg("smoothingSteps"), py::arg("theta"));
 
     // LU Factorization
-    m.def("pivot_lu", &basic::PivotLU<double, DenseObj<double>>, 
+    m.def("pivot_lu", &basic::PivotLU<double, DenseObj<double>>,
         "Perform LU decomposition with partial pivoting.",
         py::arg("A"), py::arg("P"));
 
@@ -90,26 +92,26 @@ PYBIND11_MODULE(fastsolver, m) {
 
     // Numerical Integration
    py::class_<GaussianQuadrature<double>>(m, "GaussQuadrature")
-        .def(py::init<int>())
-        .def("integrate", &GaussianQuadrature<double>::integrate, 
+        .def(py::init<int>(), py::arg("n"))
+        .def("integrate", &GaussianQuadrature<double>::integrate,
              "Perform numerical integration of a function over the interval [a, b].",
              py::arg("f"), py::arg("a"), py::arg("b"))
-        .def("getPoints", &GaussianQuadrature<double>::getPoints, 
+        .def("getPoints", &GaussianQuadrature<double>::getPoints,
              "Get the quadrature points.")
-        .def("getWeights", &GaussianQuadrature<double>::getWeights, 
+        .def("getWeights", &GaussianQuadrature<double>::getWeights,
              "Get the quadrature weights.");
 
     py::class_<RungeKutta<double, VectorObj<double>, VectorObj<double>>>(m, "RK4")
         .def(py::init<>())
-        .def("solve", &RungeKutta<double, VectorObj<double>, VectorObj<double>>::solve, 
+        .def("solve", &RungeKutta<double, VectorObj<double>, VectorObj<double>>::solve,
             py::arg("y"), py::arg("f"), py::arg("h"), py::arg("n"), py::arg("callback") = nullptr);
-        // .def("solve_adaptive", &RungeKutta<double, VectorObj<double>, VectorObj<double>>::solveAdaptive, 
+        // .def("solve_adaptive", &RungeKutta<double, VectorObj<double>, VectorObj<double>>::solveAdaptive,
         //     py::arg("y"), py::arg("f"), py::arg("h"), py::arg("tol"), py::arg("max_steps"));
 
     // Matrix/Vector Operations
     // Update Vector bindings with numpy compatibility
     py::class_<VectorObj<double>>(m, "Vector")
-        .def(py::init<int>())
+        .def(py::init<int>(), py::arg("size"))
         .def(py::init([](py::array_t<double> array) {
             auto buf = array.request();
             if (buf.ndim != 1) {
@@ -137,7 +139,7 @@ PYBIND11_MODULE(fastsolver, m) {
             }
             self[index] = value;
         })
-        .def("size", &VectorObj<double>::size)
+        .def("size", &VectorObj<double>::size, "Get the size of the vector.")
         .def("norm", &VectorObj<double>::L2norm, "Compute the L2 norm of the vector.");
 
     // Add Cholesky decomposition
@@ -147,48 +149,48 @@ PYBIND11_MODULE(fastsolver, m) {
 
     // Update Dense Matrix bindings
     py::class_<DenseObj<double>>(m, "DenseMatrix")
-        .def(py::init<int, int>())
-        .def(py::init<const VectorObj<double>&, int, int>())
-        .def(py::init<const std::vector<VectorObj<double>>&, int, int>())
+        .def(py::init<int, int>(), py::arg("rows"), py::arg("cols"))
+        .def(py::init<const VectorObj<double>&, int, int>(), py::arg("data"), py::arg("rows"), py::arg("cols"))
+        .def(py::init<const std::vector<VectorObj<double>>&, int, int>(), py::arg("data"), py::arg("rows"), py::arg("cols"))
         .def("__setitem__", [](DenseObj<double> &self, std::pair<int, int> idx, double value) {
             self(idx.first, idx.second) = value;
         })
         .def("__getitem__", [](const DenseObj<double> &self, std::pair<int, int> idx) {
             return self(idx.first, idx.second);
         })
-        .def("rows", &DenseObj<double>::getRows)
-        .def("cols", &DenseObj<double>::getCols)
-        .def("__len__", &DenseObj<double>::getRows)
-        .def("resize", &DenseObj<double>::resize)
-        .def("transpose", &DenseObj<double>::Transpose)
+        .def("rows", &DenseObj<double>::getRows, "Get the number of rows.")
+        .def("cols", &DenseObj<double>::getCols, "Get the number of columns.")
+        .def("__len__", &DenseObj<double>::getRows, "Get the number of rows.")
+        .def("resize", &DenseObj<double>::resize, py::arg("rows"), py::arg("cols"))
+        .def("transpose", &DenseObj<double>::Transpose, "Get the transpose of the matrix.")
         .def("__mul__", [](const DenseObj<double>& self, const DenseObj<double>& other) {
             return self * other;
-        })
+        }, py::is_operator())
         .def("__mul__", [](const DenseObj<double>& self, double scalar) {
             return self * scalar;
-        });
+        }, py::is_operator());
 
     // Update Sparse Matrix bindings
     py::class_<SparseMatrixCSC<double>>(m, "SparseMatrix")
-        .def(py::init<int, int>())
-        .def(py::init<const DenseObj<double>&>())
-        .def("addValue", &SparseMatrixCSC<double>::addValue)
-        .def("finalize", &SparseMatrixCSC<double>::finalize)
-        .def("rows", &SparseMatrixCSC<double>::getRows)
-        .def("cols", &SparseMatrixCSC<double>::getCols)
-        .def("transpose", &SparseMatrixCSC<double>::Transpose)
+        .def(py::init<int, int>(), py::arg("rows"), py::arg("cols"))
+        .def(py::init<const DenseObj<double>&>(), py::arg("dense_matrix"))
+        .def("addValue", &SparseMatrixCSC<double>::addValue, py::arg("row"), py::arg("col"), py::arg("value"))
+        .def("finalize", &SparseMatrixCSC<double>::finalize, "Finalize the sparse matrix construction.")
+        .def("rows", &SparseMatrixCSC<double>::getRows, "Get the number of rows.")
+        .def("cols", &SparseMatrixCSC<double>::getCols, "Get the number of columns.")
+        .def("transpose", &SparseMatrixCSC<double>::Transpose, "Get the transpose of the matrix.")
         .def("__mul__", [](const SparseMatrixCSC<double>& self, const VectorObj<double>& vec) {
             return self * vec;
-        })
+        }, py::is_operator())
         .def("__mul__", [](const SparseMatrixCSC<double>& self, const SparseMatrixCSC<double>& other) {
             return self * other;
-        })
+        }, py::is_operator())
         .def("__mul__", [](const SparseMatrixCSC<double>& self, double scalar) {
             return self * scalar;
-        })
+        }, py::is_operator())
         .def("__call__", [](const SparseMatrixCSC<double>& self, int i, int j) {
             return self(i, j);
-        });
+        },py::arg("i"),py::arg("j"));
 
     // Matrix Market File IO
     m.def("read_matrix_market", [](const std::string& filename, py::object matrix) {
