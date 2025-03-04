@@ -166,6 +166,9 @@ PYBIND11_MODULE(fastsolver, m) {
         .def("__mul__", [](const DenseObj<double>& self, const DenseObj<double>& other) {
             return self * other;
         }, py::is_operator())
+        .def("__mul__", [](const DenseObj<double>& self, const VectorObj<double>& vec) {
+            return self * vec;
+        }, py::is_operator())
         .def("__mul__", [](const DenseObj<double>& self, double scalar) {
             return self * scalar;
         }, py::is_operator());

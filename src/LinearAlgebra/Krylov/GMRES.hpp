@@ -77,12 +77,12 @@ public:
                 }
                 
                 TNum w_norm = w.L2norm();
+                setMatrixValue(H, j + 1, j, w_norm);
                 if (w_norm < tol) {
                     KryUpdate = j;
                     std::cout << "KrylovUpdate : " << KryUpdate << std::endl;
                     break;
                 }
-                setMatrixValue(H, j + 1, j, w_norm);
                 V[j + 1] = w / H(j + 1, j);
 
                 // Apply Givens rotations
