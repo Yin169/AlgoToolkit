@@ -21,12 +21,12 @@ public:
         : A(matrix), b(rhs), maxIter(iterations), tol(tolerance) {}
 
     void solve(VectorType& x) {
-        VectorType r = b - (const_cast<SparseMatrixType&>(A) * x); // Initial residual
+        VectorType r = b - A * x; // Initial residual
         TNum residualNorm = r.L2norm();
         VectorType xOld = x;
 
         for (int iter = 0; iter < maxIter && residualNorm > tol; ++iter) {
-            VectorType Ar = const_cast<SparseMatrixType&>(A) * r;
+            VectorType Ar = A * r;
             TNum alpha = (r * r) / (r * Ar);
             // std::cout << (r * Ar) << std::endl;
             x = x + r * alpha;

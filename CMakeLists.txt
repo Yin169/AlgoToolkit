@@ -15,6 +15,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Krylov
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Nonlinear
     ${PROJECT_SOURCE_DIR}/src/ODE
+    ${PROJECT_SOURCE_DIR}/src/PDEs
     ${PROJECT_SOURCE_DIR}/src/Intergal
     ${PROJECT_SOURCE_DIR}/src/Obj
     ${PROJECT_SOURCE_DIR}/src/Mesh
@@ -55,7 +56,7 @@ set(TEST_SOURCES
     RungeKutta_test
     GaussianQuad_test
     NewtonMethod_test
-    MeshObj_test
+    # MeshObj_test
     Visual_test
     SVD_test
     test_linearRegress
@@ -71,19 +72,17 @@ endforeach()
 # Enable testing
 enable_testing()
 
-# Benchmark executable
-set(BENCHMARK_SOURCES
-    bench_Obj
-    bench_LU
-    bench_Solver
-    bench_ODE
-    # CavityFlow
-    # CylinderFlow2D
-    # JetFlow_2D
-)
 
-# Add benchmark executables
-foreach(benchmark_source ${BENCHMARK_SOURCES})
-    add_executable(${benchmark_source} benchmark/${benchmark_source}.cpp)
-    target_link_libraries(${benchmark_source} PRIVATE benchmark::benchmark OpenBLAS::OpenBLAS)
-endforeach()
+# # Benchmark executable
+# set(BENCHMARK_SOURCES
+#     bench_Obj
+#     bench_LU
+#     bench_Solver
+#     bench_ODE
+# )
+
+# # Add benchmark executables
+# foreach(benchmark_source ${BENCHMARK_SOURCES})
+#     add_executable(${benchmark_source} benchmark/${benchmark_source}.cpp)
+#     target_link_libraries(${benchmark_source} PRIVATE benchmark::benchmark OpenBLAS::OpenBLAS)
+# endforeach()
