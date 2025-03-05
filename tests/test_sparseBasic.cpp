@@ -10,7 +10,7 @@ protected:
         // 2 1 0
         // 3 4 1
         L = SparseMatrixCSC<double>(3, 3);
-        L.values = {1.0, 2.0, 3.0, 1.0, 4.0, 1.0};
+        L.values = {1.0, 4.0, 6.0, 1.0, 3.0, 1.0};
         L.row_indices = {0, 1, 2, 1, 2, 2};
         L.col_ptr = {0, 3, 5, 6};
 
@@ -69,9 +69,9 @@ TEST_F(SparseBasicTest, ReachTest) {
 
 TEST_F(SparseBasicTest, LSolveTest) {
     VectorObj<double> b(3);
-    b[0] = 1.0;
-    b[1] = 2.0;
-    b[2] = 3.0;
+    b[0] = 2.0;
+    b[1] = 4.0;
+    b[2] = 8.0;
     
     // Make a copy for verification
     VectorObj<double> expected(b);
