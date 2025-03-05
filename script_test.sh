@@ -6,6 +6,3 @@ cmake .. -DCMAKE_TOOLCHAIN_FILE=Release/generators/conan_toolchain.cmake -DCMAKE
 cmake --build .
 
 ctest
-# ./CavityFlow
-# ./CylinderFlow2D
-# ./JetFlow_2D
