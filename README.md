@@ -18,6 +18,9 @@ FASTSolver is a state-of-the-art scientific computing framework that delivers ex
   - Flexible Jacobian matrix handling
   - Seamless GMRES integration
   - Sophisticated convergence monitoring
+
+![GMRES](https://github.com/Yin169/FASTSolver/blob/dev/doc/pic_2.png)
+
 ### CFD Engine
 - Advanced Lattice Boltzmann Implementation
   - Full D2Q9 and D3Q19 support
