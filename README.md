@@ -61,7 +61,7 @@ python setup.py install
 Here's an example of how to use the `FASTSolver` module in Python:
 
 ```python
-iimport fastsolver as fs
+import fastsolver as fs
 import numpy as np
 
 
