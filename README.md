@@ -84,53 +84,6 @@ tol = 1e-6
 gmres.solve(matrix, b, x, max_iter, krylov_dim, tol)
 ```
 
-## Project Structure
-
-```
-FASTSolver
-├── Doxyfile
-├── LICENSE
-├── README.md
-├── application
-│   ├── LatticeBoltz
-│   │   └── LBMSolver.hpp
-│   ├── Mesh
-│   │   └── MeshObj.hpp
-│   └── PostProcess
-│       └── Visual.hpp
-├── conanfile.txt
-├── python
-│   └── pybind.cpp
-├── script_test.sh
-├── src
-│   ├── Intergal
-│   │   └── GaussianQuad.hpp
-│   ├── LinearAlgebra
-│   │   ├── Factorized
-│   │   │   └── basic.hpp
-│   │   ├── Krylov
-│   │   │   ├── ConjugateGradient.hpp
-│   │   │   ├── GMRES.hpp
-│   │   │   └── KrylovSubspace.hpp
-│   │   ├── Preconditioner
-│   │   │   ├── LU.hpp
-│   │   │   └── MultiGrid.hpp
-│   │   └── Solver
-│   │       └── IterSolver.hpp
-│   ├── ODE
-│   │   └── RungeKutta.hpp
-│   ├── Obj
-│   │   ├── DenseObj.hpp
-│   │   ├── MatrixObj.hpp
-│   │   ├── SparseObj.hpp
-│   │   └── VectorObj.hpp
-│   ├── PDEs
-│   │   └── SpectralElementMethod.hpp
-│   └── utils.hpp
-└── test
- 
-```
-
 ## Contributing
 
 Contributions are welcome! Feel free to fork the repository and submit a pull request.
