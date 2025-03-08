@@ -18,15 +18,16 @@ private:
     double tol;               // Convergence tolerance
     int max_iter;             // Maximum iterations
     
-    // Maps 3D index (i,j,k) to 1D index
-    inline int idx(int i, int j, int k) const {
-        return i + j * nx + k * nx * ny;
-    }
     
     // Boundary condition function type
     using BoundaryConditionFunc = std::function<TObj(double, double, double)>;
     using SourceTermFunc = std::function<TObj(double, double, double)>;
 public:
+
+    inline int idx(int i, int j, int k) const {
+        return i + j * nx + k * nx * ny;
+    }
+
     Laplacian3DFDM(int nx_, int ny_, int nz_, 
                   double xmin, double xmax, 
                   double ymin, double ymax, 

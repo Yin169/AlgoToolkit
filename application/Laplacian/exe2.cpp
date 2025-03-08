@@ -1,4 +1,4 @@
-#include "../../src/PDEs/FDM/Laplacian.hpp"
+#include "../../src/PDEs/FDM/AdaptiveLaplacian.hpp"
 
 int main() {
     // Define domain and grid
@@ -8,7 +8,7 @@ int main() {
     const double zmin = 0.0, zmax = 1.0;
     
     // Create solver
-    Laplacian3DFDM<double> solver(nx, ny, nz, xmin, xmax, ymin, ymax, zmin, zmax);
+    AdaptiveLaplacian3DFDM<double> solver(nx, ny, nz, xmin, xmax, ymin, ymax, zmin, zmax);
     
     // Define source term function (e.g., f(x,y,z) = 6)
     auto sourceFunc = [](double x, double y, double z) -> double {
@@ -21,10 +21,10 @@ int main() {
     };
     
     // Solve using SOR method with relaxation parameter 1.5
-    auto solution = solver.solve(boundaryFunc, sourceFunc, xmin, ymin, zmin, 1.5);
+    auto solution = solver.solve(boundaryFunc, sourceFunc);
     
     // Export solution for visualization
-    solver.exportToVTK(solution, "laplacian_solution.vtk", xmin, ymin, zmin);
+    solver.exportToVTK("Adpativelaplacian_solution.vtk");
     
     return 0;
 }
