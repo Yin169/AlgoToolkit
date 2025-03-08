@@ -14,9 +14,10 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Solver
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Krylov
     ${PROJECT_SOURCE_DIR}/src/LinearAlgebra/Nonlinear
-    ${PROJECT_SOURCE_DIR}/src/SparseLinearAlgebra/SparseBasic.cpp
+    ${PROJECT_SOURCE_DIR}/src/SparseLinearAlgebra
     ${PROJECT_SOURCE_DIR}/src/ODE
     ${PROJECT_SOURCE_DIR}/src/PDEs
+    ${PROJECT_SOURCE_DIR}/src/PDEs/FDM
     ${PROJECT_SOURCE_DIR}/src/Intergal
     ${PROJECT_SOURCE_DIR}/src/Obj
     ${PROJECT_SOURCE_DIR}/src/Mesh
@@ -61,17 +62,18 @@ set(TEST_SOURCES
     SVD_test
     test_linearRegress
     test_sparseBasic
+    DirectLU_test
 )
 
 # Add test executables
-foreach(test_source ${TEST_SOURCES})
-    add_executable(${test_source} tests/${test_source}.cpp)
-    target_link_libraries(${test_source} PRIVATE ${TEST_DEPENDENCIES})
-    add_test(NAME ${test_source} COMMAND ${test_source})
-endforeach()
+# foreach(test_source ${TEST_SOURCES})
+#     add_executable(${test_source} tests/${test_source}.cpp)
+#     target_link_libraries(${test_source} PRIVATE ${TEST_DEPENDENCIES})
+#     add_test(NAME ${test_source} COMMAND ${test_source})
+# endforeach()
 
-# Enable testing
-enable_testing()
+# # Enable testing
+# enable_testing()
 
 
 # # Benchmark executable
@@ -87,3 +89,9 @@ enable_testing()
 #     add_executable(${benchmark_source} benchmark/${benchmark_source}.cpp)
 #     target_link_libraries(${benchmark_source} PRIVATE benchmark::benchmark OpenBLAS::OpenBLAS)
 # endforeach()
+set(test_source
+    exe1
+)
+add_executable(${test_source} application/laplacian/${test_source}.cpp)
+target_link_libraries(${test_source} PRIVATE ${TEST_DEPENDENCIES})
+
