@@ -10,13 +10,18 @@ int main() {
     // Create solver
     Laplacian3DFDM<double> solver(nx, ny, nz, xmin, xmax, ymin, ymax, zmin, zmax);
     
-    // Define boundary condition function (e.g., u = x^2 + y^2 + z^2 on boundary)
+    // Define source term function (e.g., f(x,y,z) = 6)
+    auto sourceFunc = [](double x, double y, double z) -> double {
+        return 6.0;  // This would give u = x²+y²+z² as the solution
+    };
+
+    // Define boundary condition function
     auto boundaryFunc = [](double x, double y, double z) -> double {
-        return x*x + y*y + z*z;
+        return x*x + y*y + z*z;  // Exact solution on boundary
     };
     
     // Solve using SOR method with relaxation parameter 1.5
-    auto solution = solver.solve(boundaryFunc, xmin, ymin, zmin, 1.5);
+    auto solution = solver.solve(boundaryFunc, sourceFunc, xmin, ymin, zmin, 1.5);
     
     // Export solution for visualization
     solver.exportToVTK(solution, "laplacian_solution.vtk", xmin, ymin, zmin);

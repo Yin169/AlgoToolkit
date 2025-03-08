@@ -25,7 +25,7 @@ private:
     
     // Boundary condition function type
     using BoundaryConditionFunc = std::function<TObj(double, double, double)>;
-    
+    using SourceTermFunc = std::function<TObj(double, double, double)>;
 public:
     Laplacian3DFDM(int nx_, int ny_, int nz_, 
                   double xmin, double xmax, 
@@ -81,6 +81,25 @@ public:
         A.finalize();
         return A;
     }
+ 
+    void applySourceTerm(VectorObj<TObj>& b, 
+                        const SourceTermFunc& sourceFunc,
+                        double xmin, double ymin, double zmin) const {
+        for (int k = 0; k < nz; ++k) {
+            double z = zmin + k * hz;
+            for (int j = 0; j < ny; ++j) {
+                double y = ymin + j * hy;
+                for (int i = 0; i < nx; ++i) {
+                    double x = xmin + i * hx;
+                        
+                    // Skip boundary points (they're handled by Dirichlet BC)
+                    if (i == 0 || i == nx-1 || j == 0 || j == ny-1 || k == 0 || k == nz-1) {continue;}
+                    // For interior points, apply the source term
+                     b[idx(i, j, k)] = sourceFunc(x, y, z);
+                }
+            }
+        }
+    }
     
     // Apply Dirichlet boundary conditions
     void applyDirichletBC(VectorObj<TObj>& b, 
@@ -102,6 +121,7 @@ public:
     }
     
     VectorObj<TObj> solve(const BoundaryConditionFunc& bcFunc,
+                         const SourceTermFunc& sourceFunc,
                          double xmin, double ymin, double zmin,
                          double omega = 1.0) const {
         const int total_points = nx * ny * nz;
@@ -111,12 +131,14 @@ public:
         
         // Initialize the right-hand side vector (initially zero)
         VectorObj<TObj> b(total_points, 0.0);
-        
+
+        // Apply source term for interior points
+        applySourceTerm(b, sourceFunc, xmin, ymin, zmin);
         // Apply boundary conditions
         applyDirichletBC(b, bcFunc, xmin, ymin, zmin);
         
         // Initialize solution vector with boundary conditions
-        VectorObj<TObj> x = b;
+        VectorObj<TObj> x(b.size(), 0.0);
         
         // Create and run the solver
         SOR<TObj, SparseMatrixCSC<TObj>, VectorObj<TObj>> solver(A, b, max_iter, omega);
