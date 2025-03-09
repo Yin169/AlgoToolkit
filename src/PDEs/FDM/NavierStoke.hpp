@@ -4,7 +4,7 @@
 #include "../../Obj/VectorObj.hpp"
 #include "../../Obj/SparseObj.hpp"
 #include "../../Obj/DenseObj.hpp"
-#include "../../LinearAlgebra/Solver/IterSolver.hpp"
+#include "../../LinearAlgebra/Preconditioner/MultiGrid.hpp"
 #include <vector>
 #include <cmath>
 #include <iostream>
@@ -25,7 +25,7 @@ private:
     
     // System matrices for pressure Poisson equation
     SparseMatrixCSC<TNum> laplacian;
-    
+    AlgebraicMultiGrid<TNum, VectorObj<TNum>> amg;
     // Boundary conditions
     std::function<TNum(TNum, TNum, TNum, TNum)> u_bc, v_bc, w_bc;
     
@@ -258,8 +258,7 @@ private:
         }
         
         // Solve pressure Poisson equation using iterative solver
-        GradientDescent<TNum, SparseMatrixCSC<TNum>, VectorObj<TNum>> solver(laplacian, rhs, 1000, 1e-6);
-        solver.solve(p);
+        amg.amgVCycle(laplacian, rhs, p, 5, 100, 1.5);
     }
     
     void projectVelocity() {
