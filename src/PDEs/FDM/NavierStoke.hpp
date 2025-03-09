@@ -231,6 +231,32 @@ private:
             }
         }
         
+        // Apply Neumann boundary conditions for pressure (dp/dn = 0)
+        // This ensures that the normal pressure gradient at boundaries is zero
+        for (int k = 0; k < nz; k++) {
+            for (int j = 0; j < ny; j++) {
+                // x boundaries
+                rhs[idx(0, j, k)] = 0.0;
+                rhs[idx(nx-1, j, k)] = 0.0;
+            }
+        }
+        
+        for (int k = 0; k < nz; k++) {
+            for (int i = 0; i < nx; i++) {
+                // y boundaries
+                rhs[idx(i, 0, k)] = 0.0;
+                rhs[idx(i, ny-1, k)] = 0.0;
+            }
+        }
+        
+        for (int j = 0; j < ny; j++) {
+            for (int i = 0; i < nx; i++) {
+                // z boundaries
+                rhs[idx(i, j, 0)] = 0.0;
+                rhs[idx(i, j, nz-1)] = 0.0;
+            }
+        }
+        
         // Solve pressure Poisson equation using iterative solver
         GradientDescent<TNum, SparseMatrixCSC<TNum>, VectorObj<TNum>> solver(laplacian, rhs, 1000, 1e-6);
         solver.solve(p);
