@@ -67,7 +67,7 @@ int main() {
     const double dy = 0.1;
     const double dz = 0.1;
     const double dt = 0.01;
-    const double Re = 100.0;  // Reynolds number
+    const double Re = 10000.0;  // Reynolds number
     const double totalTime = 10.0;
     const int saveInterval = 20;  // Save every 20 steps
     
@@ -76,7 +76,7 @@ int main() {
     
     // Define jet inlet boundary conditions
     // Jet enters from the x=0 plane in the center
-    auto u_bc = [nx, ny, nz, dx, dy, dz](double x, double y, double z, double t) -> double {
+    auto u_bc = [&solver, nx, ny, nz, dx, dy, dz](double x, double y, double z, double t) -> double {
         // Jet at the inlet (x=0)
         if (std::abs(x) < 1e-10) {
             // Circular jet in the center of the inlet plane
@@ -90,33 +90,151 @@ int main() {
                 // Parabolic velocity profile
                 return 1.0 * (1.0 - std::pow(distFromCenter/jetRadius, 2));
             }
-        }
-        // No-slip at other boundaries
-        else if (std::abs(x - (nx-1)*dx) < 1e-10 || 
-                 std::abs(y) < 1e-10 || std::abs(y - (ny-1)*dy) < 1e-10 ||
-                 std::abs(z) < 1e-10 || std::abs(z - (nz-1)*dz) < 1e-10) {
             return 0.0;
+        }
+        // Pressure outlet at all other boundaries (zero gradient for velocity)
+        else if (std::abs(x - (nx-1)*dx) < 1e-10) {
+            // Outlet at x = nx-1
+            int j = static_cast<int>(y/dy);
+            int k = static_cast<int>(z/dz);
+            if (j >= 0 && j < ny && k >= 0 && k < nz) {
+                return solver.getU(nx-2, j, k);  // Zero gradient
+            }
+        }
+        else if (std::abs(y) < 1e-10) {
+            // Outlet at y = 0
+            int i = static_cast<int>(x/dx);
+            int k = static_cast<int>(z/dz);
+            if (i >= 0 && i < nx && k >= 0 && k < nz) {
+                return solver.getU(i, 1, k);  // Zero gradient
+            }
+        }
+        else if (std::abs(y - (ny-1)*dy) < 1e-10) {
+            // Outlet at y = ny-1
+            int i = static_cast<int>(x/dx);
+            int k = static_cast<int>(z/dz);
+            if (i >= 0 && i < nx && k >= 0 && k < nz) {
+                return solver.getU(i, ny-2, k);  // Zero gradient
+            }
+        }
+        else if (std::abs(z) < 1e-10) {
+            // Outlet at z = 0
+            int i = static_cast<int>(x/dx);
+            int j = static_cast<int>(y/dy);
+            if (i >= 0 && i < nx && j >= 0 && j < ny) {
+                return solver.getU(i, j, 1);  // Zero gradient
+            }
+        }
+        else if (std::abs(z - (nz-1)*dz) < 1e-10) {
+            // Outlet at z = nz-1
+            int i = static_cast<int>(x/dx);
+            int j = static_cast<int>(y/dy);
+            if (i >= 0 && i < nx && j >= 0 && j < ny) {
+                return solver.getU(i, j, nz-2);  // Zero gradient
+            }
         }
         
         return 0.0;
     };
     
-    // Zero velocity in y and z directions at boundaries
-    auto v_bc = [nx, ny, nz, dx, dy, dz](double x, double y, double z, double t) -> double {
-        if (std::abs(x) < 1e-10 || std::abs(x - (nx-1)*dx) < 1e-10 || 
-            std::abs(y) < 1e-10 || std::abs(y - (ny-1)*dy) < 1e-10 ||
-            std::abs(z) < 1e-10 || std::abs(z - (nz-1)*dz) < 1e-10) {
+    // Zero velocity in y and z directions at inlet, pressure outlet at other boundaries
+    auto v_bc = [&solver, nx, ny, nz, dx, dy, dz](double x, double y, double z, double t) -> double {
+        // Zero velocity at inlet (x=0)
+        if (std::abs(x) < 1e-10) {
             return 0.0;
         }
+        // Pressure outlet at all other boundaries (zero gradient for velocity)
+        else if (std::abs(x - (nx-1)*dx) < 1e-10) {
+            // Outlet at x = nx-1
+            int j = static_cast<int>(y/dy);
+            int k = static_cast<int>(z/dz);
+            if (j >= 0 && j < ny && k >= 0 && k < nz) {
+                return solver.getV(nx-2, j, k);  // Zero gradient
+            }
+        }
+        else if (std::abs(y) < 1e-10) {
+            // Outlet at y = 0
+            int i = static_cast<int>(x/dx);
+            int k = static_cast<int>(z/dz);
+            if (i >= 0 && i < nx && k >= 0 && k < nz) {
+                return solver.getV(i, 1, k);  // Zero gradient
+            }
+        }
+        else if (std::abs(y - (ny-1)*dy) < 1e-10) {
+            // Outlet at y = ny-1
+            int i = static_cast<int>(x/dx);
+            int k = static_cast<int>(z/dz);
+            if (i >= 0 && i < nx && k >= 0 && k < nz) {
+                return solver.getV(i, ny-2, k);  // Zero gradient
+            }
+        }
+        else if (std::abs(z) < 1e-10) {
+            // Outlet at z = 0
+            int i = static_cast<int>(x/dx);
+            int j = static_cast<int>(y/dy);
+            if (i >= 0 && i < nx && j >= 0 && j < ny) {
+                return solver.getV(i, j, 1);  // Zero gradient
+            }
+        }
+        else if (std::abs(z - (nz-1)*dz) < 1e-10) {
+            // Outlet at z = nz-1
+            int i = static_cast<int>(x/dx);
+            int j = static_cast<int>(y/dy);
+            if (i >= 0 && i < nx && j >= 0 && j < ny) {
+                return solver.getV(i, j, nz-2);  // Zero gradient
+            }
+        }
+        
         return 0.0;
     };
     
-    auto w_bc = [nx, ny, nz, dx, dy, dz](double x, double y, double z, double t) -> double {
-        if (std::abs(x) < 1e-10 || std::abs(x - (nx-1)*dx) < 1e-10 || 
-            std::abs(y) < 1e-10 || std::abs(y - (ny-1)*dy) < 1e-10 ||
-            std::abs(z) < 1e-10 || std::abs(z - (nz-1)*dz) < 1e-10) {
+    auto w_bc = [&solver, nx, ny, nz, dx, dy, dz](double x, double y, double z, double t) -> double {
+        // Zero velocity at inlet (x=0)
+        if (std::abs(x) < 1e-10) {
             return 0.0;
         }
+        // Pressure outlet at all other boundaries (zero gradient for velocity)
+        else if (std::abs(x - (nx-1)*dx) < 1e-10) {
+            // Outlet at x = nx-1
+            int j = static_cast<int>(y/dy);
+            int k = static_cast<int>(z/dz);
+            if (j >= 0 && j < ny && k >= 0 && k < nz) {
+                return solver.getW(nx-2, j, k);  // Zero gradient
+            }
+        }
+        else if (std::abs(y) < 1e-10) {
+            // Outlet at y = 0
+            int i = static_cast<int>(x/dx);
+            int k = static_cast<int>(z/dz);
+            if (i >= 0 && i < nx && k >= 0 && k < nz) {
+                return solver.getW(i, 1, k);  // Zero gradient
+            }
+        }
+        else if (std::abs(y - (ny-1)*dy) < 1e-10) {
+            // Outlet at y = ny-1
+            int i = static_cast<int>(x/dx);
+            int k = static_cast<int>(z/dz);
+            if (i >= 0 && i < nx && k >= 0 && k < nz) {
+                return solver.getW(i, ny-2, k);  // Zero gradient
+            }
+        }
+        else if (std::abs(z) < 1e-10) {
+            // Outlet at z = 0
+            int i = static_cast<int>(x/dx);
+            int j = static_cast<int>(y/dy);
+            if (i >= 0 && i < nx && j >= 0 && j < ny) {
+                return solver.getW(i, j, 1);  // Zero gradient
+            }
+        }
+        else if (std::abs(z - (nz-1)*dz) < 1e-10) {
+            // Outlet at z = nz-1
+            int i = static_cast<int>(x/dx);
+            int j = static_cast<int>(y/dy);
+            if (i >= 0 && i < nx && j >= 0 && j < ny) {
+                return solver.getW(i, j, nz-2);  // Zero gradient
+            }
+        }
+        
         return 0.0;
     };
     
