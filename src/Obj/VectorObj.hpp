@@ -116,6 +116,11 @@ public:
         _size = n;
         data.resize(n);
     }
+    void resize(size_t n, TObj value) {
+        _size = n;
+        data.resize(n);
+        fill(data.begin(), data.end(), value);
+    }
 };
 
 #endif // VECTOROBJ_HPP
