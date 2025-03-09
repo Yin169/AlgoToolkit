@@ -36,30 +36,39 @@ private:
     
     void buildLaplacianMatrix() {
         int n = nx * ny * nz;
-        laplacian = SparseMatrixCSC<TNum>(n, n);
+        const int total_points = nx * ny * nz;
+        laplacian = SparseMatrixCSC<TNum> (total_points, total_points);
         
-        for (int k = 0; k < nz; k++) {
-            for (int j = 0; j < ny; j++) {
-                for (int i = 0; i < nx; i++) {
-                    int index = idx(i, j, k);
+        // Coefficients for the finite difference stencil
+        const double cx = 1.0 / (dx * dx);
+        const double cy = 1.0 / (dy * dy);
+        const double cz = 1.0 / (dz * dz);
+        const double cc = -2.0 * (cx + cy + cz);  // Center coefficient
+        
+        for (int k = 0; k < nz; ++k) {
+            for (int j = 0; j < ny; ++j) {
+                for (int i = 0; i < nx; ++i) {
+                    const int index = idx(i, j, k);
                     
-                    // Diagonal term
-                    TNum diag = -6.0;
-                    
-                    // Boundary adjustments
-                    if (i == 0 || i == nx-1) diag += 1.0;
-                    if (j == 0 || j == ny-1) diag += 1.0;
-                    if (k == 0 || k == nz-1) diag += 1.0;
-                    
-                    laplacian.addValue(index, index, diag / (dx * dx));
-                    
-                    // Off-diagonal terms
-                    if (i > 0) laplacian.addValue(index, idx(i-1, j, k), 1.0 / (dx * dx));
-                    if (i < nx-1) laplacian.addValue(index, idx(i+1, j, k), 1.0 / (dx * dx));
-                    if (j > 0) laplacian.addValue(index, idx(i, j-1, k), 1.0 / (dy * dy));
-                    if (j < ny-1) laplacian.addValue(index, idx(i, j+1, k), 1.0 / (dy * dy));
-                    if (k > 0) laplacian.addValue(index, idx(i, j, k-1), 1.0 / (dz * dz));
-                    if (k < nz-1) laplacian.addValue(index, idx(i, j, k+1), 1.0 / (dz * dz));
+                    // For boundary points, set diagonal to 1 (Dirichlet BC will be applied later)
+                    if (i == 0 || i == nx-1 || j == 0 || j == ny-1 || k == 0 || k == nz-1) {
+                        laplacian.addValue(index, index, 1.0);
+                    } else {
+                        // Interior points: apply the 7-point stencil
+                        laplacian.addValue(index, index, cc);
+                        
+                        // x-direction neighbors
+                        laplacian.addValue(index, idx(i-1, j, k), cx);
+                        laplacian.addValue(index, idx(i+1, j, k), cx);
+                        
+                        // y-direction neighbors
+                        laplacian.addValue(index, idx(i, j-1, k), cy);
+                        laplacian.addValue(index, idx(i, j+1, k), cy);
+                        
+                        // z-direction neighbors
+                        laplacian.addValue(index, idx(i, j, k-1), cz);
+                        laplacian.addValue(index, idx(i, j, k+1), cz);
+                    }
                 }
             }
         }
@@ -256,37 +265,9 @@ private:
                 rhs[idx(i, j, nz-1)] = 0.0;
             }
         }
-        
-        // Initialize pressure to zero before solving
         p.zero();
-        
-        // Solve pressure Poisson equation with multiple V-cycles for better convergence
-        const int maxIter = 50;
-        const TNum tolerance = 1e-6;
-        
-        for (int iter = 0; iter < maxIter; iter++) {
-            // Perform one V-cycle
-            amg.amgVCycle(laplacian, rhs, p, 3, 5, 0.7);
-            
-            // Check convergence
-            VectorObj<TNum> residual = rhs - laplacian * p;
-            TNum residualNorm = residual.L2norm();
-            
-            if (residualNorm < tolerance) {
-                break;
-            }
-        }
-        
-        // Ensure pressure has zero mean (important for incompressible flow)
-        TNum meanP = 0.0;
-        for (int i = 0; i < p.size(); i++) {
-            meanP += p[i];
-        }
-        meanP /= p.size();
-        
-        for (int i = 0; i < p.size(); i++) {
-            p[i] -= meanP;
-        }
+        // Solve pressure Poisson equation using iterative solver
+        amg.amgVCycle(laplacian, rhs, p, 3, 5, 0.25);
     }
     
     void projectVelocity() {
@@ -296,21 +277,12 @@ private:
                 for (int i = 1; i < nx-1; i++) {
                     int idx_c = idx(i, j, k);
                     
-                    // Calculate pressure gradients using central differences
-                    TNum dp_dx = (p[idx(i+1, j, k)] - p[idx(i-1, j, k)]) / (2*dx);
-                    TNum dp_dy = (p[idx(i, j+1, k)] - p[idx(i, j-1, k)]) / (2*dy);
-                    TNum dp_dz = (p[idx(i, j, k+1)] - p[idx(i, j, k-1)]) / (2*dz);
-                    
-                    // Update velocity components
-                    u[idx_c] -= dt * dp_dx;
-                    v[idx_c] -= dt * dp_dy;
-                    w[idx_c] -= dt * dp_dz;
+                    u[idx_c] -= dt * (p[idx(i+1, j, k)] - p[idx(i-1, j, k)]) / (2*dx);
+                    v[idx_c] -= dt * (p[idx(i, j+1, k)] - p[idx(i, j-1, k)]) / (2*dy);
+                    w[idx_c] -= dt * (p[idx(i, j, k+1)] - p[idx(i, j, k-1)]) / (2*dz);
                 }
             }
         }
-        
-        // Apply boundary conditions after projection to ensure consistency
-        applyBoundaryConditions(0.0);
     }
 
 public:
@@ -360,59 +332,8 @@ public:
         w_prev = w;
     }
     
-    // Calculate divergence of velocity field (should be close to zero for incompressible flow)
-    VectorObj<TNum> calculateDivergence() const {
-        VectorObj<TNum> div(nx * ny * nz, 0.0);
-        
-        for (int k = 1; k < nz-1; k++) {
-            for (int j = 1; j < ny-1; j++) {
-                for (int i = 1; i < nx-1; i++) {
-                    int index = idx(i, j, k);
-                    
-                    div[index] = (u[idx(i+1, j, k)] - u[idx(i-1, j, k)]) / (2*dx) +
-                                (v[idx(i, j+1, k)] - v[idx(i, j-1, k)]) / (2*dy) +
-                                (w[idx(i, j, k+1)] - w[idx(i, j, k-1)]) / (2*dz);
-                }
-            }
-        }
-        
-        return div;
-    }
-    
-    // Check if simulation parameters are stable
-    bool checkStability() const {
-        // Check viscous stability condition
-        TNum viscousDt = 0.5 * Re * std::min(std::min(dx*dx, dy*dy), dz*dz);
-        
-        // Check CFL condition
-        TNum maxVel = 0.0;
-        for (int i = 0; i < u.size(); i++) {
-            maxVel = std::max(maxVel, std::sqrt(u[i]*u[i] + v[i]*v[i] + w[i]*w[i]));
-        }
-        
-        if (maxVel < 1e-10) maxVel = 1e-10; // Avoid division by zero
-        
-        TNum convectiveDt = 0.5 * std::min(std::min(dx, dy), dz) / maxVel;
-        
-        // Return true if current dt is less than both stability limits
-        bool isStable = (dt < viscousDt) && (dt < convectiveDt);
-        
-        if (!isStable) {
-            std::cout << "Warning: Simulation may be unstable!" << std::endl;
-            std::cout << "Current dt: " << dt << std::endl;
-            std::cout << "Recommended viscous dt: " << viscousDt << std::endl;
-            std::cout << "Recommended convective dt: " << convectiveDt << std::endl;
-        }
-        
-        return isStable;
-    }
     // Advance simulation by one time step
     void step(TNum time) {
-        // Store previous velocity state
-        u_prev = u;
-        v_prev = v;
-        w_prev = w;
-        
         // Apply boundary conditions
         applyBoundaryConditions(time);
         
@@ -424,56 +345,18 @@ public:
         
         // Project velocity field to ensure incompressibility
         projectVelocity();
-        
-        // Calculate and monitor maximum divergence (for debugging)
-        VectorObj<TNum> div = calculateDivergence();
-        TNum maxDiv = 0.0;
-        for (int i = 0; i < div.size(); i++) {
-            maxDiv = std::max(maxDiv, std::abs(div[i]));
-        }
-        
-        // Check CFL condition for stability
-        TNum maxVel = 0.0;
-        for (int i = 0; i < u.size(); i++) {
-            maxVel = std::max(maxVel, std::sqrt(u[i]*u[i] + v[i]*v[i] + w[i]*w[i]));
-        }
-        
-        TNum cfl = maxVel * dt / std::min(std::min(dx, dy), dz);
-        
-        if (cfl > 1.0) {
-            std::cout << "Warning: CFL condition violated. CFL = " << cfl << std::endl;
-        }
     }
     
     // Run simulation for specified duration
     void simulate(TNum duration, int output_freq = 1) {
         int num_steps = static_cast<int>(duration / dt);
         
-        // Check stability before starting
-        checkStability();
-        
-        // Track energy conservation
-        TNum initial_energy = calculateKineticEnergy();
-        
         for (int step = 0; step < num_steps; step++) {
             TNum current_time = step * dt;
             this->step(current_time);
             
             if (step % output_freq == 0) {
-                TNum current_energy = calculateKineticEnergy();
-                TNum energy_change = (current_energy - initial_energy) / initial_energy * 100.0;
-                
-                // Calculate maximum divergence
-                VectorObj<TNum> div = calculateDivergence();
-                TNum max_div = 0.0;
-                for (int i = 0; i < div.size(); i++) {
-                    max_div = std::max(max_div, std::abs(div[i]));
-                }
-                
-                std::cout << "Time: " << current_time 
-                          << ", Step: " << step 
-                          << ", Energy change: " << energy_change << "%"
-                          << ", Max divergence: " << max_div << std::endl;
+                std::cout << "Time: " << current_time << ", Step: " << step << std::endl;
             }
         }
     }
@@ -544,6 +427,24 @@ public:
         return energy * dx * dy * dz;
     }
     
+    // Calculate divergence of velocity field (should be close to zero for incompressible flow)
+    VectorObj<TNum> calculateDivergence() const {
+        VectorObj<TNum> div(nx * ny * nz, 0.0);
+        
+        for (int k = 1; k < nz-1; k++) {
+            for (int j = 1; j < ny-1; j++) {
+                for (int i = 1; i < nx-1; i++) {
+                    int index = idx(i, j, k);
+                    
+                    div[index] = (u[idx(i+1, j, k)] - u[idx(i-1, j, k)]) / (2*dx) +
+                                (v[idx(i, j+1, k)] - v[idx(i, j-1, k)]) / (2*dy) +
+                                (w[idx(i, j, k+1)] - w[idx(i, j, k-1)]) / (2*dz);
+                }
+            }
+        }
+        
+        return div;
+    }
 };
 
 #endif // NAVIER_STOKES_HPP
