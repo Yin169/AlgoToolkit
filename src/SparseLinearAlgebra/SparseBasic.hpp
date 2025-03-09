@@ -1,3 +1,6 @@
+#ifndef SPARSELA_SPARSEBASIC_CPP
+#define SPARSELA_SPARSEBASIC_CPP
+
 #include "../../Obj/SparseObj.hpp"
 #include "../../Obj/VectorObj.hpp" 
 
@@ -41,3 +44,5 @@ namespace SparseLA{
 		}
 	}
 }
+
+#endif

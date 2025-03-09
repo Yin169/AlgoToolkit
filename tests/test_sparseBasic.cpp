@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../src/SparseLinearAlgebra/SparseBasic.cpp"
+#include "../src/SparseLinearAlgebra/SparseBasic.hpp"
 #include <stack>
 
 class SparseBasicTest : public ::testing::Test {
