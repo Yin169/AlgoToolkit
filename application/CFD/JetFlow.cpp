@@ -60,13 +60,13 @@ void saveVTKFile(const NavierStokesSolver3D<TNum>& solver, const std::string& fi
 
 int main() {
     // Simulation parameters
-    const int nx = 50;
-    const int ny = 50;
-    const int nz = 50;
+    const int nx = 60;
+    const int ny = 60;
+    const int nz = 10;
     const double dx = 0.1;
     const double dy = 0.1;
     const double dz = 0.1;
-    const double dt = 0.01;
+    const double dt = 0.001;
     const double Re = 10000.0;  // Reynolds number
     const double totalTime = 10.0;
     const int saveInterval = 20;  // Save every 20 steps
@@ -82,7 +82,7 @@ int main() {
             // Circular jet in the center of the inlet plane
             double centerY = (ny/2) * dy;
             double centerZ = (nz/2) * dz;
-            double jetRadius = std::min(ny, nz) * 0.1 * dy;  // 10% of domain size
+            double jetRadius = std::min(ny, nz) * 0.3 * dy;  // 10% of domain size
             
             double distFromCenter = std::sqrt(std::pow(y - centerY, 2) + std::pow(z - centerZ, 2));
             
