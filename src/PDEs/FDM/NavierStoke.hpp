@@ -256,9 +256,9 @@ private:
                 rhs[idx(i, j, nz-1)] = 0.0;
             }
         }
-        
+        p.zero();
         // Solve pressure Poisson equation using iterative solver
-        amg.amgVCycle(laplacian, rhs, p, 5, 100, 1.5);
+        amg.amgVCycle(laplacian, rhs, p, 3, 5, 0.25);
     }
     
     void projectVelocity() {
