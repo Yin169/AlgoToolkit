@@ -27,8 +27,8 @@ int main(int argc, char** argv) {
         double dt = 0.001;       // Time step
         double Re = 1000.0;      // Reynolds number
         double duration = 20.0;  // Total simulation time
-        int output_freq = 100;   // Output frequency (in time steps)
-        int vtk_freq = 1000;     // VTK output frequency (in time steps)
+        int output_freq = 5;   // Output frequency (in time steps)
+        int vtk_freq = 20;     // VTK output frequency (in time steps)
         
         std::cout << "Parameters:" << std::endl;
         std::cout << "  Reynolds number: " << Re << std::endl;
