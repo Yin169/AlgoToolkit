@@ -1,6 +1,6 @@
 # FASTSolver: Advanced Scientific Computing Framework
 ## Overview
-FASTSolver is a state-of-the-art scientific computing framework that delivers exceptional performance for numerical computations, CFD simulations, matrix operations, and scientific data visualization.
+FASTSolver is a state-of-the-art scientific computing framework that delivers exceptional performance for numerical computations, PDEs computation, matrix operations, and scientific data visualization.
 
 ## Core Components
 
@@ -17,6 +17,8 @@ FASTSolver is a state-of-the-art scientific computing framework that delivers ex
   - Sparse matrix-vector multiplication (OpenMP parallelized)
   - Matrix transpose operations
   - Element-wise matrix operations (addition, subtraction)
+
+  ![GMRES](https://github.com/Yin169/FASTSolver/blob/dev/doc/pic_2.png)
 
 ### Object Types
 - **Dense Matrix Object** <mcsymbol name="DenseObj" filename="DenseObj.hpp" path="src/Obj/DenseObj.hpp" startline="62" type="class"></mcsymbol>
@@ -40,6 +42,8 @@ FASTSolver is a state-of-the-art scientific computing framework that delivers ex
   - Time-stepping algorithm with pressure projection
   - 3D spatial indexing and boundary condition handling
   - Reynolds number parameterization
+
+ ![laplacian](https://github.com/Yin169/FASTSolver/blob/dev/doc/laplacian.png)
 
 ### ODE Solvers
 - **Runge-Kutta Methods** <mcsymbol name="RungeKutta" filename="RungeKutta.hpp" path="src/ODE/RungeKutta.hpp" startline="1" type="class"></mcsymbol>
