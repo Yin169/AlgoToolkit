@@ -18,6 +18,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/ODE
     ${PROJECT_SOURCE_DIR}/src/PDEs
     ${PROJECT_SOURCE_DIR}/src/PDEs/FDM
+    ${PROJECT_SOURCE_DIR}/src/PDEs/AdaptiveMesh
     ${PROJECT_SOURCE_DIR}/src/Intergal
     ${PROJECT_SOURCE_DIR}/src/Obj
     ${PROJECT_SOURCE_DIR}/src/Mesh
@@ -90,7 +91,7 @@ set(TEST_SOURCES
 #     target_link_libraries(${benchmark_source} PRIVATE benchmark::benchmark OpenBLAS::OpenBLAS)
 # endforeach()
 set(test_source 
-    JetFlow
+    cavityflow
 )
 add_executable(${test_source} application/CFD/${test_source}.cpp)
 target_link_libraries(${test_source} PRIVATE ${TEST_DEPENDENCIES})
