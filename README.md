@@ -1,59 +1,61 @@
 # FASTSolver: Advanced Scientific Computing Framework
 ## Overview
-FASTSolver is a state-of-the-art scientific computing framework that delivers exceptional performance for numerical computations, PDEs computation, matrix operations, and scientific data visualization.
+FASTSolver is a high-performance scientific computing framework designed for numerical computations, PDE solving, and scientific data visualization. It combines modern C++ techniques with efficient algorithms for maximum performance.
 
 ## Core Components
 
 ### Linear Algebra Components
 - **Krylov Subspace Methods**
-  - <mcsymbol name="GMRES" filename="GMRES.hpp" path="src/LinearAlgebra/Krylov/GMRES.hpp" startline="153" type="function">GMRES Solver</mcsymbol> with Arnoldi iteration and upper Hessenberg matrix handling
-  - Back substitution solution update (Hessenberg system resolution)
+  - <mcsymbol name="GMRES" filename="GMRES.hpp" path="src/LinearAlgebra/Krylov/GMRES.hpp" startline="153" type="function">GMRES Solver</mcsymbol> with Arnoldi iteration and ILU preconditioning
+  - Conjugate Gradient method for symmetric positive-definite systems
+  - Flexible preconditioning support
 - **Matrix Factorizations**
-  - LU Decomposition with partial pivoting (row swapping)
-  - Cholesky Decomposition for symmetric positive-definite matrices
+  - LU Decomposition with partial pivoting
+  - Cholesky Decomposition
   - ILU Preconditioning for sparse systems
 - **Matrix Operations**
-  - Dense matrix-vector multiplication (BLAS optimized)
-  - Sparse matrix-vector multiplication (OpenMP parallelized)
-  - Matrix transpose operations
-  - Element-wise matrix operations (addition, subtraction)
+  - Dense and sparse matrix operations
+  - Matrix-vector multiplication
+  - Matrix transpose and element-wise operations
 
   ![GMRES](https://github.com/Yin169/FASTSolver/blob/dev/doc/pic_2.png)
 
 ### Object Types
 - **Dense Matrix Object** <mcsymbol name="DenseObj" filename="DenseObj.hpp" path="src/Obj/DenseObj.hpp" startline="62" type="class"></mcsymbol>
-  - Row/column swapping operations
-  - BLAS-level matrix-vector multiplication
-  - Element-wise arithmetic operations
-  - Matrix transposition with OpenMP parallelization
-- **Sparse Matrix Object** <mcsymbol name="SparseMatrixCSC" filename="SparseObj.hpp" path="src/Obj/SparseObj.hpp" startline="76" type="class"></mcsymbol> (CSC format)
-  - Compressed Sparse Column (CSC) storage
-  - Scalar multiplication and matrix addition
-  - Parallelized sparse matrix-vector product
-  - Matrix Market file I/O support
+  - Row/column operations
+  - Matrix arithmetic
+  - BLAS-level operations
+- **Sparse Matrix Object** <mcsymbol name="SparseMatrixCSC" filename="SparseObj.hpp" path="src/Obj/SparseObj.hpp" startline="76" type="class"></mcsymbol>
+  - Compressed Sparse Column (CSC) format
+  - Efficient storage and operations
+  - Matrix Market file I/O
 - **Vector Object** <mcsymbol name="VectorObj" filename="VectorObj.hpp" path="src/Obj/VectorObj.hpp" startline="1" type="class"></mcsymbol>
   - Basic linear algebra operations
-  - Element-wise arithmetic operations
+  - Element-wise arithmetic
   - BLAS-compatible memory layout
 
 ### PDE Solvers
 - **Finite Difference Method (FDM)**
   - <mcsymbol name="NavierStoke" filename="NavierStoke.hpp" path="src/PDEs/FDM/NavierStoke.hpp" startline="33" type="class">Navier-Stokes solver</mcsymbol>
-  - Time-stepping algorithm with pressure projection
-  - 3D spatial indexing and boundary condition handling
-  - Reynolds number parameterization
+  - 3D incompressible flow simulation
+  - Adaptive time stepping
+  - Multiple advection schemes (Upwind, Central, QUICK)
 
- ![laplacian](https://github.com/Yin169/FASTSolver/blob/dev/doc/laplacian.png)
+
+<img src="https://github.com/Yin169/FASTSolver/blob/dev/doc/pic_3.png" width="400" alt="JetFlow Simulation">
+<img src="https://github.com/Yin169/FASTSolver/blob/dev/doc/laplacian.png" width="400" alt="Laplacian Visualization">
 
 ### ODE Solvers
 - **Runge-Kutta Methods** <mcsymbol name="RungeKutta" filename="RungeKutta.hpp" path="src/ODE/RungeKutta.hpp" startline="1" type="class"></mcsymbol>
-  - Explicit time integration schemes
-  - Adaptive time-stepping capabilities
+  - Explicit time integration
+  - Adaptive time stepping
+  - High-order accuracy
 
 ### Utilities
-- Matrix Market file reader <mcsymbol name="readMatrixMarket" filename="utils.hpp" path="src/utils.hpp" startline="31" type="function"></mcsymbol>
-- Performance tracking and analysis tools
+- Matrix Market file reader
+- Performance tracking tools
 - VTK export for visualization
+- Structured grid handlingn
 
 ### Advanced Lattice Boltzmann Implementation
   - Full D2Q9 and D3Q19 support
