@@ -92,7 +92,6 @@ set(TEST_SOURCES
 # endforeach()
 set(TEST_SOURCES
     JetFlow
-    # cavityflow
 )
 foreach(test_source ${TEST_SOURCES})
     add_executable(${test_source} application/CFD/${test_source}.cpp)
