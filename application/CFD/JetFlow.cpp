@@ -105,12 +105,12 @@ void saveVTKFile(const NavierStokesSolver3D<TNum>& solver, const std::string& fi
 
 int main() {
     // Simulation parameters
-    const int nx = 50;
-    const int ny = 50;
-    const int nz = 30;
-    const double dx = 0.1;
-    const double dy = 0.1;
-    const double dz = 0.1;
+    const int nx = 100;
+    const int ny = 80;
+    const int nz = 3;
+    const double dx = 0.2;
+    const double dy = 0.2;
+    const double dz = 0.2;
     const double dt = 0.005;
     const double Re = 1000.0;  // Reynolds number
     const double totalTime = 20.0;
