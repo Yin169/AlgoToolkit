@@ -53,8 +53,7 @@ double calculateL2Error(const Poisson3DSolver<double>& solver) {
     return sqrt(error / totalPoints);
 }
 
-// Function to save solution to a VTK file for visualization
-void saveToVTK(const Poisson3DSolver<double>& solver, const std::string& filename) {
+void exportToVTK(const std::string& filename, const Poisson3DSolver<double>& solver) {
     std::ofstream file(filename);
     if (!file.is_open()) {
         std::cerr << "Error: Could not open file " << filename << std::endl;
@@ -102,6 +101,19 @@ void saveToVTK(const Poisson3DSolver<double>& solver, const std::string& filenam
         }
     }
     
+    // Write analytical solution
+    file << "SCALARS analytical_solution float 1\n";
+    file << "LOOKUP_TABLE default\n";
+    for (int k = 0; k < nz; k++) {
+        for (int j = 0; j < ny; j++) {
+            for (int i = 0; i < nx; i++) {
+                double x = i * hx;
+                double y = j * hy;
+                double z = k * hz;
+                file << analyticalSolution(x, y, z) << "\n";
+            }
+        }
+    }
     
     // Write error
     file << "SCALARS error float 1\n";
@@ -120,14 +132,14 @@ void saveToVTK(const Poisson3DSolver<double>& solver, const std::string& filenam
     }
     
     file.close();
-    std::cout << "Solution saved to " << filename << std::endl;
+    std::cout << "Solution exported to " << filename << std::endl;
 }
 
 int main() {
     // Problem parameters
-    int nx = 33;  // Number of grid points in x direction
-    int ny = 33;  // Number of grid points in y direction
-    int nz = 33;  // Number of grid points in z direction
+    int nx = 64;  // Number of grid points in x direction
+    int ny = 64;  // Number of grid points in y direction
+    int nz = 64;  // Number of grid points in z direction
     double lx = 1.0;  // Domain size in x direction
     double ly = 1.0;  // Domain size in y direction
     double lz = 1.0;  // Domain size in z direction
@@ -154,7 +166,7 @@ int main() {
     std::cout << "L2 error: " << std::scientific << std::setprecision(6) << l2Error << std::endl;
     
     // Save solution to VTK file for visualization
-    saveToVTK(solver, "poisson3d_solution.vtk");
+    exportToVTK("solution_poisson.vtk", solver);
     
     // Print solution at some sample points
     std::cout << "\nSolution at sample points:" << std::endl;
