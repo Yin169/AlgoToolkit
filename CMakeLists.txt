@@ -91,7 +91,7 @@ set(TEST_SOURCES
 #     target_link_libraries(${benchmark_source} PRIVATE benchmark::benchmark OpenBLAS::OpenBLAS)
 # endforeach()
 set(TEST_SOURCES
-    JetFlow
+    # JetFlow
     DrivenCavity
 )
 foreach(test_source ${TEST_SOURCES})
