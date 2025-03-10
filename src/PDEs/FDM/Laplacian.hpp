@@ -8,6 +8,7 @@
 #include <cmath>
 #include <stdexcept>
 #include <iostream>
+#include <fstream>
 
 template <typename TNum>
 class Poisson3DSolver {
@@ -160,7 +161,7 @@ public:
         }
         return u[index(i, j, k)];
     }
-    
+
     // Get the entire solution vector
     const VectorObj<TNum>& getSolution() const {
         return u;
