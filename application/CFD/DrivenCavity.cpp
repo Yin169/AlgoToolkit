@@ -118,16 +118,16 @@ void saveVTKFile(const NavierStokesSolver3D<TNum>& solver, const std::string& fi
 
 int main() {
     // Simulation parameters
-    const int nx = 32;
-    const int ny = 32;
-    const int nz = 32;  // Using 3 layers for quasi-2D simulation
+    const int nx = 64;
+    const int ny = 64;
+    const int nz = 64;  // Using 3 layers for quasi-2D simulation
     const double L = 1.0;  // Domain size
     const double dx = L / (nx - 1);
     const double dy = L / (ny - 1);
     const double dz = L / (nz - 1);
     const double dt = 0.0005;  // Reduced initial time step for stability
     const double Re = 100.0;  // Reynolds number
-    const double U_lid = 1.0;  // Lid velocity
+    const double U_lid = 10.0;  // Lid velocity
 	const double totalTime = 20.0;  // Total simulation time
 	const int saveInterval = 50;  // Save every 50 steps
     

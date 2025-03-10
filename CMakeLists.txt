@@ -91,11 +91,12 @@ set(TEST_SOURCES
 #     target_link_libraries(${benchmark_source} PRIVATE benchmark::benchmark OpenBLAS::OpenBLAS)
 # endforeach()
 set(TEST_SOURCES
-    JetFlow
-    DrivenCavity
+    # JetFlow
+    # DrivenCavity
+    exe1
 )
 foreach(test_source ${TEST_SOURCES})
-    add_executable(${test_source} application/CFD/${test_source}.cpp)
+    add_executable(${test_source} application/Laplacian/${test_source}.cpp)
     target_link_libraries(${test_source} PRIVATE ${TEST_DEPENDENCIES})
 endforeach()
 
