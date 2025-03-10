@@ -4,7 +4,6 @@
 #include <string>
 #include <cmath>
 #include <iomanip>
-
 // Function to save velocity field to a file in VTK format
 template <typename TNum>
 void saveVTKFile(const NavierStokesSolver3D<TNum>& solver, const std::string& filename) {
@@ -14,6 +13,17 @@ void saveVTKFile(const NavierStokesSolver3D<TNum>& solver, const std::string& fi
     TNum dx = solver.getDx();
     TNum dy = solver.getDy();
     TNum dz = solver.getDz();
+    
+    // Get velocity and pressure fields
+    const VectorObj<TNum>& u = solver.getU();
+    const VectorObj<TNum>& v = solver.getV();
+    const VectorObj<TNum>& w = solver.getW();
+    const VectorObj<TNum>& p = solver.getP();
+    
+    // Helper function to get index in the flattened array
+    auto idx = [nx, ny](int i, int j, int k) -> int {
+        return i + j * nx + k * nx * ny;
+    };
     
     std::ofstream outFile(filename);
     outFile << "# vtk DataFile Version 3.0\n";
@@ -38,9 +48,8 @@ void saveVTKFile(const NavierStokesSolver3D<TNum>& solver, const std::string& fi
     for (int k = 0; k < nz; k++) {
         for (int j = 0; j < ny; j++) {
             for (int i = 0; i < nx; i++) {
-                outFile << solver.getU(i, j, k) << " " 
-                        << solver.getV(i, j, k) << " " 
-                        << solver.getW(i, j, k) << "\n";
+                int index = idx(i, j, k);
+                outFile << u[index] << " " << v[index] << " " << w[index] << "\n";
             }
         }
     }
@@ -51,22 +60,25 @@ void saveVTKFile(const NavierStokesSolver3D<TNum>& solver, const std::string& fi
     for (int k = 0; k < nz; k++) {
         for (int j = 0; j < ny; j++) {
             for (int i = 0; i < nx; i++) {
-                outFile << solver.getP(i, j, k) << "\n";
+                int index = idx(i, j, k);
+                outFile << p[index] << "\n";
             }
         }
     }
     
     // Calculate and write vorticity
-    VectorObj<TNum> vort_x, vort_y, vort_z;
-    solver.calculateVorticity(vort_x, vort_y, vort_z);
+    auto vorticity = solver.calculateVorticity();
+    VectorObj<TNum>& vort_x = std::get<0>(vorticity);
+    VectorObj<TNum>& vort_y = std::get<1>(vorticity);
+    VectorObj<TNum>& vort_z = std::get<2>(vorticity);
     
     // Vorticity vector field
     outFile << "VECTORS vorticity float\n";
     for (int k = 0; k < nz; k++) {
         for (int j = 0; j < ny; j++) {
             for (int i = 0; i < nx; i++) {
-                int idx = i + j*nx + k*nx*ny;
-                outFile << vort_x[idx] << " " << vort_y[idx] << " " << vort_z[idx] << "\n";
+                int index = idx(i, j, k);
+                outFile << vort_x[index] << " " << vort_y[index] << " " << vort_z[index] << "\n";
             }
         }
     }
@@ -77,10 +89,10 @@ void saveVTKFile(const NavierStokesSolver3D<TNum>& solver, const std::string& fi
     for (int k = 0; k < nz; k++) {
         for (int j = 0; j < ny; j++) {
             for (int i = 0; i < nx; i++) {
-                int idx = i + j*nx + k*nx*ny;
-                TNum magnitude = std::sqrt(vort_x[idx]*vort_x[idx] + 
-                                          vort_y[idx]*vort_y[idx] + 
-                                          vort_z[idx]*vort_z[idx]);
+                int index = idx(i, j, k);
+                TNum magnitude = std::sqrt(vort_x[index]*vort_x[index] + 
+                                          vort_y[index]*vort_y[index] + 
+                                          vort_z[index]*vort_z[index]);
                 outFile << magnitude << "\n";
             }
         }
@@ -94,8 +106,8 @@ void saveVTKFile(const NavierStokesSolver3D<TNum>& solver, const std::string& fi
     for (int k = 0; k < nz; k++) {
         for (int j = 0; j < ny; j++) {
             for (int i = 0; i < nx; i++) {
-                int idx = i + j*nx + k*nx*ny;
-                outFile << div[idx] << "\n";
+                int index = idx(i, j, k);
+                outFile << div[index] << "\n";
             }
         }
     }
@@ -125,8 +137,13 @@ int main() {
     // Create solver
     NavierStokesSolver3D<double> solver(nx, ny, nz, dx, dy, dz, dt, Re);
     
+    // Helper function to get index in the flattened array
+    auto idx = [nx, ny](int i, int j, int k) -> int {
+        return i + j * nx + k * nx * ny;
+    };
+    
     // Define boundary conditions with convective outflow
-    auto u_bc = [&solver, nx, ny, nz, dx, dy, dz, jetRadius, jetVelocity, jetCenterY, jetCenterZ]
+    auto u_bc = [jetRadius, jetVelocity, jetCenterY, jetCenterZ]
                (double x, double y, double z, double t) -> double {
         // Jet inlet at x=0 (left boundary)
         if (std::abs(x) < 1e-10) {
@@ -141,148 +158,65 @@ int main() {
             return 0.0;
         }
         
-        // Convective outflow at x=L (right boundary)
-        if (std::abs(x - (nx-1)*dx) < 1e-10) {
-            int i = nx-2;  // One cell before boundary
-            int j = static_cast<int>(y/dy);
-            int k = static_cast<int>(z/dz);
-            
-            // Ensure indices are within bounds
-            j = std::max(0, std::min(j, ny-1));
-            k = std::max(0, std::min(k, nz-1));
-            
-            return solver.getU(i, j, k);  // Zero gradient
-        }
-        
-        // Free-slip at other boundaries
+        // For other boundaries, we'll use zero gradient in the solver's implementation
         return 0.0;
     };
     
-    auto v_bc = [&solver, nx, ny, nz, dx, dy, dz]
-               (double x, double y, double z, double t) -> double {
-        // No flow through inlet
-        if (std::abs(x) < 1e-10) {
-            return 0.0;
-        }
-        
-        // Convective outflow at x=L (right boundary)
-        if (std::abs(x - (nx-1)*dx) < 1e-10) {
-            int i = nx-2;  // One cell before boundary
-            int j = static_cast<int>(y/dy);
-            int k = static_cast<int>(z/dz);
-            
-            // Ensure indices are within bounds
-            j = std::max(0, std::min(j, ny-1));
-            k = std::max(0, std::min(k, nz-1));
-            
-            return solver.getV(i, j, k);  // Zero gradient
-        }
-        
-        // Free-slip at y boundaries
-        if (std::abs(y) < 1e-10 || std::abs(y - (ny-1)*dy) < 1e-10) {
-            int i = static_cast<int>(x/dx);
-            int k = static_cast<int>(z/dz);
-            
-            // Ensure indices are within bounds
-            i = std::max(0, std::min(i, nx-1));
-            k = std::max(0, std::min(k, nz-1));
-            
-            return 0.0;  // No flow through boundary
-        }
-        
-        // Free-slip at z boundaries
-        if (std::abs(z) < 1e-10 || std::abs(z - (nz-1)*dz) < 1e-10) {
-            int i = static_cast<int>(x/dx);
-            int j = static_cast<int>(y/dy);
-            
-            // Ensure indices are within bounds
-            i = std::max(0, std::min(i, nx-1));
-            j = std::max(0, std::min(j, ny-1));
-            
-            return 0.0;  // No flow through boundary
-        }
-        
+    auto v_bc = [](double x, double y, double z, double t) -> double {
+        // No flow through boundaries
         return 0.0;
     };
     
-    auto w_bc = [&solver, nx, ny, nz, dx, dy, dz]
-               (double x, double y, double z, double t) -> double {
-        // No flow through inlet
-        if (std::abs(x) < 1e-10) {
-            return 0.0;
-        }
-        
-        // Convective outflow at x=L (right boundary)
-        if (std::abs(x - (nx-1)*dx) < 1e-10) {
-            int i = nx-2;  // One cell before boundary
-            int j = static_cast<int>(y/dy);
-            int k = static_cast<int>(z/dz);
-            
-            // Ensure indices are within bounds
-            j = std::max(0, std::min(j, ny-1));
-            k = std::max(0, std::min(k, nz-1));
-            
-            return solver.getW(i, j, k);  // Zero gradient
-        }
-        
-        // Free-slip at y boundaries
-        if (std::abs(y) < 1e-10 || std::abs(y - (ny-1)*dy) < 1e-10) {
-            int i = static_cast<int>(x/dx);
-            int k = static_cast<int>(z/dz);
-            
-            // Ensure indices are within bounds
-            i = std::max(0, std::min(i, nx-1));
-            k = std::max(0, std::min(k, nz-1));
-            
-            return 0.0;  // No flow through boundary
-        }
-        
-        // Free-slip at z boundaries
-        if (std::abs(z) < 1e-10 || std::abs(z - (nz-1)*dz) < 1e-10) {
-            int i = static_cast<int>(x/dx);
-            int j = static_cast<int>(y/dy);
-            
-            // Ensure indices are within bounds
-            i = std::max(0, std::min(i, nx-1));
-            j = std::max(0, std::min(j, ny-1));
-            
-            return 0.0;  // No flow through boundary
-        }
-        
+    auto w_bc = [](double x, double y, double z, double t) -> double {
+        // No flow through boundaries
         return 0.0;
     };
     
     // Set boundary conditions
     solver.setBoundaryConditions(u_bc, v_bc, w_bc);
     
-    // Set initial conditions (small random perturbation for better vortex development)
-    auto u_init = [jetVelocity, jetRadius, jetCenterY, jetCenterZ, dx, dy, dz]
-                 (double x, double y, double z) -> double {
-        // Small initial velocity in the domain
-        double r = std::sqrt(std::pow(y - jetCenterY, 2) + std::pow(z - jetCenterZ, 2));
-        
-        if (x < 2.0*dx && r <= jetRadius) {
-            // Smooth jet profile with cosine function
-            double profile = 0.5 * (1.0 + std::cos(M_PI * r / jetRadius));
-            return jetVelocity * profile;
+    // Initialize velocity fields
+    int n = nx * ny * nz;
+    VectorObj<double> u0(n, 0.0);
+    VectorObj<double> v0(n, 0.0);
+    VectorObj<double> w0(n, 0.0);
+    
+    // Set initial conditions with small random perturbation
+    for (int k = 0; k < nz; k++) {
+        for (int j = 0; j < ny; j++) {
+            for (int i = 0; i < nx; i++) {
+                int index = idx(i, j, k);
+                double x = i * dx;
+                double y = j * dy;
+                double z = k * dz;
+                
+                // Jet profile near inlet
+                double r = std::sqrt(std::pow(y - jetCenterY, 2) + std::pow(z - jetCenterZ, 2));
+                
+                if (x < 2.0*dx && r <= jetRadius) {
+                    // Smooth jet profile with cosine function
+                    double profile = 0.5 * (1.0 + std::cos(M_PI * r / jetRadius));
+                    u0[index] = jetVelocity * profile;
+                } else {
+                    // Small random perturbation elsewhere
+                    u0[index] = 0.01 * jetVelocity * (2.0 * rand() / RAND_MAX - 1.0);
+                }
+                
+                // Small random perturbation for v and w
+                v0[index] = 0.01 * jetVelocity * (2.0 * rand() / RAND_MAX - 1.0);
+                w0[index] = 0.01 * jetVelocity * (2.0 * rand() / RAND_MAX - 1.0);
+            }
         }
-        
-        // Small random perturbation elsewhere
-        return 0.01 * jetVelocity * (2.0 * rand() / RAND_MAX - 1.0);
-    };
-    
-    auto v_init = [jetVelocity](double x, double y, double z) -> double {
-        // Small random perturbation
-        return 0.01 * jetVelocity * (2.0 * rand() / RAND_MAX - 1.0);
-    };
-    
-    auto w_init = [jetVelocity](double x, double y, double z) -> double {
-        // Small random perturbation
-        return 0.01 * jetVelocity * (2.0 * rand() / RAND_MAX - 1.0);
-    };
+    }
     
     // Set initial conditions
-    solver.setInitialConditions(u_init, v_init, w_init);
+    solver.setInitialConditions(u0, v0, w0);
+    
+    // Set advection scheme to QUICK for better accuracy
+    solver.setAdvectionScheme(AdvectionScheme::QUICK);
+    
+    // Enable adaptive time stepping for stability
+    solver.enableAdaptiveTimeStep(0.5);
     
     // Run simulation
     int numSteps = static_cast<int>(totalTime / dt);
@@ -309,6 +243,9 @@ int main() {
                 max_div = std::max(max_div, std::abs(div[i]));
             }
             std::cout << "  Max Divergence: " << std::scientific << max_div << std::endl;
+            
+            // Also print current dt if adaptive time stepping is enabled
+            std::cout << "  Current dt: " << std::scientific << solver.getDt() << std::endl;
         }
         
         // Save results periodically
