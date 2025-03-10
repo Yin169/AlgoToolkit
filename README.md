@@ -116,6 +116,76 @@ tol = 1e-6
 gmres.solve(matrix, b, x, max_iter, krylov_dim, tol)
 ```
 
+```python
+import fastsolver as fs
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import os
+
+ Create output directory if it doesn't exist
+output_dir = "./output"
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
+
+print("Testing Laplacian Solver...")
+# =============================================
+# Test 1: Laplacian Solver
+# =============================================
+# Define domain parameters
+nx, ny, nz = 30, 30, 30  # Number of grid points
+xmin, xmax = 0.0, 1.0    # Domain boundaries in x
+ymin, ymax = 0.0, 1.0    # Domain boundaries in y
+zmin, zmax = 0.0, 1.0    # Domain boundaries in z
+
+# Create Laplacian solver
+laplacian_solver = fs.LaplacianSolver(nx, ny, nz, xmin, xmax, ymin, ymax, zmin, zmax)
+
+# Define boundary conditions (a simple example with a heated wall)
+def boundary_condition(x, y, z):
+    if abs(x - xmin) < 1e-10:  # Left wall is hot (temperature = 1)
+        return 1.0
+    elif abs(x - xmax) < 1e-10:  # Right wall is cold (temperature = 0)
+        return 0.0
+    else:  # Other walls are insulated (zero gradient)
+        return 0.0
+
+# Define source term (zero for Laplace equation)
+def source_term(x, y, z):
+    return 0.0
+
+# Solve the Laplace equation
+print("Solving Laplace equation...")
+solution = laplacian_solver.solve(boundary_condition, source_term, xmin, ymin, zmin, omega=1.5)
+
+# Convert solution to numpy array for visualization
+solution_np = np.array(solution.to_numpy()).reshape(nz, ny, nx)
+
+# Visualize a 2D slice of the solution at the middle of the z-axis
+z_slice = nz // 2
+solution_2d = solution_np[z_slice, :, :]
+
+# Create a grid for plotting
+x = np.linspace(xmin, xmax, nx)
+y = np.linspace(ymin, ymax, ny)
+X, Y = np.meshgrid(x, y)
+
+# Plot the solution
+plt.figure(figsize=(10, 8))
+plt.contourf(X, Y, solution_2d, 20, cmap='hot')
+plt.colorbar(label='Temperature')
+plt.title('Solution of Laplace Equation (z-slice at z={:.2f})'.format(zmin + z_slice * (zmax - zmin) / (nz - 1)))
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.savefig(os.path.join(output_dir, "laplacian_solution.png"))
+print("Laplacian solution saved to", os.path.join(output_dir, "laplacian_solution.png"))
+
+# Export solution to VTK for 3D visualization
+vtk_filename = os.path.join(output_dir, "laplacian_solution.vtk")
+laplacian_solver.exportToVTK(solution, vtk_filename, xmin, ymin, zmin)
+print("Laplacian solution exported to VTK:", vtk_filename)
+```
+
 ## Contributing
 
 Contributions are welcome! Feel free to fork the repository and submit a pull request.

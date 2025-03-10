@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: fastsolver
-Version: 0.1
+Version: 0.1.1
 Summary: Python bindings for FASTSolver
 License-File: LICENSE
 Requires-Dist: pybind11
