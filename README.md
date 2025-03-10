@@ -41,9 +41,7 @@ FASTSolver is a high-performance scientific computing framework designed for num
   - Adaptive time stepping
   - Multiple advection schemes (Upwind, Central, QUICK)
 
-
 <img src="https://github.com/Yin169/FASTSolver/blob/dev/doc/pic_3.png" width="400" alt="JetFlow Simulation">
-<img src="https://github.com/Yin169/FASTSolver/blob/dev/doc/laplacian.png" width="400" alt="Laplacian Visualization">
 
 ### ODE Solvers
 - **Runge-Kutta Methods** <mcsymbol name="RungeKutta" filename="RungeKutta.hpp" path="src/ODE/RungeKutta.hpp" startline="1" type="class"></mcsymbol>
