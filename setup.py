@@ -31,7 +31,7 @@ fastsolver_module = Extension(
 # Setup configuration
 setup(
     name='fastsolver',
-    version='0.1',
+    version='0.1.1',
     description='Python bindings for FASTSolver',
     ext_modules=[fastsolver_module],
     install_requires=['pybind11'],

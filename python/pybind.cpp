@@ -13,6 +13,9 @@
 #include "../src/LinearAlgebra/Krylov/KrylovSubspace.hpp"
 #include "../src/LinearAlgebra/Solver/IterSolver.hpp"
 #include "../src/LinearAlgebra/Factorized/basic.hpp"
+#include "../src/PDEs/FDM/Laplacian.hpp"
+#include "../src/PDEs/FDM/NavierStoke.hpp"
+#include "../src/PDEs/SU2Mesh/readMesh.hpp"
 #include "../src/utils.hpp"
 #include <pybind11/numpy.h>
 
@@ -101,12 +104,10 @@ PYBIND11_MODULE(fastsolver, m) {
         .def("getWeights", &GaussianQuadrature<double>::getWeights,
              "Get the quadrature weights.");
 
-    py::class_<RungeKutta<double, VectorObj<double>, VectorObj<double>>>(m, "RK4")
+    py::class_<RungeKutta<double, VectorObj<double>, VectorObj<double>>>(m, "RK")
         .def(py::init<>())
         .def("solve", &RungeKutta<double, VectorObj<double>, VectorObj<double>>::solve,
             py::arg("y"), py::arg("f"), py::arg("h"), py::arg("n"), py::arg("callback") = nullptr);
-        // .def("solve_adaptive", &RungeKutta<double, VectorObj<double>, VectorObj<double>>::solveAdaptive,
-        //     py::arg("y"), py::arg("f"), py::arg("h"), py::arg("tol"), py::arg("max_steps"));
 
     // Matrix/Vector Operations
     // Update Vector bindings with numpy compatibility
@@ -208,4 +209,147 @@ PYBIND11_MODULE(fastsolver, m) {
         }
     }, "Read matrix from Matrix Market format file",
        py::arg("filename"), py::arg("matrix"));
+       
+    // PDEs - Laplacian Solver
+    py::class_<Laplacian3DFDM<double>>(m, "LaplacianSolver")
+        .def(py::init<int, int, int, double, double, double, double, double, double, double, int>(),
+             py::arg("nx"), py::arg("ny"), py::arg("nz"), 
+             py::arg("xmin"), py::arg("xmax"), 
+             py::arg("ymin"), py::arg("ymax"), 
+             py::arg("zmin"), py::arg("zmax"),
+             py::arg("tol") = 1e-6, 
+             py::arg("max_iter") = 10000)
+        .def("solve", &Laplacian3DFDM<double>::solve,
+             "Solve the Laplace equation with given boundary conditions and source term",
+             py::arg("bc_func"), py::arg("source_func"), 
+             py::arg("xmin"), py::arg("ymin"), py::arg("zmin"),
+             py::arg("omega") = 1.25)
+        .def("getSolutionAt", &Laplacian3DFDM<double>::getSolutionAt,
+             "Get solution value at specific grid point",
+             py::arg("solution"), py::arg("i"), py::arg("j"), py::arg("k"))
+        .def("getCoordinates", &Laplacian3DFDM<double>::getCoordinates,
+             "Get physical coordinates from grid indices",
+             py::arg("i"), py::arg("j"), py::arg("k"), 
+             py::arg("xmin"), py::arg("ymin"), py::arg("zmin"),
+             py::arg("x"), py::arg("y"), py::arg("z"))
+        .def("exportToVTK", &Laplacian3DFDM<double>::exportToVTK,
+             "Export solution to VTK file for visualization",
+             py::arg("solution"), py::arg("filename"), 
+             py::arg("xmin"), py::arg("ymin"), py::arg("zmin"));
+ 
+    py::enum_<TimeIntegration>(m, "TimeIntegration")
+        .value("EULER", TimeIntegration::EULER)
+        .value("RK4", TimeIntegration::RK4)
+        .export_values();
+        
+    py::enum_<AdvectionScheme>(m, "AdvectionScheme")
+        .value("UPWIND", AdvectionScheme::UPWIND)
+        .value("CENTRAL", AdvectionScheme::CENTRAL)
+        .value("QUICK", AdvectionScheme::QUICK)
+        .export_values();
+    
+    // PDEs - Navier-Stokes Solver
+    py::class_<NavierStokesSolver3D<double>>(m, "NavierStokesSolver3D")
+        .def(py::init<int, int, int, double, double, double, double, double>(),
+             py::arg("nx"), py::arg("ny"), py::arg("nz"), 
+             py::arg("dx"), py::arg("dy"), py::arg("dz"),
+             py::arg("dt"), py::arg("Re"))
+        .def("setInitialConditions", [](NavierStokesSolver3D<double>& self, 
+                                       py::function u_func, py::function v_func, py::function w_func) {
+            // Create a wrapper that calls the Python function for each grid point
+            int nx = self.getNx();
+            int ny = self.getNy();
+            int nz = self.getNz();
+            double dx = self.getDx();
+            double dy = self.getDy();
+            double dz = self.getDz();
+            
+            VectorObj<double> u(nx * ny * nz);
+            VectorObj<double> v(nx * ny * nz);
+            VectorObj<double> w(nx * ny * nz);
+            
+            for (int k = 0; k < nz; k++) {
+                for (int j = 0; j < ny; j++) {
+                    for (int i = 0; i < nx; i++) {
+                        double x = i * dx;
+                        double y = j * dy;
+                        double z = k * dz;
+                        int idx = i + j * nx + k * nx * ny;
+                        
+                        u[idx] = py::cast<double>(u_func(x, y, z));
+                        v[idx] = py::cast<double>(v_func(x, y, z));
+                        w[idx] = py::cast<double>(w_func(x, y, z));
+                    }
+                }
+            }
+            
+            self.setInitialConditions(u, v, w);
+        }, "Set initial velocity conditions", py::arg("u_func"), py::arg("v_func"), py::arg("w_func"))
+        .def("setBoundaryConditions", [](NavierStokesSolver3D<double>& self, 
+                                        py::function u_bc, py::function v_bc, py::function w_bc) {
+            // Store the Python functions and create a C++ wrapper that will be called by the solver
+            self.setBoundaryConditions(
+                [u_bc, &self](int i, int j, int k, double t) -> double {
+                    double x = i * self.getDx();
+                    double y = j * self.getDy();
+                    double z = k * self.getDz();
+                    return py::cast<double>(u_bc(x, y, z, t));
+                },
+                [v_bc, &self](int i, int j, int k, double t) -> double {
+                    double x = i * self.getDx();
+                    double y = j * self.getDy();
+                    double z = k * self.getDz();
+                    return py::cast<double>(v_bc(x, y, z, t));
+                },
+                [w_bc, &self](int i, int j, int k, double t) -> double {
+                    double x = i * self.getDx();
+                    double y = j * self.getDy();
+                    double z = k * self.getDz();
+                    return py::cast<double>(w_bc(x, y, z, t));
+                }
+            );
+        }, "Set boundary conditions", py::arg("u_bc"), py::arg("v_bc"), py::arg("w_bc"))
+        .def("setExternalForces", &NavierStokesSolver3D<double>::setExternalForces,
+             "Set external force fields", py::arg("fx"), py::arg("fy"), py::arg("fz"))
+        .def("setTimeIntegrationMethod", &NavierStokesSolver3D<double>::setTimeIntegrationMethod,
+             "Set time integration method (EULER or RK4)", py::arg("method"))
+        .def("setAdvectionScheme", &NavierStokesSolver3D<double>::setAdvectionScheme,
+             "Set advection scheme (UPWIND, CENTRAL, or QUICK)", py::arg("scheme"))
+        .def("enableAdaptiveTimeStep", &NavierStokesSolver3D<double>::enableAdaptiveTimeStep,
+             "Enable adaptive time stepping", py::arg("cfl_target"))
+        .def("disableAdaptiveTimeStep", &NavierStokesSolver3D<double>::disableAdaptiveTimeStep,
+             "Disable adaptive time stepping")
+        .def("step", &NavierStokesSolver3D<double>::step,
+             "Advance simulation by one time step", py::arg("time"))
+        .def("solve", [](NavierStokesSolver3D<double>& self, double start_time, double end_time, 
+                        int output_frequency, py::function callback) {
+            self.solve(start_time, end_time, output_frequency,
+                [callback](const VectorObj<double>& u, const VectorObj<double>& v, 
+                          const VectorObj<double>& w, const VectorObj<double>& p, double time) {
+                    callback(u, v, w, p, time);
+                }
+            );
+        }, "Solve from start_time to end_time", 
+           py::arg("start_time"), py::arg("end_time"), 
+           py::arg("output_frequency") = 1, py::arg("callback") = nullptr)
+        .def("getU", &NavierStokesSolver3D<double>::getU, "Get u velocity component")
+        .def("getV", &NavierStokesSolver3D<double>::getV, "Get v velocity component")
+        .def("getW", &NavierStokesSolver3D<double>::getW, "Get w velocity component")
+        .def("getP", &NavierStokesSolver3D<double>::getP, "Get pressure field")
+        .def("getNx", &NavierStokesSolver3D<double>::getNx, "Get number of grid points in x direction")
+        .def("getNy", &NavierStokesSolver3D<double>::getNy, "Get number of grid points in y direction")
+        .def("getNz", &NavierStokesSolver3D<double>::getNz, "Get number of grid points in z direction")
+        .def("getDx", &NavierStokesSolver3D<double>::getDx, "Get grid spacing in x direction")
+        .def("getDy", &NavierStokesSolver3D<double>::getDy, "Get grid spacing in y direction")
+        .def("getDz", &NavierStokesSolver3D<double>::getDz, "Get grid spacing in z direction")
+        .def("getDt", &NavierStokesSolver3D<double>::getDt, "Get time step size")
+        .def("setDt", &NavierStokesSolver3D<double>::setDt, "Set time step size", py::arg("dt"))
+        .def("getReynoldsNumber", &NavierStokesSolver3D<double>::getReynoldsNumber, "Get Reynolds number")
+        .def("calculateDivergence", &NavierStokesSolver3D<double>::calculateDivergence, 
+             "Calculate divergence of velocity field (for debugging)")
+        .def("calculateVorticity", &NavierStokesSolver3D<double>::calculateVorticity, 
+             "Calculate vorticity field")
+        .def("calculateKineticEnergy", &NavierStokesSolver3D<double>::calculateKineticEnergy, 
+             "Calculate total kinetic energy");
+    
 }
