@@ -36,39 +36,30 @@ private:
     
     void buildLaplacianMatrix() {
         int n = nx * ny * nz;
-        const int total_points = nx * ny * nz;
-        laplacian = SparseMatrixCSC<TNum> (total_points, total_points);
+        laplacian = SparseMatrixCSC<TNum>(n, n);
         
-        // Coefficients for the finite difference stencil
-        const double cx = 1.0 / (dx * dx);
-        const double cy = 1.0 / (dy * dy);
-        const double cz = 1.0 / (dz * dz);
-        const double cc = -2.0 * (cx + cy + cz);  // Center coefficient
-        
-        for (int k = 0; k < nz; ++k) {
-            for (int j = 0; j < ny; ++j) {
-                for (int i = 0; i < nx; ++i) {
-                    const int index = idx(i, j, k);
+        for (int k = 0; k < nz; k++) {
+            for (int j = 0; j < ny; j++) {
+                for (int i = 0; i < nx; i++) {
+                    int index = idx(i, j, k);
                     
-                    // For boundary points, set diagonal to 1 (Dirichlet BC will be applied later)
-                    if (i == 0 || i == nx-1 || j == 0 || j == ny-1 || k == 0 || k == nz-1) {
-                        laplacian.addValue(index, index, 1.0);
-                    } else {
-                        // Interior points: apply the 7-point stencil
-                        laplacian.addValue(index, index, cc);
-                        
-                        // x-direction neighbors
-                        laplacian.addValue(index, idx(i-1, j, k), cx);
-                        laplacian.addValue(index, idx(i+1, j, k), cx);
-                        
-                        // y-direction neighbors
-                        laplacian.addValue(index, idx(i, j-1, k), cy);
-                        laplacian.addValue(index, idx(i, j+1, k), cy);
-                        
-                        // z-direction neighbors
-                        laplacian.addValue(index, idx(i, j, k-1), cz);
-                        laplacian.addValue(index, idx(i, j, k+1), cz);
-                    }
+                    // Diagonal term
+                    TNum diag = -6.0;
+                    
+                    // Boundary adjustments
+                    if (i == 0 || i == nx-1) diag += 1.0;
+                    if (j == 0 || j == ny-1) diag += 1.0;
+                    if (k == 0 || k == nz-1) diag += 1.0;
+                    
+                    laplacian.addValue(index, index, diag / (dx * dx));
+                    
+                    // Off-diagonal terms
+                    if (i > 0) laplacian.addValue(index, idx(i-1, j, k), 1.0 / (dx * dx));
+                    if (i < nx-1) laplacian.addValue(index, idx(i+1, j, k), 1.0 / (dx * dx));
+                    if (j > 0) laplacian.addValue(index, idx(i, j-1, k), 1.0 / (dy * dy));
+                    if (j < ny-1) laplacian.addValue(index, idx(i, j+1, k), 1.0 / (dy * dy));
+                    if (k > 0) laplacian.addValue(index, idx(i, j, k-1), 1.0 / (dz * dz));
+                    if (k < nz-1) laplacian.addValue(index, idx(i, j, k+1), 1.0 / (dz * dz));
                 }
             }
         }

@@ -16,3 +16,4 @@ bazel-bin
 *.ipynb
 *.egg
 *.egg-info/
+*.vtk
