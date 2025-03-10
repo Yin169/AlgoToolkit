@@ -92,10 +92,11 @@ set(TEST_SOURCES
 # endforeach()
 set(TEST_SOURCES
     # JetFlow
-    DrivenCavity
+    # DrivenCavity
+    exe1
 )
 foreach(test_source ${TEST_SOURCES})
-    add_executable(${test_source} application/CFD/${test_source}.cpp)
+    add_executable(${test_source} application/Laplacian/${test_source}.cpp)
     target_link_libraries(${test_source} PRIVATE ${TEST_DEPENDENCIES})
 endforeach()
 

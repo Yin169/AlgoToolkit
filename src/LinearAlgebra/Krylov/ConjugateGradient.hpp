@@ -63,14 +63,14 @@ public:
             TNum rs_new = r * r;
 
             // Debugging logs
-            std::cout << "Iteration " << i << ":\n"
-                      << "  Residual norm: " << std::sqrt(rs_new) << "\n"
-                      << "  Alpha: " << alpha << "\n"
-                      << "  Solution: [";
-            for (int j = 0; j < x.size(); ++j) {
-                std::cout << x[j] << (j + 1 < x.size() ? ", " : "");
-            }
-            std::cout << "]\n";
+            // std::cout << "Iteration " << i << ":\n"
+            //           << "  Residual norm: " << std::sqrt(rs_new) << "\n"
+            //           << "  Alpha: " << alpha << "\n"
+            //           << "  Solution: [";
+            // for (int j = 0; j < x.size(); ++j) {
+            //     std::cout << x[j] << (j + 1 < x.size() ? ", " : "");
+            // }
+            // std::cout << "]\n";
 
             // if (std::sqrt(rs_new) / b_norm < _tol) {
             //     break;

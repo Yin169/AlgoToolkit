@@ -1,30 +1,184 @@
 #include "../../src/PDEs/FDM/Laplacian.hpp"
+#include <iostream>
+#include <iomanip>
+#include <cmath>
+#include <functional>
+#include <fstream>
+
+// Analytical solution: u(x,y,z) = sin(πx)sin(πy)sin(πz)
+// This gives us f(x,y,z) = -∇²u = 3π²sin(πx)sin(πy)sin(πz)
+
+double analyticalSolution(double x, double y, double z) {
+    return sin(M_PI * x) * sin(M_PI * y) * sin(M_PI * z);
+}
+
+double rhsFunction(double x, double y, double z) {
+    // -∇²u = 3π²sin(πx)sin(πy)sin(πz)
+    return -3.0 * M_PI * M_PI * sin(M_PI * x) * sin(M_PI * y) * sin(M_PI * z);
+}
+
+double boundaryCondition(double x, double y, double z) {
+    // Dirichlet boundary condition: u = sin(πx)sin(πy)sin(πz) on the boundary
+    return analyticalSolution(x, y, z);
+}
+
+// Function to calculate L2 error between numerical and analytical solutions
+double calculateL2Error(const Poisson3DSolver<double>& solver) {
+    double error = 0.0;
+    double totalPoints = 0.0;
+    
+    int nx = solver.getGridSizeX();
+    int ny = solver.getGridSizeY();
+    int nz = solver.getGridSizeZ();
+    double hx = solver.getGridSpacingX();
+    double hy = solver.getGridSpacingY();
+    double hz = solver.getGridSpacingZ();
+    
+    for (int k = 0; k < nz; k++) {
+        for (int j = 0; j < ny; j++) {
+            for (int i = 0; i < nx; i++) {
+                double x = i * hx;
+                double y = j * hy;
+                double z = k * hz;
+                
+                double numerical = solver.getSolution(i, j, k);
+                double analytical = analyticalSolution(x, y, z);
+                
+                error += (numerical - analytical) * (numerical - analytical);
+                totalPoints += 1.0;
+            }
+        }
+    }
+    
+    return sqrt(error / totalPoints);
+}
+
+// Function to save solution to a VTK file for visualization
+void saveToVTK(const Poisson3DSolver<double>& solver, const std::string& filename) {
+    std::ofstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file " << filename << std::endl;
+        return;
+    }
+    
+    int nx = solver.getGridSizeX();
+    int ny = solver.getGridSizeY();
+    int nz = solver.getGridSizeZ();
+    double hx = solver.getGridSpacingX();
+    double hy = solver.getGridSpacingY();
+    double hz = solver.getGridSpacingZ();
+    
+    // VTK header
+    file << "# vtk DataFile Version 3.0\n";
+    file << "Poisson 3D Solution\n";
+    file << "ASCII\n";
+    file << "DATASET STRUCTURED_GRID\n";
+    file << "DIMENSIONS " << nx << " " << ny << " " << nz << "\n";
+    file << "POINTS " << nx * ny * nz << " float\n";
+    
+    // Write grid points
+    for (int k = 0; k < nz; k++) {
+        for (int j = 0; j < ny; j++) {
+            for (int i = 0; i < nx; i++) {
+                double x = i * hx;
+                double y = j * hy;
+                double z = k * hz;
+                file << x << " " << y << " " << z << "\n";
+            }
+        }
+    }
+    
+    // Write point data
+    file << "POINT_DATA " << nx * ny * nz << "\n";
+    
+    // Write numerical solution
+    file << "SCALARS numerical_solution float 1\n";
+    file << "LOOKUP_TABLE default\n";
+    for (int k = 0; k < nz; k++) {
+        for (int j = 0; j < ny; j++) {
+            for (int i = 0; i < nx; i++) {
+                file << solver.getSolution(i, j, k) << "\n";
+            }
+        }
+    }
+    
+    
+    // Write error
+    file << "SCALARS error float 1\n";
+    file << "LOOKUP_TABLE default\n";
+    for (int k = 0; k < nz; k++) {
+        for (int j = 0; j < ny; j++) {
+            for (int i = 0; i < nx; i++) {
+                double x = i * hx;
+                double y = j * hy;
+                double z = k * hz;
+                double numerical = solver.getSolution(i, j, k);
+                double analytical = analyticalSolution(x, y, z);
+                file << std::abs(numerical - analytical) << "\n";
+            }
+        }
+    }
+    
+    file.close();
+    std::cout << "Solution saved to " << filename << std::endl;
+}
 
 int main() {
-    // Define domain and grid
-    const int nx = 50, ny = 50, nz = 50;
-    const double xmin = 0.0, xmax = 1.0;
-    const double ymin = 0.0, ymax = 1.0;
-    const double zmin = 0.0, zmax = 1.0;
+    // Problem parameters
+    int nx = 33;  // Number of grid points in x direction
+    int ny = 33;  // Number of grid points in y direction
+    int nz = 33;  // Number of grid points in z direction
+    double lx = 1.0;  // Domain size in x direction
+    double ly = 1.0;  // Domain size in y direction
+    double lz = 1.0;  // Domain size in z direction
     
-    // Create solver
-    Laplacian3DFDM<double> solver(nx, ny, nz, xmin, xmax, ymin, ymax, zmin, zmax);
+    std::cout << "Creating 3D Poisson solver with " << nx << "x" << ny << "x" << nz << " grid points..." << std::endl;
     
-    // Define source term function (e.g., f(x,y,z) = 6)
-    auto sourceFunc = [](double x, double y, double z) -> double {
-        return x*x + y*y + z*z; ;
-    };
-
-    // Define boundary condition function
-    auto boundaryFunc = [](double x, double y, double z) -> double {
-        return x*x + y*y + z*z;  // Exact solution on boundary
-    };
+    // Create the Poisson solver
+    Poisson3DSolver<double> solver(nx, ny, nz, lx, ly, lz);
     
-    // Solve using SOR method with relaxation parameter 1.5
-    auto solution = solver.solve(boundaryFunc, sourceFunc, xmin, ymin, zmin, 1.5);
+    // Set the right-hand side function
+    std::cout << "Setting right-hand side function..." << std::endl;
+    solver.setRHS(rhsFunction);
     
-    // Export solution for visualization
-    solver.exportToVTK(solution, "laplacian_solution.vtk", xmin, ymin, zmin);
+    // Set Dirichlet boundary conditions
+    std::cout << "Setting Dirichlet boundary conditions..." << std::endl;
+    solver.setDirichletBC(boundaryCondition);
+    
+    // Solve the Poisson equation
+    std::cout << "Solving the Poisson equation..." << std::endl;
+    solver.solve(1000, 1e-8);
+    
+    // Calculate and print the L2 error
+    double l2Error = calculateL2Error(solver);
+    std::cout << "L2 error: " << std::scientific << std::setprecision(6) << l2Error << std::endl;
+    
+    // Save solution to VTK file for visualization
+    saveToVTK(solver, "poisson3d_solution.vtk");
+    
+    // Print solution at some sample points
+    std::cout << "\nSolution at sample points:" << std::endl;
+    std::cout << std::fixed << std::setprecision(6);
+    
+    // Center of the domain
+    double xCenter = 0.5, yCenter = 0.5, zCenter = 0.5;
+    int iCenter = static_cast<int>(xCenter / solver.getGridSpacingX());
+    int jCenter = static_cast<int>(yCenter / solver.getGridSpacingY());
+    int kCenter = static_cast<int>(zCenter / solver.getGridSpacingZ());
+    
+    std::cout << "At (0.5, 0.5, 0.5): " << std::endl;
+    std::cout << "  Numerical: " << solver.getSolution(iCenter, jCenter, kCenter) << std::endl;
+    std::cout << "  Analytical: " << analyticalSolution(xCenter, yCenter, zCenter) << std::endl;
+    
+    // Quarter of the domain
+    double xQuarter = 0.25, yQuarter = 0.25, zQuarter = 0.25;
+    int iQuarter = static_cast<int>(xQuarter / solver.getGridSpacingX());
+    int jQuarter = static_cast<int>(yQuarter / solver.getGridSpacingY());
+    int kQuarter = static_cast<int>(zQuarter / solver.getGridSpacingZ());
+    
+    std::cout << "At (0.25, 0.25, 0.25): " << std::endl;
+    std::cout << "  Numerical: " << solver.getSolution(iQuarter, jQuarter, kQuarter) << std::endl;
+    std::cout << "  Analytical: " << analyticalSolution(xQuarter, yQuarter, zQuarter) << std::endl;
     
     return 0;
 }

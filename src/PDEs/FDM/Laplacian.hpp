@@ -1,201 +1,178 @@
 #ifndef LAPLACIAN_HPP
 #define LAPLACIAN_HPP
 
-#include <iostream>
-#include <vector>
-#include <functional>
-#include <cmath>
-#include <fstream> 
 #include "../../Obj/SparseObj.hpp"
 #include "../../Obj/VectorObj.hpp"
-#include "../../LinearAlgebra/Solver/IterSolver.hpp"
+#include "../../LinearAlgebra/Krylov/ConjugateGradient.hpp"
+#include <vector>
+#include <cmath>
+#include <stdexcept>
+#include <iostream>
 
-template <typename TObj>
-class Laplacian3DFDM {
+template <typename TNum>
+class Poisson3DSolver {
 private:
     int nx, ny, nz;           // Number of grid points in each dimension
     double hx, hy, hz;        // Grid spacing in each dimension
-    double tol;               // Convergence tolerance
-    int max_iter;             // Maximum iterations
+    double lx, ly, lz;        // Domain size in each dimension
+    SparseMatrixCSC<TNum> A;  // Coefficient matrix for the Laplacian
+    VectorObj<TNum> b;        // Right-hand side vector
+    VectorObj<TNum> u;        // Solution vector
     
+    // Boundary conditions
+    enum class BoundaryType { Dirichlet, Neumann, Periodic };
+    BoundaryType bcTypeX, bcTypeY, bcTypeZ;
     
-    // Boundary condition function type
-    using BoundaryConditionFunc = std::function<TObj(double, double, double)>;
-    using SourceTermFunc = std::function<TObj(double, double, double)>;
 public:
-
-    inline int idx(int i, int j, int k) const {
-        return i + j * nx + k * nx * ny;
+    Poisson3DSolver(int nx, int ny, int nz, 
+                   double lx, double ly, double lz,
+                   BoundaryType bcTypeX = BoundaryType::Dirichlet,
+                   BoundaryType bcTypeY = BoundaryType::Dirichlet,
+                   BoundaryType bcTypeZ = BoundaryType::Dirichlet) 
+        : nx(nx), ny(ny), nz(nz), 
+          lx(lx), ly(ly), lz(lz),
+          hx(lx/(nx-1)), hy(ly/(ny-1)), hz(lz/(nz-1)),
+          bcTypeX(bcTypeX), bcTypeY(bcTypeY), bcTypeZ(bcTypeZ) {
+        
+        // Initialize solution vector
+        int totalPoints = nx * ny * nz;
+        u = VectorObj<TNum>(totalPoints, 0.0);
+        b = VectorObj<TNum>(totalPoints, 0.0);
+        
+        // Build the Laplacian matrix
+        buildLaplacianMatrix();
     }
-
-    Laplacian3DFDM(int nx_, int ny_, int nz_, 
-                  double xmin, double xmax, 
-                  double ymin, double ymax, 
-                  double zmin, double zmax,
-                  double tol_ = 1e-6, 
-                  int max_iter_ = 10000) 
-        : nx(nx_), ny(ny_), nz(nz_), 
-          hx((xmax - xmin) / (nx - 1)), 
-          hy((ymax - ymin) / (ny - 1)), 
-          hz((zmax - zmin) / (nz - 1)),
-          tol(tol_), max_iter(max_iter_) {}
     
-    // Build the coefficient matrix for the Laplacian operator
-    SparseMatrixCSC<TObj> buildLaplacianMatrix() const {
-        const int total_points = nx * ny * nz;
-        SparseMatrixCSC<TObj> A(total_points, total_points);
+    void buildLaplacianMatrix() {
+        int totalPoints = nx * ny * nz;
+        A = SparseMatrixCSC<TNum>(totalPoints, totalPoints);
         
-        // Coefficients for the finite difference stencil
-        const double cx = 1.0 / (hx * hx);
-        const double cy = 1.0 / (hy * hy);
-        const double cz = 1.0 / (hz * hz);
-        const double cc = -2.0 * (cx + cy + cz);  // Center coefficient
+        // Coefficients for the 7-point stencil
+        double cx = 1.0 / (hx * hx);
+        double cy = 1.0 / (hy * hy);
+        double cz = 1.0 / (hz * hz);
+        double cc = -2.0 * (cx + cy + cz); // Center coefficient
         
-        for (int k = 0; k < nz; ++k) {
-            for (int j = 0; j < ny; ++j) {
-                for (int i = 0; i < nx; ++i) {
-                    const int index = idx(i, j, k);
+        for (int k = 0; k < nz; k++) {
+            for (int j = 0; j < ny; j++) {
+                for (int i = 0; i < nx; i++) {
+                    int idx = index(i, j, k);
                     
-                    // For boundary points, set diagonal to 1 (Dirichlet BC will be applied later)
-                    if (i == 0 || i == nx-1 || j == 0 || j == ny-1 || k == 0 || k == nz-1) {
-                        A.addValue(index, index, 1.0);
+                    // Handle boundary conditions
+                    bool isBoundary = (i == 0 || i == nx-1 || 
+                                      j == 0 || j == ny-1 || 
+                                      k == 0 || k == nz-1);
+                    
+                    if (isBoundary && (bcTypeX == BoundaryType::Dirichlet || 
+                                      bcTypeY == BoundaryType::Dirichlet || 
+                                      bcTypeZ == BoundaryType::Dirichlet)) {
+                        // Dirichlet boundary: u = g
+                        A.addValue(idx, idx, 1.0);
                     } else {
                         // Interior points: apply the 7-point stencil
-                        A.addValue(index, index, cc);
+                        A.addValue(idx, idx, cc);
                         
-                        // x-direction neighbors
-                        A.addValue(index, idx(i-1, j, k), cx);
-                        A.addValue(index, idx(i+1, j, k), cx);
+                        // X-direction neighbors
+                        if (i > 0) A.addValue(idx, index(i-1, j, k), cx);
+                        if (i < nx-1) A.addValue(idx, index(i+1, j, k), cx);
                         
-                        // y-direction neighbors
-                        A.addValue(index, idx(i, j-1, k), cy);
-                        A.addValue(index, idx(i, j+1, k), cy);
+                        // Y-direction neighbors
+                        if (j > 0) A.addValue(idx, index(i, j-1, k), cy);
+                        if (j < ny-1) A.addValue(idx, index(i, j+1, k), cy);
                         
-                        // z-direction neighbors
-                        A.addValue(index, idx(i, j, k-1), cz);
-                        A.addValue(index, idx(i, j, k+1), cz);
+                        // Z-direction neighbors
+                        if (k > 0) A.addValue(idx, index(i, j, k-1), cz);
+                        if (k < nz-1) A.addValue(idx, index(i, j, k+1), cz);
                     }
                 }
             }
         }
         
         A.finalize();
-        return A;
-    }
- 
-    void applySourceTerm(VectorObj<TObj>& b, 
-                        const SourceTermFunc& sourceFunc,
-                        double xmin, double ymin, double zmin) const {
-        for (int k = 0; k < nz; ++k) {
-            double z = zmin + k * hz;
-            for (int j = 0; j < ny; ++j) {
-                double y = ymin + j * hy;
-                for (int i = 0; i < nx; ++i) {
-                    double x = xmin + i * hx;
-                        
-                    // Skip boundary points (they're handled by Dirichlet BC)
-                    if (i == 0 || i == nx-1 || j == 0 || j == ny-1 || k == 0 || k == nz-1) {continue;}
-                    // For interior points, apply the source term
-                     b[idx(i, j, k)] = sourceFunc(x, y, z);
-                }
-            }
-        }
     }
     
-    // Apply Dirichlet boundary conditions
-    void applyDirichletBC(VectorObj<TObj>& b, 
-                         const BoundaryConditionFunc& bcFunc,
-                         double xmin, double ymin, double zmin) const {
-        for (int k = 0; k < nz; ++k) {
-            double z = zmin + k * hz;
-            for (int j = 0; j < ny; ++j) {
-                double y = ymin + j * hy;
-                for (int i = 0; i < nx; ++i) {
-                    double x = xmin + i * hx;
+    // Helper function to convert 3D indices to 1D index
+    inline int index(int i, int j, int k) const {
+        return i + j * nx + k * nx * ny;
+    }
+    
+    // Set the right-hand side function f
+    void setRHS(const std::function<TNum(double, double, double)>& f) {
+        for (int k = 0; k < nz; k++) {
+            for (int j = 0; j < ny; j++) {
+                for (int i = 0; i < nx; i++) {
+                    double x = i * hx;
+                    double y = j * hy;
+                    double z = k * hz;
+                    int idx = index(i, j, k);
                     
-                    if (i == 0 || i == nx-1 || j == 0 || j == ny-1 || k == 0 || k == nz-1) {
-                        b[idx(i, j, k)] = bcFunc(x, y, z);
+                    // For interior points, set the RHS to f(x,y,z)
+                    bool isBoundary = (i == 0 || i == nx-1 || 
+                                      j == 0 || j == ny-1 || 
+                                      k == 0 || k == nz-1);
+                    
+                    if (isBoundary && (bcTypeX == BoundaryType::Dirichlet || 
+                                      bcTypeY == BoundaryType::Dirichlet || 
+                                      bcTypeZ == BoundaryType::Dirichlet)) {
+                        // For Dirichlet boundaries, set b to the boundary value
+                        b[idx] = f(x, y, z);
+                    } else {
+                        // For interior points, set b to f(x,y,z)
+                        b[idx] = f(x, y, z);
                     }
                 }
             }
         }
     }
     
-    VectorObj<TObj> solve(const BoundaryConditionFunc& bcFunc,
-                         const SourceTermFunc& sourceFunc,
-                         double xmin, double ymin, double zmin,
-                         double omega = 1.0) const {
-        const int total_points = nx * ny * nz;
-        
-        // Build the coefficient matrix
-        SparseMatrixCSC<TObj> A = buildLaplacianMatrix();
-        
-        // Initialize the right-hand side vector (initially zero)
-        VectorObj<TObj> b(total_points, 0.0);
-
-        // Apply source term for interior points
-        applySourceTerm(b, sourceFunc, xmin, ymin, zmin);
-        // Apply boundary conditions
-        applyDirichletBC(b, bcFunc, xmin, ymin, zmin);
-        
-        // Initialize solution vector with boundary conditions
-        VectorObj<TObj> x(b.size(), 0.0);
-        
-        // Create and run the solver
-        SOR<TObj, SparseMatrixCSC<TObj>, VectorObj<TObj>> solver(A, b, max_iter, omega);
-        solver.solve(x);
-        
-        return x;
-    }
-    
-    // Extract solution at a specific point
-    TObj getSolutionAt(const VectorObj<TObj>& solution, int i, int j, int k) const {
-        if (i < 0 || i >= nx || j < 0 || j >= ny || k < 0 || k >= nz) {
-            throw std::out_of_range("Grid indices out of range");
-        }
-        return solution[idx(i, j, k)];
-    }
-    
-    // Get physical coordinates from grid indices
-    void getCoordinates(int i, int j, int k, double xmin, double ymin, double zmin,
-                       double& x, double& y, double& z) const {
-        x = xmin + i * hx;
-        y = ymin + j * hy;
-        z = zmin + k * hz;
-    }
-    
-    // Export solution to a VTK file for visualization
-    void exportToVTK(const VectorObj<TObj>& solution, 
-                    const std::string& filename,
-                    double xmin, double ymin, double zmin) const {
-        std::ofstream file(filename);
-        if (!file.is_open()) {
-            throw std::runtime_error("Failed to open file for writing: " + filename);
-        }
-        
-        // VTK file header
-        file << "# vtk DataFile Version 3.0\n";
-        file << "3D Laplacian Solution\n";
-        file << "ASCII\n";
-        file << "DATASET STRUCTURED_POINTS\n";
-        file << "DIMENSIONS " << nx << " " << ny << " " << nz << "\n";
-        file << "ORIGIN " << xmin << " " << ymin << " " << zmin << "\n";
-        file << "SPACING " << hx << " " << hy << " " << hz << "\n";
-        file << "POINT_DATA " << nx * ny * nz << "\n";
-        file << "SCALARS solution float 1\n";
-        file << "LOOKUP_TABLE default\n";
-        
-        // Write solution values
-        for (int k = 0; k < nz; ++k) {
-            for (int j = 0; j < ny; ++j) {
-                for (int i = 0; i < nx; ++i) {
-                    file << solution[idx(i, j, k)] << "\n";
+    // Set Dirichlet boundary conditions
+    void setDirichletBC(const std::function<TNum(double, double, double)>& g) {
+        for (int k = 0; k < nz; k++) {
+            for (int j = 0; j < ny; j++) {
+                for (int i = 0; i < nx; i++) {
+                    bool isBoundary = (i == 0 || i == nx-1 || 
+                                      j == 0 || j == ny-1 || 
+                                      k == 0 || k == nz-1);
+                    
+                    if (isBoundary) {
+                        double x = i * hx;
+                        double y = j * hy;
+                        double z = k * hz;
+                        int idx = index(i, j, k);
+                        
+                        b[idx] = g(x, y, z);
+                    }
                 }
             }
         }
-        
-        file.close();
     }
+    
+    // Solve the Poisson equation using Conjugate Gradient
+    void solve(int maxIter = 1000, double tol = 1e-6) {
+        ConjugateGrad<TNum, SparseMatrixCSC<TNum>, VectorObj<TNum>> cg(A, b, maxIter, tol);
+        cg.solve(u);
+    }
+    
+    // Get the solution at a specific grid point
+    TNum getSolution(int i, int j, int k) const {
+        if (i < 0 || i >= nx || j < 0 || j >= ny || k < 0 || k >= nz) {
+            throw std::out_of_range("Grid indices out of range");
+        }
+        return u[index(i, j, k)];
+    }
+    
+    // Get the entire solution vector
+    const VectorObj<TNum>& getSolution() const {
+        return u;
+    }
+    
+    // Get grid information
+    double getGridSpacingX() const { return hx; }
+    double getGridSpacingY() const { return hy; }
+    double getGridSpacingZ() const { return hz; }
+    int getGridSizeX() const { return nx; }
+    int getGridSizeY() const { return ny; }
+    int getGridSizeZ() const { return nz; }
 };
 
 #endif // LAPLACIAN_HPP
