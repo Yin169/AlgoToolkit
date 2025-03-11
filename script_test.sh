@@ -6,4 +6,4 @@ cmake .. -DCMAKE_TOOLCHAIN_FILE=Release/generators/conan_toolchain.cmake -DCMAKE
 cmake --build .
 
 ./PoissonCase
-python ../application/PostProcess/ShowVTK.py poisson_solution_sor.vtk -f solution 
+python ../application/PostProcess/ShowVTK.py solution_poisson.vtk -f solution 
