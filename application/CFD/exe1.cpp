@@ -103,21 +103,10 @@ void exportToVTK(const std::string& filename, const Poisson3DSolver<double>& sol
     file << "# vtk DataFile Version 3.0\n";
     file << "Poisson 3D Solution\n";
     file << "ASCII\n";
-    file << "DATASET STRUCTURED_GRID\n";
+    file << "DATASET STRUCTURED_POINTS\n";
     file << "DIMENSIONS " << nx << " " << ny << " " << nz << "\n";
-    file << "POINTS " << nx * ny * nz << " float\n";
-    
-    // Write grid points
-    for (int k = 0; k < nz; k++) {
-        for (int j = 0; j < ny; j++) {
-            for (int i = 0; i < nx; i++) {
-                double x = i * hx;
-                double y = j * hy;
-                double z = k * hz;
-                file << x << " " << y << " " << z << "\n";
-            }
-        }
-    }
+    file << "ORIGIN 0.0 0.0 0.0\n";
+    file << "SPACING " << hx << " " << hy << " " << hz << "\n";
     
     // Write point data
     file << "POINT_DATA " << nx * ny * nz << "\n";
@@ -166,12 +155,11 @@ void exportToVTK(const std::string& filename, const Poisson3DSolver<double>& sol
     file.close();
     std::cout << "Solution exported to " << filename << std::endl;
 }
-
 int main() {
     // Problem parameters
-    int nx = 128;  // Number of grid points in x direction
-    int ny = 128;  // Number of grid points in y direction
-    int nz = 128;  // Number of grid points in z direction
+    int nx = 12;  // Number of grid points in x direction
+    int ny = 12;  // Number of grid points in y direction
+    int nz = 12;  // Number of grid points in z direction
     double lx = 1.0;  // Domain size in x direction
     double ly = 1.0;  // Domain size in y direction
     double lz = 1.0;  // Domain size in z direction
