@@ -209,41 +209,47 @@ PYBIND11_MODULE(fastsolver, m) {
     }, "Read matrix from Matrix Market format file",
        py::arg("filename"), py::arg("matrix"));
 
-       
-     // Add FDM::PoissonSolver3D binding
-     py::class_<FDM::PoissonSolver3D<double>>(m, "FDMPoissonSolver3D")
-     .def(py::init<int, int, int, double, double, double>(),
-          py::arg("nx"), py::arg("ny"), py::arg("nz"), 
-          py::arg("lx"), py::arg("ly"), py::arg("lz"))
-     .def("solve", [](FDM::PoissonSolver3D<double>& self, 
-                      py::function source_func, py::function boundary_func,
-                      int maxIter, double omega) {
-         self.solve(
-             [source_func](double x, double y, double z) -> double {
-                 return py::cast<double>(source_func(x, y, z));
-             },
-             [boundary_func](double x, double y, double z) -> double {
-                 return py::cast<double>(boundary_func(x, y, z));
-             },
-             maxIter, omega
-         );
-     }, "Solve the Poisson equation using SOR method",
-        py::arg("source_func"), py::arg("boundary_func"), 
-        py::arg("maxIter") = 1000, py::arg("omega") = 1.5)
-     .def("getSolution", py::overload_cast<int, int, int>(&FDM::PoissonSolver3D<double>::getSolution, py::const_),
-          "Get solution value at specific grid point",
-          py::arg("i"), py::arg("j"), py::arg("k"))
-     .def("getSolution", py::overload_cast<>(&FDM::PoissonSolver3D<double>::getSolution, py::const_),
-          "Get the entire solution vector")
-     .def("getNx", &FDM::PoissonSolver3D<double>::getNx, "Get number of grid points in x direction")
-     .def("getNy", &FDM::PoissonSolver3D<double>::getNy, "Get number of grid points in y direction")
-     .def("getNz", &FDM::PoissonSolver3D<double>::getNz, "Get number of grid points in z direction")
-     .def("getHx", &FDM::PoissonSolver3D<double>::getHx, "Get grid spacing in x direction")
-     .def("getHy", &FDM::PoissonSolver3D<double>::getHy, "Get grid spacing in y direction")
-     .def("getHz", &FDM::PoissonSolver3D<double>::getHz, "Get grid spacing in z direction")
-     .def("getCoordinates", &FDM::PoissonSolver3D<double>::getCoordinates, 
-          "Get physical coordinates for a grid point",
-          py::arg("i"), py::arg("j"), py::arg("k"), py::arg("x"), py::arg("y"), py::arg("z"));
+
+    // Add Poisson3DSolver binding
+    py::enum_<BoundaryType>(m, "BoundaryType")
+        .value("Dirichlet", BoundaryType::Dirichlet)
+        .value("Neumann", BoundaryType::Neumann)
+        .value("Periodic", BoundaryType::Periodic)
+        .export_values();
+        
+    py::class_<Poisson3DSolver<double>>(m, "Poisson3DSolver")
+        .def(py::init<int, int, int, double, double, double, BoundaryType, BoundaryType, BoundaryType>(),
+             py::arg("nx"), py::arg("ny"), py::arg("nz"), 
+             py::arg("lx"), py::arg("ly"), py::arg("lz"),
+             py::arg("bcTypeX") = BoundaryType::Dirichlet,
+             py::arg("bcTypeY") = BoundaryType::Dirichlet,
+             py::arg("bcTypeZ") = BoundaryType::Dirichlet)
+        .def("setRHS", [](Poisson3DSolver<double>& self, py::function f) {
+            self.setRHS([f](double x, double y, double z) -> double {
+                return py::cast<double>(f(x, y, z));
+            });
+        }, "Set the right-hand side function f", py::arg("f"))
+        .def("setDirichletBC", [](Poisson3DSolver<double>& self, py::function g) {
+            self.setDirichletBC([g](double x, double y, double z) -> double {
+                return py::cast<double>(g(x, y, z));
+            });
+        }, "Set Dirichlet boundary conditions", py::arg("g"))
+        .def("solve", &Poisson3DSolver<double>::solve,
+             "Solve the Poisson equation using Conjugate Gradient",
+             py::arg("maxIter") = 1000, py::arg("tol") = 1e-6)
+        .def("getSolution", py::overload_cast<int, int, int>(&Poisson3DSolver<double>::getSolution, py::const_),
+             "Get solution value at specific grid point",
+             py::arg("i"), py::arg("j"), py::arg("k"))
+        .def("getSolution", [](const Poisson3DSolver<double>& self) {
+            return self.getSolution();
+        }, "Get the entire solution vector")
+        .def("getDx", &Poisson3DSolver<double>::getDx, "Get grid spacing in x direction")
+        .def("getDy", &Poisson3DSolver<double>::getDy, "Get grid spacing in y direction")
+        .def("getDz", &Poisson3DSolver<double>::getDz, "Get grid spacing in z direction")
+        .def("getNx", &Poisson3DSolver<double>::getNx, "Get number of grid points in x direction")
+        .def("getNy", &Poisson3DSolver<double>::getNy, "Get number of grid points in y direction")
+        .def("getNz", &Poisson3DSolver<double>::getNz, "Get number of grid points in z direction");
+
  
     py::enum_<TimeIntegration>(m, "TimeIntegration")
         .value("EULER", TimeIntegration::EULER)
