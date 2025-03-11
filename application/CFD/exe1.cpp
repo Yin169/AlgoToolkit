@@ -29,12 +29,12 @@ double calculateL2Error(const Poisson3DSolver<double>& solver) {
     double error = 0.0;
     double totalPoints = 0.0;
     
-    int nx = solver.getGridSizeX();
-    int ny = solver.getGridSizeY();
-    int nz = solver.getGridSizeZ();
-    double hx = solver.getGridSpacingX();
-    double hy = solver.getGridSpacingY();
-    double hz = solver.getGridSpacingZ();
+    int nx = solver.getNx();
+    int ny = solver.getNy();
+    int nz = solver.getNz();
+    double hx = solver.getDx();
+    double hy = solver.getDy();
+    double hz = solver.getDz();
     
     for (int k = 0; k < nz; k++) {
         for (int j = 0; j < ny; j++) {
@@ -59,12 +59,12 @@ double calculateL2Error(const Poisson3DSolver<double>& solver) {
 double calculateMaxError(const Poisson3DSolver<double>& solver) {
     double maxError = 0.0;
     
-    int nx = solver.getGridSizeX();
-    int ny = solver.getGridSizeY();
-    int nz = solver.getGridSizeZ();
-    double hx = solver.getGridSpacingX();
-    double hy = solver.getGridSpacingY();
-    double hz = solver.getGridSpacingZ();
+    int nx = solver.getNx();
+    int ny = solver.getNy();
+    int nz = solver.getNz();
+    double hx = solver.getDx();
+    double hy = solver.getDy();
+    double hz = solver.getDz();
     
     for (int k = 0; k < nz; k++) {
         for (int j = 0; j < ny; j++) {
@@ -86,80 +86,91 @@ double calculateMaxError(const Poisson3DSolver<double>& solver) {
 }
 
 void exportToVTK(const std::string& filename, const Poisson3DSolver<double>& solver) {
-    std::ofstream file(filename);
-    if (!file.is_open()) {
-        std::cerr << "Error: Could not open file " << filename << std::endl;
-        return;
+    int nx = solver.getNx();
+    int ny = solver.getNy();
+    int nz = solver.getNz();
+    double dx = solver.getDx();
+    double dy = solver.getDy();
+    double dz = solver.getDz();
+    
+    // Get solution field
+    const VectorObj<double>& u = solver.getSolution();
+    
+    // Helper function to get index in the flattened array
+    auto idx = [nx, ny](int i, int j, int k) -> int {
+        return i + j * nx + k * nx * ny;
+    };
+    
+    std::ofstream outFile(filename);
+    outFile << "# vtk DataFile Version 3.0\n";
+    outFile << "Poisson Simulation\n";
+    outFile << "ASCII\n";
+    outFile << "DATASET STRUCTURED_GRID\n";
+    outFile << "DIMENSIONS " << nx << " " << ny << " " << nz << "\n";
+    outFile << "POINTS " << nx*ny*nz << " float\n";
+    
+    // Write grid points
+    for (int k = 0; k < nz; k++) {
+        for (int j = 0; j < ny; j++) {
+            for (int i = 0; i < nx; i++) {
+                outFile << i*dx << " " << j*dy << " " << k*dz << "\n";
+            }
+        }
     }
     
-    int nx = solver.getGridSizeX();
-    int ny = solver.getGridSizeY();
-    int nz = solver.getGridSizeZ();
-    double hx = solver.getGridSpacingX();
-    double hy = solver.getGridSpacingY();
-    double hz = solver.getGridSpacingZ();
-    
-    // VTK header
-    file << "# vtk DataFile Version 3.0\n";
-    file << "Poisson 3D Solution\n";
-    file << "ASCII\n";
-    file << "DATASET STRUCTURED_POINTS\n";
-    file << "DIMENSIONS " << nx << " " << ny << " " << nz << "\n";
-    file << "ORIGIN 0.0 0.0 0.0\n";
-    file << "SPACING " << hx << " " << hy << " " << hz << "\n";
-    
-    // Write point data
-    file << "POINT_DATA " << nx * ny * nz << "\n";
+    // Write data header
+    outFile << "POINT_DATA " << nx*ny*nz << "\n";
     
     // Write numerical solution
-    file << "SCALARS numerical_solution float 1\n";
-    file << "LOOKUP_TABLE default\n";
+    outFile << "SCALARS numerical_solution float 1\n";
+    outFile << "LOOKUP_TABLE default\n";
     for (int k = 0; k < nz; k++) {
         for (int j = 0; j < ny; j++) {
             for (int i = 0; i < nx; i++) {
-                file << solver.getSolution(i, j, k) << "\n";
+                outFile << u[idx(i, j, k)] << "\n";
             }
         }
     }
     
-    // Write analytical solution
-    file << "SCALARS analytical_solution float 1\n";
-    file << "LOOKUP_TABLE default\n";
+    // Write analytical solution for comparison
+    outFile << "SCALARS analytical_solution float 1\n";
+    outFile << "LOOKUP_TABLE default\n";
     for (int k = 0; k < nz; k++) {
         for (int j = 0; j < ny; j++) {
             for (int i = 0; i < nx; i++) {
-                double x = i * hx;
-                double y = j * hy;
-                double z = k * hz;
-                file << analyticalSolution(x, y, z) << "\n";
+                double x = i * dx;
+                double y = j * dy;
+                double z = k * dz;
+                outFile << analyticalSolution(x, y, z) << "\n";
             }
         }
     }
     
-    // Write error
-    file << "SCALARS error float 1\n";
-    file << "LOOKUP_TABLE default\n";
+    // Write error field
+    outFile << "SCALARS error float 1\n";
+    outFile << "LOOKUP_TABLE default\n";
     for (int k = 0; k < nz; k++) {
         for (int j = 0; j < ny; j++) {
             for (int i = 0; i < nx; i++) {
-                double x = i * hx;
-                double y = j * hy;
-                double z = k * hz;
-                double numerical = solver.getSolution(i, j, k);
+                double x = i * dx;
+                double y = j * dy;
+                double z = k * dz;
+                double numerical = u[idx(i, j, k)];
                 double analytical = analyticalSolution(x, y, z);
-                file << std::abs(numerical - analytical) << "\n";
+                outFile << std::abs(numerical - analytical) << "\n";
             }
         }
     }
     
-    file.close();
-    std::cout << "Solution exported to " << filename << std::endl;
+    outFile.close();
+    std::cout << "Solution exported to " << filename << " (ParaView compatible format)" << std::endl;
 }
+
 int main() {
     // Problem parameters
-    int nx = 12;  // Number of grid points in x direction
-    int ny = 12;  // Number of grid points in y direction
-    int nz = 12;  // Number of grid points in z direction
+    int nx = 128;  // Number of grid points in x direction
+    int ny = 128;  // Number of grid points in y direction
+    int nz = 128;  // Number of grid points in z direction
     double lx = 1.0;  // Domain size in x direction
     double ly = 1.0;  // Domain size in y direction
     double lz = 1.0;  // Domain size in z direction
@@ -204,9 +215,9 @@ int main() {
     
     // Center of the domain
     double xCenter = 0.5, yCenter = 0.5, zCenter = 0.5;
-    int iCenter = static_cast<int>(xCenter / solver.getGridSpacingX());
-    int jCenter = static_cast<int>(yCenter / solver.getGridSpacingY());
-    int kCenter = static_cast<int>(zCenter / solver.getGridSpacingZ());
+    int iCenter = static_cast<int>(xCenter / solver.getDx());
+    int jCenter = static_cast<int>(yCenter / solver.getDy());
+    int kCenter = static_cast<int>(zCenter / solver.getDz());
     
     std::cout << "At (0.5, 0.5, 0.5): " << std::endl;
     std::cout << "  Numerical: " << solver.getSolution(iCenter, jCenter, kCenter) << std::endl;
@@ -214,9 +225,9 @@ int main() {
     
     // Quarter of the domain
     double xQuarter = 0.25, yQuarter = 0.25, zQuarter = 0.25;
-    int iQuarter = static_cast<int>(xQuarter / solver.getGridSpacingX());
-    int jQuarter = static_cast<int>(yQuarter / solver.getGridSpacingY());
-    int kQuarter = static_cast<int>(zQuarter / solver.getGridSpacingZ());
+    int iQuarter = static_cast<int>(xQuarter / solver.getDx());
+    int jQuarter = static_cast<int>(yQuarter / solver.getDy());
+    int kQuarter = static_cast<int>(zQuarter / solver.getDz());
     
     std::cout << "At (0.25, 0.25, 0.25): " << std::endl;
     std::cout << "  Numerical: " << solver.getSolution(iQuarter, jQuarter, kQuarter) << std::endl;
