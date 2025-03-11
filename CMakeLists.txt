@@ -93,8 +93,9 @@ set(TEST_SOURCES
 set(TEST_SOURCES
     JetFlow
     DrivenCavity
-    exe1
+    PoissonCase
 )
+
 foreach(test_source ${TEST_SOURCES})
     add_executable(${test_source} application/CFD/${test_source}.cpp)
     target_link_libraries(${test_source} PRIVATE ${TEST_DEPENDENCIES})

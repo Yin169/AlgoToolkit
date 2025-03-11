@@ -13,7 +13,6 @@ bazel-bin
 *.txt
 *.cmake
 /build
-*.ipynb
 *.egg
 *.egg-info/
 *.vtk
