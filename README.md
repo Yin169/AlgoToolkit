@@ -123,7 +123,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import os
 
- Create output directory if it doesn't exist
+# Create output directory if it doesn't exist
 output_dir = "./output"
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
