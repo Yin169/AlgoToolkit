@@ -1,61 +1,91 @@
-#ifndef POISSON_HPP
-#define POISSON_HPP
+#ifndef LAPLACIAN_HPP
+#define LAPLACIAN_HPP
 
 #include "../../Obj/SparseObj.hpp"
 #include "../../Obj/VectorObj.hpp"
-#include "../../LinearAlgebra/Solver/IterSolver.hpp"
-#include <functional>
-#include <cmath>
-#include <iostream>
+#include "../../LinearAlgebra/Krylov/ConjugateGradient.hpp"
 #include <vector>
+#include <cmath>
+#include <stdexcept>
+#include <iostream>
+#include <fstream>
 
-namespace FDM {
+enum class BoundaryType { Dirichlet, Neumann, Periodic };
 
 template <typename TNum>
-class PoissonSolver3D {
+class Poisson3DSolver {
 private:
     int nx, ny, nz;           // Number of grid points in each dimension
     double hx, hy, hz;        // Grid spacing in each dimension
     double lx, ly, lz;        // Domain size in each dimension
-    SparseMatrixCSC<TNum> A;  // System matrix
+    SparseMatrixCSC<TNum> A;  // Coefficient matrix for the Laplacian
     VectorObj<TNum> b;        // Right-hand side vector
     VectorObj<TNum> u;        // Solution vector
     
-    // Maps 3D index (i,j,k) to 1D index
-    inline int idx(int i, int j, int k) const {
-        return i + j * nx + k * nx * ny;
+    // Boundary conditions
+    BoundaryType bcTypeX, bcTypeY, bcTypeZ;
+    
+public:
+    Poisson3DSolver(int nx, int ny, int nz, 
+                   double lx, double ly, double lz,
+                   BoundaryType bcTypeX = BoundaryType::Dirichlet,
+                   BoundaryType bcTypeY = BoundaryType::Dirichlet,
+                   BoundaryType bcTypeZ = BoundaryType::Dirichlet) 
+        : nx(nx), ny(ny), nz(nz), 
+          lx(lx), ly(ly), lz(lz),
+          hx(lx/(nx-1)), hy(ly/(ny-1)), hz(lz/(nz-1)),
+          bcTypeX(bcTypeX), bcTypeY(bcTypeY), bcTypeZ(bcTypeZ) {
+        
+        // Initialize solution vector
+        int totalPoints = nx * ny * nz;
+        u = VectorObj<TNum>(totalPoints, 0.0);
+        b = VectorObj<TNum>(totalPoints, 0.0);
+        
+        // Build the Laplacian matrix
+        buildLaplacianMatrix();
     }
     
-    // Builds the system matrix for the 3D Poisson equation
-    void buildSystemMatrix() {
-        const int n = nx * ny * nz;
-        A = SparseMatrixCSC<TNum>(n, n);
+    void buildLaplacianMatrix() {
+        int totalPoints = nx * ny * nz;
+        A = SparseMatrixCSC<TNum>(totalPoints, totalPoints);
         
-        // Coefficients for the finite difference stencil
-        const double cx = 1.0 / (hx * hx);
-        const double cy = 1.0 / (hy * hy);
-        const double cz = 1.0 / (hz * hz);
-        const double cc = -2.0 * (cx + cy + cz); // Center coefficient
+        // Coefficients for the 7-point stencil
+        double cx = 1.0 / (hx * hx);
+        double cy = 1.0 / (hy * hy);
+        double cz = 1.0 / (hz * hz);
+        double cc = -2.0 * (cx + cy + cz); // Center coefficient
         
-        for (int k = 0; k < nz; ++k) {
-            for (int j = 0; j < ny; ++j) {
-                for (int i = 0; i < nx; ++i) {
-                    const int index = idx(i, j, k);
+        for (int k = 0; k < nz; k++) {
+            for (int j = 0; j < ny; j++) {
+                for (int i = 0; i < nx; i++) {
+                    int idx = index(i, j, k);
                     
-                    // Center point
-                    A.addValue(index, index, cc);
+                    // Handle boundary conditions
+                    bool isBoundary = (i == 0 || i == nx-1 || 
+                                      j == 0 || j == ny-1 || 
+                                      k == 0 || k == nz-1);
                     
-                    // x-direction neighbors
-                    if (i > 0) A.addValue(index, idx(i-1, j, k), cx);
-                    if (i < nx-1) A.addValue(index, idx(i+1, j, k), cx);
-                    
-                    // y-direction neighbors
-                    if (j > 0) A.addValue(index, idx(i, j-1, k), cy);
-                    if (j < ny-1) A.addValue(index, idx(i, j+1, k), cy);
-                    
-                    // z-direction neighbors
-                    if (k > 0) A.addValue(index, idx(i, j, k-1), cz);
-                    if (k < nz-1) A.addValue(index, idx(i, j, k+1), cz);
+                    if (isBoundary && (bcTypeX == BoundaryType::Dirichlet || 
+                                      bcTypeY == BoundaryType::Dirichlet || 
+                                      bcTypeZ == BoundaryType::Dirichlet)) {
+                        // Dirichlet boundary: u = g
+                        A.addValue(idx, idx, 1.0);
+                    } else {
+                        // Interior points: apply the 7-point stencil
+                        A.addValue(idx, idx, cc);
+                        
+                        // X-direction neighbors
+                        if (i > 0) A.addValue(idx, index(i-1, j, k), cx);
+                        if (i < nx-1) A.addValue(idx, index(i+1, j, k), cx);
+                        
+                        // Y-direction neighbors
+                        if (j > 0) A.addValue(idx, index(i, j-1, k), cy);
+                        if (j < ny-1) A.addValue(idx, index(i, j+1, k), cy);
+                        
+                        // Z-direction neighbors
+                        if (k > 0) A.addValue(idx, index(i, j, k-1), cz);
+                        if (k < nz-1) A.addValue(idx, index(i, j, k+1), cz);
+                    }
                 }
             }
         }
@@ -63,76 +93,66 @@ private:
         A.finalize();
     }
     
-    // Applies Dirichlet boundary conditions
-    void applyDirichletBC(const std::function<TNum(double, double, double)>& boundaryFunc) {
-        const int n = nx * ny * nz;
-        
-        // Reset the right-hand side vector
-        b.zero();
-        
-        // Apply boundary conditions
-        for (int k = 0; k < nz; ++k) {
-            double z = k * hz;
-            for (int j = 0; j < ny; ++j) {
-                double y = j * hy;
-                for (int i = 0; i < nx; ++i) {
+    // Helper function to convert 3D indices to 1D index
+    inline int index(int i, int j, int k) const {
+        return i + j * nx + k * nx * ny;
+    }
+    
+    // Set the right-hand side function f
+    void setRHS(const std::function<TNum(double, double, double)>& f) {
+        for (int k = 0; k < nz; k++) {
+            for (int j = 0; j < ny; j++) {
+                for (int i = 0; i < nx; i++) {
                     double x = i * hx;
-                    const int index = idx(i, j, k);
+                    double y = j * hy;
+                    double z = k * hz;
+                    int idx = index(i, j, k);
                     
-                    // Check if this is a boundary point
-                    bool isBoundary = (i == 0 || i == nx-1 || j == 0 || j == ny-1 || k == 0 || k == nz-1);
+                    // For interior points, set the RHS to f(x,y,z)
+                    bool isBoundary = (i == 0 || i == nx-1 || 
+                                      j == 0 || j == ny-1 || 
+                                      k == 0 || k == nz-1);
                     
-                    if (isBoundary) {
-                        // Set diagonal to 1
-                        for (int idx = A.col_ptr[index]; idx < A.col_ptr[index+1]; ++idx) {
-                            A.values[idx] = (A.row_indices[idx] == index) ? 1.0 : 0.0;
-                        }
-                        
-                        // Set boundary value
-                        b[index] = boundaryFunc(x, y, z);
-                        u[index] = boundaryFunc(x, y, z);
+                    if (isBoundary && (bcTypeX == BoundaryType::Dirichlet || 
+                                      bcTypeY == BoundaryType::Dirichlet || 
+                                      bcTypeZ == BoundaryType::Dirichlet)) {
+                        // For Dirichlet boundaries, set b to the boundary value
+                        b[idx] = f(x, y, z);
+                    } else {
+                        // For interior points, set b to f(x,y,z)
+                        b[idx] = f(x, y, z);
                     }
                 }
             }
         }
     }
-
-public:
-    PoissonSolver3D(int nx_, int ny_, int nz_, double lx_, double ly_, double lz_)
-        : nx(nx_), ny(ny_), nz(nz_), 
-          lx(lx_), ly(ly_), lz(lz_),
-          hx(lx_ / (nx_ - 1)), hy(ly_ / (ny_ - 1)), hz(lz_ / (nz_ - 1)),
-          b(nx_ * ny_ * nz_), u(nx_ * ny_ * nz_) {
-        buildSystemMatrix();
-    }
     
-    // Solves the Poisson equation: ∇²u = f with Dirichlet boundary conditions
-    // Alternative solver using SOR method
-    void solve(const std::function<TNum(double, double, double)>& sourceFunc,
-                  const std::function<TNum(double, double, double)>& boundaryFunc,
-                  int maxIter = 1000, TNum omega = 1.5) {
-        
-        const int n = nx * ny * nz;
-        
-        // Set up the right-hand side vector with the source function
-        for (int k = 1; k < nz-1; ++k) {
-            double z = k * hz;
-            for (int j = 1; j < ny-1; ++j) {
-                double y = j * hy;
-                for (int i = 1; i < nx-1; ++i) {
-                    double x = i * hx;
-                    const int index = idx(i, j, k);
-                    b[index] = sourceFunc(x, y, z);
+    // Set Dirichlet boundary conditions
+    void setDirichletBC(const std::function<TNum(double, double, double)>& g) {
+        for (int k = 0; k < nz; k++) {
+            for (int j = 0; j < ny; j++) {
+                for (int i = 0; i < nx; i++) {
+                    bool isBoundary = (i == 0 || i == nx-1 || 
+                                      j == 0 || j == ny-1 || 
+                                      k == 0 || k == nz-1);
+                    
+                    if (isBoundary) {
+                        double x = i * hx;
+                        double y = j * hy;
+                        double z = k * hz;
+                        int idx = index(i, j, k);
+                        
+                        b[idx] = g(x, y, z);
+                    }
                 }
             }
         }
-        
-        // Apply boundary conditions
-        applyDirichletBC(boundaryFunc);
-        
-        // Solve the system using SOR
-        SOR<TNum, SparseMatrixCSC<TNum>, VectorObj<TNum>> solver(A, b, maxIter, omega);
-        solver.solve(u);
+    }
+    
+    // Solve the Poisson equation using Conjugate Gradient
+    void solve(int maxIter = 1000, double tol = 1e-6) {
+        ConjugateGrad<TNum, SparseMatrixCSC<TNum>, VectorObj<TNum>> cg(A, b, maxIter, tol);
+        cg.solve(u);
     }
     
     // Get the solution at a specific grid point
@@ -140,32 +160,21 @@ public:
         if (i < 0 || i >= nx || j < 0 || j >= ny || k < 0 || k >= nz) {
             throw std::out_of_range("Grid indices out of range");
         }
-        return u[idx(i, j, k)];
+        return u[index(i, j, k)];
     }
-    
+
     // Get the entire solution vector
     const VectorObj<TNum>& getSolution() const {
         return u;
     }
     
-    // Get grid dimensions
+    // Get grid information
+    double getDx() const { return hx; }
+    double getDy() const { return hy; }
+    double getDz() const { return hz; }
     int getNx() const { return nx; }
     int getNy() const { return ny; }
     int getNz() const { return nz; }
-    
-    // Get grid spacing
-    double getHx() const { return hx; }
-    double getHy() const { return hy; }
-    double getHz() const { return hz; }
-    
-    // Get the physical coordinates for a grid point
-    void getCoordinates(int i, int j, int k, double& x, double& y, double& z) const {
-        x = i * hx;
-        y = j * hy;
-        z = k * hz;
-    }
 };
 
-} // namespace FDM
-
-#endif // POISSON_HPP
+#endif // LAPLACIAN_HPP
