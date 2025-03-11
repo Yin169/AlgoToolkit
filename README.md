@@ -129,61 +129,107 @@ if not os.path.exists(output_dir):
     os.makedirs(output_dir)
 
 print("Testing Laplacian Solver...")
+
 # =============================================
-# Test 1: Laplacian Solver
+# Test 2: Navier-Stokes Solver - Lid-Driven Cavity
 # =============================================
-# Define domain parameters
-nx, ny, nz = 30, 30, 30  # Number of grid points
-xmin, xmax = 0.0, 1.0    # Domain boundaries in x
-ymin, ymax = 0.0, 1.0    # Domain boundaries in y
-zmin, zmax = 0.0, 1.0    # Domain boundaries in z
+print("\nTesting Navier-Stokes Solver...")
 
-# Create Laplacian solver
-laplacian_solver = fs.LaplacianSolver(nx, ny, nz, xmin, xmax, ymin, ymax, zmin, zmax)
+# Domain parameters
+nx, ny, nz = 41, 41, 5  # More resolution in x-y plane, less in z
+dx = dy = dz = 0.025    # Grid spacing
+dt = 0.001              # Time step
+Re = 100                # Reynolds number
 
-# Define boundary conditions (a simple example with a heated wall)
-def boundary_condition(x, y, z):
-    if abs(x - xmin) < 1e-10:  # Left wall is hot (temperature = 1)
-        return 1.0
-    elif abs(x - xmax) < 1e-10:  # Right wall is cold (temperature = 0)
-        return 0.0
-    else:  # Other walls are insulated (zero gradient)
-        return 0.0
+# Create Navier-Stokes solver
+ns_solver = fs.NavierStokesSolver3D(nx, ny, nz, dx, dy, dz, dt, Re)
 
-# Define source term (zero for Laplace equation)
-def source_term(x, y, z):
+# Set time integration and advection schemes
+ns_solver.setTimeIntegrationMethod(fs.TimeIntegration.RK4)
+ns_solver.setAdvectionScheme(fs.AdvectionScheme.CENTRAL)
+
+# Initial conditions (fluid at rest)
+def u_init(x, y, z):
     return 0.0
 
-# Solve the Laplace equation
-print("Solving Laplace equation...")
-solution = laplacian_solver.solve(boundary_condition, source_term, xmin, ymin, zmin, omega=1.5)
+def v_init(x, y, z):
+    return 0.0
 
-# Convert solution to numpy array for visualization
-solution_np = np.array(solution.to_numpy()).reshape(nz, ny, nx)
+def w_init(x, y, z):
+    return 0.0
 
-# Visualize a 2D slice of the solution at the middle of the z-axis
-z_slice = nz // 2
-solution_2d = solution_np[z_slice, :, :]
+# Set initial conditions
+ns_solver.setInitialConditions(u_init, v_init, w_init)
 
-# Create a grid for plotting
-x = np.linspace(xmin, xmax, nx)
-y = np.linspace(ymin, ymax, ny)
-X, Y = np.meshgrid(x, y)
+# Boundary conditions (lid-driven cavity)
+def u_bc(x, y, z, t):
+    if abs(y - (ny-1)*dy) < 1e-10:  # Top boundary moving with u=1
+        return 1.0
+    else:  # No-slip on other boundaries
+        return 0.0
 
-# Plot the solution
-plt.figure(figsize=(10, 8))
-plt.contourf(X, Y, solution_2d, 20, cmap='hot')
-plt.colorbar(label='Temperature')
-plt.title('Solution of Laplace Equation (z-slice at z={:.2f})'.format(zmin + z_slice * (zmax - zmin) / (nz - 1)))
-plt.xlabel('X')
-plt.ylabel('Y')
-plt.savefig(os.path.join(output_dir, "laplacian_solution.png"))
-print("Laplacian solution saved to", os.path.join(output_dir, "laplacian_solution.png"))
+def v_bc(x, y, z, t):
+    return 0.0  # No-slip on all boundaries
 
-# Export solution to VTK for 3D visualization
-vtk_filename = os.path.join(output_dir, "laplacian_solution.vtk")
-laplacian_solver.exportToVTK(solution, vtk_filename, xmin, ymin, zmin)
-print("Laplacian solution exported to VTK:", vtk_filename)
+def w_bc(x, y, z, t):
+    return 0.0  # No-slip on all boundaries
+
+# Set boundary conditions
+ns_solver.setBoundaryConditions(u_bc, v_bc, w_bc)
+
+# Enable adaptive time stepping for stability
+ns_solver.enableAdaptiveTimeStep(0.5)  # CFL target of 0.5
+
+# Simulation parameters
+start_time = 0.0
+end_time = 1.0  # Run for 1 time unit
+output_frequency = 10
+
+# Store velocity fields at different time steps
+u_fields = []
+v_fields = []
+times = []
+
+# Callback function to store results
+def store_results(u, v, w, p, time):
+    print(f"Time: {time:.3f}, Max velocity: {max(abs(u.to_numpy())):.3f}")
+    u_fields.append(u.to_numpy().reshape(nz, ny, nx))
+    v_fields.append(v.to_numpy().reshape(nz, ny, nx))
+    times.append(time)
+
+# Run the simulation
+print(f"Running Navier-Stokes simulation from t={start_time} to t={end_time}...")
+ns_solver.solve(start_time, end_time, output_frequency, store_results)
+
+# Plot the final velocity field (mid-z slice)
+if len(u_fields) > 0:
+    z_mid = nz // 2
+    u_final = u_fields[-1][z_mid]
+    v_final = v_fields[-1][z_mid]
+    
+    # Create a grid for plotting
+    x = np.linspace(0, (nx-1)*dx, nx)
+    y = np.linspace(0, (ny-1)*dy, ny)
+    X, Y = np.meshgrid(x, y)
+    
+    # Plot velocity magnitude
+    plt.figure(figsize=(10, 8))
+    speed = np.sqrt(u_final**2 + v_final**2)
+    plt.contourf(X, Y, speed, 20, cmap='viridis')
+    plt.colorbar(label='Velocity Magnitude')
+    
+    # Add velocity vectors (subsample for clarity)
+    skip = 2
+    plt.quiver(X[::skip, ::skip], Y[::skip, ::skip], 
+               u_final[::skip, ::skip], v_final[::skip, ::skip], 
+               scale=10, color='white', alpha=0.7)
+    
+    plt.title(f'Lid-Driven Cavity Flow at t={times[-1]:.3f}, Re={Re}')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.savefig(os.path.join(output_dir, "navier_stokes_solution.png"))
+    print("Navier-Stokes solution saved to", os.path.join(output_dir, "navier_stokes_solution.png"))
+
 ```
 
 ## Contributing

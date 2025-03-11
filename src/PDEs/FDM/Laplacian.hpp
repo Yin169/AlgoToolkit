@@ -10,6 +10,8 @@
 #include <iostream>
 #include <fstream>
 
+enum class BoundaryType { Dirichlet, Neumann, Periodic };
+
 template <typename TNum>
 class Poisson3DSolver {
 private:
@@ -21,7 +23,6 @@ private:
     VectorObj<TNum> u;        // Solution vector
     
     // Boundary conditions
-    enum class BoundaryType { Dirichlet, Neumann, Periodic };
     BoundaryType bcTypeX, bcTypeY, bcTypeZ;
     
 public:
@@ -168,12 +169,12 @@ public:
     }
     
     // Get grid information
-    double getGridSpacingX() const { return hx; }
-    double getGridSpacingY() const { return hy; }
-    double getGridSpacingZ() const { return hz; }
-    int getGridSizeX() const { return nx; }
-    int getGridSizeY() const { return ny; }
-    int getGridSizeZ() const { return nz; }
+    double getDx() const { return hx; }
+    double getDy() const { return hy; }
+    double getDz() const { return hz; }
+    int getNx() const { return nx; }
+    int getNy() const { return ny; }
+    int getNz() const { return nz; }
 };
 
 #endif // LAPLACIAN_HPP
