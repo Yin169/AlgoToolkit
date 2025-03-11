@@ -10,6 +10,8 @@
 #include <iostream>
 #include <fstream>
 
+enum class BoundaryType { Dirichlet, Neumann, Periodic };
+
 template <typename TNum>
 class Poisson3DSolver {
 private:
@@ -21,7 +23,6 @@ private:
     VectorObj<TNum> u;        // Solution vector
     
     // Boundary conditions
-    enum class BoundaryType { Dirichlet, Neumann, Periodic };
     BoundaryType bcTypeX, bcTypeY, bcTypeZ;
     
 public:

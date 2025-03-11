@@ -15,7 +15,6 @@
 #include "../src/LinearAlgebra/Factorized/basic.hpp"
 #include "../src/PDEs/FDM/Laplacian.hpp"
 #include "../src/PDEs/FDM/NavierStoke.hpp"
-#include "../src/PDEs/SU2Mesh/readMesh.hpp"
 #include "../src/utils.hpp"
 #include <pybind11/numpy.h>
 
@@ -209,33 +208,45 @@ PYBIND11_MODULE(fastsolver, m) {
         }
     }, "Read matrix from Matrix Market format file",
        py::arg("filename"), py::arg("matrix"));
+
        
-    // PDEs - Laplacian Solver
-    py::class_<Laplacian3DFDM<double>>(m, "LaplacianSolver")
-        .def(py::init<int, int, int, double, double, double, double, double, double, double, int>(),
+    // PDEs - Poisson Solver
+    py::enum_< BoundaryType>(m, "BoundaryType")
+        .value("Dirichlet", BoundaryType::Dirichlet)
+        .value("Neumann", BoundaryType::Neumann)
+        .value("Periodic", BoundaryType::Periodic)
+        .export_values();
+        
+    py::class_<Poisson3DSolver<double>>(m, "PoissonSolver")
+        .def(py::init<int, int, int, double, double, double, 
+                      BoundaryType, BoundaryType, BoundaryType>(),
              py::arg("nx"), py::arg("ny"), py::arg("nz"), 
-             py::arg("xmin"), py::arg("xmax"), 
-             py::arg("ymin"), py::arg("ymax"), 
-             py::arg("zmin"), py::arg("zmax"),
-             py::arg("tol") = 1e-6, 
-             py::arg("max_iter") = 10000)
-        .def("solve", &Laplacian3DFDM<double>::solve,
-             "Solve the Laplace equation with given boundary conditions and source term",
-             py::arg("bc_func"), py::arg("source_func"), 
-             py::arg("xmin"), py::arg("ymin"), py::arg("zmin"),
-             py::arg("omega") = 1.25)
-        .def("getSolutionAt", &Laplacian3DFDM<double>::getSolutionAt,
+             py::arg("lx"), py::arg("ly"), py::arg("lz"),
+             py::arg("bcTypeX") = BoundaryType::Dirichlet,
+             py::arg("bcTypeY") = BoundaryType::Dirichlet,
+             py::arg("bcTypeZ") = BoundaryType::Dirichlet)
+        .def("buildLaplacianMatrix", &Poisson3DSolver<double>::buildLaplacianMatrix,
+             "Build the Laplacian matrix for the Poisson equation")
+        .def("setRHS", &Poisson3DSolver<double>::setRHS,
+             "Set the right-hand side function f(x,y,z)",
+             py::arg("f"))
+        .def("setDirichletBC", &Poisson3DSolver<double>::setDirichletBC,
+             "Set Dirichlet boundary conditions",
+             py::arg("g"))
+        .def("solve", &Poisson3DSolver<double>::solve,
+             "Solve the Poisson equation using Conjugate Gradient",
+             py::arg("maxIter") = 1000, py::arg("tol") = 1e-6)
+        .def("getSolution", py::overload_cast<int, int, int>(&Poisson3DSolver<double>::getSolution, py::const_),
              "Get solution value at specific grid point",
-             py::arg("solution"), py::arg("i"), py::arg("j"), py::arg("k"))
-        .def("getCoordinates", &Laplacian3DFDM<double>::getCoordinates,
-             "Get physical coordinates from grid indices",
-             py::arg("i"), py::arg("j"), py::arg("k"), 
-             py::arg("xmin"), py::arg("ymin"), py::arg("zmin"),
-             py::arg("x"), py::arg("y"), py::arg("z"))
-        .def("exportToVTK", &Laplacian3DFDM<double>::exportToVTK,
-             "Export solution to VTK file for visualization",
-             py::arg("solution"), py::arg("filename"), 
-             py::arg("xmin"), py::arg("ymin"), py::arg("zmin"));
+             py::arg("i"), py::arg("j"), py::arg("k"))
+        .def("getSolution", py::overload_cast<>(&Poisson3DSolver<double>::getSolution, py::const_),
+             "Get the entire solution vector")
+        .def("getGridSpacingX", &Poisson3DSolver<double>::getGridSpacingX, "Get grid spacing in x direction")
+        .def("getGridSpacingY", &Poisson3DSolver<double>::getGridSpacingY, "Get grid spacing in y direction")
+        .def("getGridSpacingZ", &Poisson3DSolver<double>::getGridSpacingZ, "Get grid spacing in z direction")
+        .def("getGridSizeX", &Poisson3DSolver<double>::getGridSizeX, "Get number of grid points in x direction")
+        .def("getGridSizeY", &Poisson3DSolver<double>::getGridSizeY, "Get number of grid points in y direction")
+        .def("getGridSizeZ", &Poisson3DSolver<double>::getGridSizeZ, "Get number of grid points in z direction");
  
     py::enum_<TimeIntegration>(m, "TimeIntegration")
         .value("EULER", TimeIntegration::EULER)
