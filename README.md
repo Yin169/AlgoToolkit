@@ -117,120 +117,200 @@ gmres.solve(matrix, b, x, max_iter, krylov_dim, tol)
 ```
 
 ```python
-import fastsolver as fs
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+import sys
 import os
 
-# Create output directory if it doesn't exist
-output_dir = "./output"
-if not os.path.exists(output_dir):
-    os.makedirs(output_dir)
+# Add the path to the fastsolver module
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath('')), 'build'))
 
-print("Testing Laplacian Solver...")
+try:
+    import fastsolver
+except ImportError:
+    print("Error: fastsolver module not found. Make sure it's built and in the correct path.")
+    sys.exit(1)
 
-# =============================================
-# Test 2: Navier-Stokes Solver - Lid-Driven Cavity
-# =============================================
-print("\nTesting Navier-Stokes Solver...")
+# Define an analytic solution to the Poisson equation
+# We'll use u(x,y,z) = sin(πx)sin(πy)sin(πz)
+# For this function, ∇²u = -3π²sin(πx)sin(πy)sin(πz)
 
-# Domain parameters
-nx, ny, nz = 41, 41, 5  # More resolution in x-y plane, less in z
-dx = dy = dz = 0.025    # Grid spacing
-dt = 0.001              # Time step
-Re = 100                # Reynolds number
+def analytic_solution(x, y, z):
+    return np.sin(np.pi*x) * np.sin(np.pi*y) * np.sin(np.pi*z)
 
-# Create Navier-Stokes solver
-ns_solver = fs.NavierStokesSolver3D(nx, ny, nz, dx, dy, dz, dt, Re)
+def source_function(x, y, z):
+    # The right-hand side of the Poisson equation: ∇²u = f
+    # For our analytic solution, f = -3π²sin(πx)sin(πy)sin(πz)
+    return -3 * np.pi**2 * np.sin(np.pi*x) * np.sin(np.pi*y) * np.sin(np.pi*z)
 
-# Set time integration and advection schemes
-ns_solver.setTimeIntegrationMethod(fs.TimeIntegration.RK4)
-ns_solver.setAdvectionScheme(fs.AdvectionScheme.CENTRAL)
+def boundary_function(x, y, z):
+    # Dirichlet boundary conditions matching the analytic solution
+    return analytic_solution(x, y, z)
 
-# Initial conditions (fluid at rest)
-def u_init(x, y, z):
-    return 0.0
+# Set up the domain and grid
+nx, ny, nz = 32, 32, 32  # Number of grid points
+lx, ly, lz = 1.0, 1.0, 1.0  # Domain size
 
-def v_init(x, y, z):
-    return 0.0
+# Create the Poisson solver using the new Poisson3DSolver class
+poisson_solver = fastsolver.Poisson3DSolver(nx, ny, nz, lx, ly, lz)
 
-def w_init(x, y, z):
-    return 0.0
+# Set the right-hand side function and boundary conditions
+poisson_solver.setRHS(source_function)
+poisson_solver.setDirichletBC(boundary_function)
 
-# Set initial conditions
-ns_solver.setInitialConditions(u_init, v_init, w_init)
+# Solve the Poisson equation using Conjugate Gradient
+max_iter = 2000
+tol = 1e-6
+poisson_solver.solve(max_iter, tol)
 
-# Boundary conditions (lid-driven cavity)
-def u_bc(x, y, z, t):
-    if abs(y - (ny-1)*dy) < 1e-10:  # Top boundary moving with u=1
-        return 1.0
-    else:  # No-slip on other boundaries
-        return 0.0
+# Extract the numerical solution
+numerical_solution = np.zeros((nx, ny, nz))
+for k in range(nz):
+    for j in range(ny):
+        for i in range(nx):
+            numerical_solution[i, j, k] = poisson_solver.getSolution(i, j, k)
 
-def v_bc(x, y, z, t):
-    return 0.0  # No-slip on all boundaries
+# Calculate the analytic solution on the grid
+hx, hy, hz = lx/(nx-1), ly/(ny-1), lz/(nz-1)
+analytic_grid = np.zeros((nx, ny, nz))
+for k in range(nz):
+    for j in range(ny):
+        for i in range(nx):
+            x, y, z = i*hx, j*hy, k*hz
+            analytic_grid[i, j, k] = analytic_solution(x, y, z)
 
-def w_bc(x, y, z, t):
-    return 0.0  # No-slip on all boundaries
+# Calculate error
+error = np.abs(numerical_solution - analytic_grid)
+max_error = np.max(error)
+l2_error = np.sqrt(np.mean(error**2))
 
-# Set boundary conditions
-ns_solver.setBoundaryConditions(u_bc, v_bc, w_bc)
+print(f"Maximum absolute error: {max_error:.6e}")
+print(f"L2 error: {l2_error:.6e}")
 
-# Enable adaptive time stepping for stability
-ns_solver.enableAdaptiveTimeStep(0.5)  # CFL target of 0.5
+# Visualize the results
+# Let's create a slice through the middle of the domain
+mid_z = nz // 2
 
-# Simulation parameters
-start_time = 0.0
-end_time = 1.0  # Run for 1 time unit
-output_frequency = 10
+# Create coordinate grids for plotting
+x = np.linspace(0, lx, nx)
+y = np.linspace(0, ly, ny)
+X, Y = np.meshgrid(x, y)
 
-# Store velocity fields at different time steps
-u_fields = []
-v_fields = []
-times = []
+# Plot the numerical solution
+plt.figure(figsize=(18, 6))
 
-# Callback function to store results
-def store_results(u, v, w, p, time):
-    print(f"Time: {time:.3f}, Max velocity: {max(abs(u.to_numpy())):.3f}")
-    u_fields.append(u.to_numpy().reshape(nz, ny, nx))
-    v_fields.append(v.to_numpy().reshape(nz, ny, nx))
-    times.append(time)
+plt.subplot(131)
+plt.contourf(X, Y, numerical_solution[:, :, mid_z].T, 20, cmap=cm.viridis)
+plt.colorbar(label='Numerical Solution')
+plt.title('Numerical Solution (z=0.5)')
+plt.xlabel('x')
+plt.ylabel('y')
 
-# Run the simulation
-print(f"Running Navier-Stokes simulation from t={start_time} to t={end_time}...")
-ns_solver.solve(start_time, end_time, output_frequency, store_results)
+plt.subplot(132)
+plt.contourf(X, Y, analytic_grid[:, :, mid_z].T, 20, cmap=cm.viridis)
+plt.colorbar(label='Analytic Solution')
+plt.title('Analytic Solution (z=0.5)')
+plt.xlabel('x')
+plt.ylabel('y')
 
-# Plot the final velocity field (mid-z slice)
-if len(u_fields) > 0:
-    z_mid = nz // 2
-    u_final = u_fields[-1][z_mid]
-    v_final = v_fields[-1][z_mid]
+plt.subplot(133)
+plt.contourf(X, Y, error[:, :, mid_z].T, 20, cmap=cm.hot)
+plt.colorbar(label='Absolute Error')
+plt.title(f'Error (z=0.5), Max: {max_error:.2e}, L2: {l2_error:.2e}')
+plt.xlabel('x')
+plt.ylabel('y')
+
+plt.tight_layout()
+plt.show()
+
+# 3D visualization of the solution
+fig = plt.figure(figsize=(12, 10))
+ax = fig.add_subplot(111, projection='3d')
+
+# Create a coarser grid for 3D visualization
+stride = 4
+x_coarse = x[::stride]
+y_coarse = y[::stride]
+z_coarse = np.linspace(0, lz, nz)[::stride]
+X_coarse, Y_coarse, Z_coarse = np.meshgrid(x_coarse, y_coarse, z_coarse, indexing='ij')
+
+# Extract values at the coarser grid
+values = numerical_solution[::stride, ::stride, ::stride]
+
+# Create a 3D scatter plot with colors representing the solution values
+scatter = ax.scatter(X_coarse.flatten(), Y_coarse.flatten(), Z_coarse.flatten(), 
+                    c=values.flatten(), cmap=cm.viridis, s=50, alpha=0.6)
+
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_zlabel('Z')
+ax.set_title('3D Visualization of Poisson Solution')
+plt.colorbar(scatter, ax=ax, label='Solution Value')
+
+plt.tight_layout()
+plt.show()
+
+# Convergence study
+grid_sizes = [8, 16, 32, 64]
+errors_max = []
+errors_l2 = []
+
+for n in grid_sizes:
+    print(f"Running convergence test with grid size {n}x{n}x{n}")
+    # Use the new Poisson3DSolver for the convergence study
+    solver = fastsolver.Poisson3DSolver(n, n, n, lx, ly, lz)
+    solver.setRHS(source_function)
+    solver.setDirichletBC(boundary_function)
+    solver.solve(max_iter, tol)
     
-    # Create a grid for plotting
-    x = np.linspace(0, (nx-1)*dx, nx)
-    y = np.linspace(0, (ny-1)*dy, ny)
-    X, Y = np.meshgrid(x, y)
+    # Extract solution and calculate error
+    h = lx/(n-1)
+    numerical = np.zeros((n, n, n))
+    analytic = np.zeros((n, n, n))
     
-    # Plot velocity magnitude
-    plt.figure(figsize=(10, 8))
-    speed = np.sqrt(u_final**2 + v_final**2)
-    plt.contourf(X, Y, speed, 20, cmap='viridis')
-    plt.colorbar(label='Velocity Magnitude')
+    for k in range(n):
+        for j in range(n):
+            for i in range(n):
+                numerical[i, j, k] = solver.getSolution(i, j, k)
+                x, y, z = i*h, j*h, k*h
+                analytic[i, j, k] = analytic_solution(x, y, z)
     
-    # Add velocity vectors (subsample for clarity)
-    skip = 2
-    plt.quiver(X[::skip, ::skip], Y[::skip, ::skip], 
-               u_final[::skip, ::skip], v_final[::skip, ::skip], 
-               scale=10, color='white', alpha=0.7)
-    
-    plt.title(f'Lid-Driven Cavity Flow at t={times[-1]:.3f}, Re={Re}')
-    plt.xlabel('X')
-    plt.ylabel('Y')
-    plt.savefig(os.path.join(output_dir, "navier_stokes_solution.png"))
-    print("Navier-Stokes solution saved to", os.path.join(output_dir, "navier_stokes_solution.png"))
+    error = np.abs(numerical - analytic)
+    errors_max.append(np.max(error))
+    errors_l2.append(np.sqrt(np.mean(error**2)))
+
+# Plot convergence
+plt.figure(figsize=(10, 6))
+h_values = [lx/(n-1) for n in grid_sizes]
+
+plt.loglog(h_values, errors_max, 'o-', label='Max Error')
+plt.loglog(h_values, errors_l2, 's-', label='L2 Error')
+
+# Add reference lines for 2nd order convergence
+ref_h = np.array([min(h_values), max(h_values)])
+ref_error = 0.1 * ref_h**2
+plt.loglog(ref_h, ref_error, 'k--', label='O(h²) Reference')
+
+plt.xlabel('Grid Spacing (h)')
+plt.ylabel('Error')
+plt.title('Convergence Study for 3D Poisson Solver')
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Print convergence rates
+for i in range(1, len(grid_sizes)):
+    rate_max = np.log(errors_max[i-1]/errors_max[i]) / np.log(grid_sizes[i]/grid_sizes[i-1])
+    rate_l2 = np.log(errors_l2[i-1]/errors_l2[i]) / np.log(grid_sizes[i]/grid_sizes[i-1])
+    print(f"Grid refinement {grid_sizes[i-1]} -> {grid_sizes[i]}:")
+    print(f"  Max error convergence rate: {rate_max:.2f}")
+    print(f"  L2 error convergence rate: {rate_l2:.2f}")
 
 ```
+<img src="https://github.com/Yin169/FASTSolver/blob/dev/doc/poisson1.png" width="600" alt="Poissson">
+<img src="https://github.com/Yin169/FASTSolver/blob/dev/doc/poisson2.png" width="400" alt="Poissson2">
 
 ## Contributing
 
