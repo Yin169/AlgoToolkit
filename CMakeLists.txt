@@ -18,7 +18,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/ODE
     ${PROJECT_SOURCE_DIR}/src/PDEs
     ${PROJECT_SOURCE_DIR}/src/PDEs/FDM
-    ${PROJECT_SOURCE_DIR}/src/PDEs/AdaptiveMesh
+    ${PROJECT_SOURCE_DIR}/src/PDEs/Mesh
     ${PROJECT_SOURCE_DIR}/src/Intergal
     ${PROJECT_SOURCE_DIR}/src/Obj
     ${PROJECT_SOURCE_DIR}/src/Mesh
@@ -91,9 +91,10 @@ set(TEST_SOURCES
 #     target_link_libraries(${benchmark_source} PRIVATE benchmark::benchmark OpenBLAS::OpenBLAS)
 # endforeach()
 set(TEST_SOURCES
-    JetFlow
-    DrivenCavity
-    PoissonCase
+    # JetFlow
+    # DrivenCavity
+    # PoissonCase
+    CylinderFlow
 )
 
 foreach(test_source ${TEST_SOURCES})
