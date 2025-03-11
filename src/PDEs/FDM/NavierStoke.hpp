@@ -637,6 +637,10 @@ public:
         int step_count = 0;
         
         while (time < end_time) {
+            // Output results if needed
+            if (output_callback && step_count % output_frequency == 0) {
+                output_callback(u, v, w, p, time);
+            }
             // Solve for a single time step
             step(time);
             
@@ -644,10 +648,6 @@ public:
             time += dt;
             step_count++;
             
-            // Output results if needed
-            if (output_callback && step_count % output_frequency == 0) {
-                output_callback(u, v, w, p, time);
-            }
         }
     }
     

@@ -6,4 +6,4 @@ cmake .. -DCMAKE_TOOLCHAIN_FILE=Release/generators/conan_toolchain.cmake -DCMAKE
 cmake --build .
 
 ./CylinderFlow
-python ../application/PostProcess/ShowVTK.py cylinder_flow_0.vtk -f vorticity
+python ../application/PostProcess/ShowVTK.py cylinder_flow_0.vtk -f v

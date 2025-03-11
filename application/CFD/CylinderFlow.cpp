@@ -145,8 +145,8 @@ void saveToVTK(const std::string& filename,
 
 int main() {
     // Simulation parameters
-    const int nx = 36;       // Grid points in radial direction
-    const int ny = 72;       // Grid points in angular direction
+    const int nx = 128;       // Grid points in radial direction
+    const int ny = 128;       // Grid points in angular direction
     const int nz = 3;         // 2D simulation (single layer in z)
     
     const TNum Re = 200.0;    // Reynolds number
@@ -162,7 +162,7 @@ int main() {
     const TNum z_max = 0.1;   // Small z-extent for 2D simulation
     
     // Time stepping parameters
-    const TNum dt_init = 0.001;
+    const TNum dt_init = 0.0001;
     const TNum t_end = 100.0;
     const int output_freq = 100;
     
