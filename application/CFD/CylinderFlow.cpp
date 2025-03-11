@@ -171,7 +171,7 @@ int main() {
     // Create mesh adapter with cylindrical coordinates
     MeshAdapter<TNum> mesh_adapter(nx, ny, nz, MeshType::CYLINDRICAL,
                                   r_min, r_max, theta_min, theta_max, z_min, z_max);
-    
+                                  
     // Create Navier-Stokes solver
     auto solver = mesh_adapter.createSolver(dt_init, Re);
     

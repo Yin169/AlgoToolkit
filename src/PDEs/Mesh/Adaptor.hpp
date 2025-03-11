@@ -549,173 +549,173 @@ public:
 			y_max_ = y_max;
 			z_min_ = z_min;
 			z_max_ = z_max;
-		}
+	}
 		
 		// Get mesh type
-		MeshType getMeshType() const {
-			return mesh_type;
-		}
+	MeshType getMeshType() const {
+		return mesh_type;
+	}
 		
-		// Get metric tensor at a grid point
-		std::array<TNum, 9> getMetricTensor(int i, int j, int k) const {
-			return metric_tensor[idx(i, j, k)];
-		}
+	// Get metric tensor at a grid point
+	std::array<TNum, 9> getMetricTensor(int i, int j, int k) const {
+		return metric_tensor[idx(i, j, k)];
+	}
 		
-		// Get inverse metric tensor at a grid point
-		std::array<TNum, 9> getInverseMetricTensor(int i, int j, int k) const {
-			return metric_tensor_inv[idx(i, j, k)];
-		}
+	// Get inverse metric tensor at a grid point
+	std::array<TNum, 9> getInverseMetricTensor(int i, int j, int k) const {
+		return metric_tensor_inv[idx(i, j, k)];
+	}
 		
-		// Get Christoffel symbols at a grid point (only for curvilinear coordinates)
-		std::array<TNum, 27> getChristoffelSymbols(int i, int j, int k) const {
-			if (mesh_type != MeshType::CURVILINEAR) {
-				// For non-curvilinear meshes, return zeros
-				std::array<TNum, 27> zeros;
-				std::fill(zeros.begin(), zeros.end(), 0.0);
-				return zeros;
-			}
-			return christoffel_symbols[idx(i, j, k)];
+	// Get Christoffel symbols at a grid point (only for curvilinear coordinates)
+	std::array<TNum, 27> getChristoffelSymbols(int i, int j, int k) const {
+		if (mesh_type != MeshType::CURVILINEAR) {
+			// For non-curvilinear meshes, return zeros
+			std::array<TNum, 27> zeros;
+			std::fill(zeros.begin(), zeros.end(), 0.0);
+			return zeros;
 		}
+		return christoffel_symbols[idx(i, j, k)];
+	}
 		
-		// Compute the divergence of a vector field in physical space
-		VectorObj<TNum> computeDivergence(const VectorObj<TNum>& u_phys, 
-										 const VectorObj<TNum>& v_phys, 
-										 const VectorObj<TNum>& w_phys) const {
-			int n = nx * ny * nz;
-			VectorObj<TNum> div(n, 0.0);
+	// Compute the divergence of a vector field in physical space
+	VectorObj<TNum> computeDivergence(const VectorObj<TNum>& u_phys, 
+									 const VectorObj<TNum>& v_phys, 
+									 const VectorObj<TNum>& w_phys) const {
+		int n = nx * ny * nz;
+		VectorObj<TNum> div(n, 0.0);
+		
+		// For Cartesian coordinates, the divergence is simple
+		if (mesh_type == MeshType::CARTESIAN) {
+			// Compute physical grid spacing
+			TNum dx_phys = (x_max - x_min) / (nx - 1);
+			TNum dy_phys = (y_max - y_min) / (ny - 1);
+			TNum dz_phys = (z_max - z_min) / (nz - 1);
 			
-			// For Cartesian coordinates, the divergence is simple
-			if (mesh_type == MeshType::CARTESIAN) {
-				// Compute physical grid spacing
-				TNum dx_phys = (x_max - x_min) / (nx - 1);
-				TNum dy_phys = (y_max - y_min) / (ny - 1);
-				TNum dz_phys = (z_max - z_min) / (nz - 1);
-				
-				// Use central differences for interior points
-				for (int k = 1; k < nz - 1; ++k) {
-					for (int j = 1; j < ny - 1; ++j) {
-						for (int i = 1; i < nx - 1; ++i) {
-							int index = idx(i, j, k);
-							
-							// du/dx + dv/dy + dw/dz
-							div[index] = (u_phys[idx(i+1, j, k)] - u_phys[idx(i-1, j, k)]) / (2 * dx_phys) +
-										(v_phys[idx(i, j+1, k)] - v_phys[idx(i, j-1, k)]) / (2 * dy_phys) +
-										(w_phys[idx(i, j, k+1)] - w_phys[idx(i, j, k-1)]) / (2 * dz_phys);
-						}
-					}
-				}
-			} else {
-				// For non-Cartesian coordinates, use the general formula:
-				// div(V) = (1/J) * sum_i d/dxi(J * V^i)
-				// where J is the Jacobian determinant and V^i are contravariant components
-				
-				// First, transform velocity to computational space
-				VectorObj<TNum> u_comp(n), v_comp(n), w_comp(n);
-				
-				// Use a const_cast here since transformVelocity is non-const but doesn't modify the inputs
-				const_cast<MeshAdapter*>(this)->transformVelocity(u_phys, v_phys, w_phys, u_comp, v_comp, w_comp);
-				
-				// Compute divergence using the transformed velocity
-				for (int k = 1; k < nz - 1; ++k) {
-					for (int j = 1; j < ny - 1; ++j) {
-						for (int i = 1; i < nx - 1; ++i) {
-							int index = idx(i, j, k);
-							
-							// Get Jacobian determinant at this point
-							TNum J = jacobian_determinant[index];
-							
-							// Compute d/dxi(J * u_comp), d/deta(J * v_comp), d/dzeta(J * w_comp)
-							TNum d_Ju_dxi = (jacobian_determinant[idx(i+1, j, k)] * u_comp[idx(i+1, j, k)] -
-										   jacobian_determinant[idx(i-1, j, k)] * u_comp[idx(i-1, j, k)]) / (2 * dx_comp);
-							
-							TNum d_Jv_deta = (jacobian_determinant[idx(i, j+1, k)] * v_comp[idx(i, j+1, k)] -
-											jacobian_determinant[idx(i, j-1, k)] * v_comp[idx(i, j-1, k)]) / (2 * dy_comp);
-							
-							TNum d_Jw_dzeta = (jacobian_determinant[idx(i, j, k+1)] * w_comp[idx(i, j, k+1)] -
-											 jacobian_determinant[idx(i, j, k-1)] * w_comp[idx(i, j, k-1)]) / (2 * dz_comp);
-							
-							// Compute divergence
-							div[index] = (d_Ju_dxi + d_Jv_deta + d_Jw_dzeta) / J;
-						}
-					}
-				}
-			}
-			
-			return div;
-		}
-		
-		// Apply coordinate-specific corrections to the Navier-Stokes equations
-		void applyCoordinateCorrections(VectorObj<TNum>& u_comp, VectorObj<TNum>& v_comp, 
-									   VectorObj<TNum>& w_comp, TNum dt) {
-			// For Cartesian coordinates, no corrections are needed
-			if (mesh_type == MeshType::CARTESIAN) {
-				return;
-			}
-			
-			int n = nx * ny * nz;
-			
-			// For non-Cartesian coordinates, apply corrections based on Christoffel symbols
+			// Use central differences for interior points
 			for (int k = 1; k < nz - 1; ++k) {
 				for (int j = 1; j < ny - 1; ++j) {
 					for (int i = 1; i < nx - 1; ++i) {
 						int index = idx(i, j, k);
 						
-						// Get velocity components at this point
-						TNum u = u_comp[index];
-						TNum v = v_comp[index];
-						TNum w = w_comp[index];
+						// du/dx + dv/dy + dw/dz
+						div[index] = (u_phys[idx(i+1, j, k)] - u_phys[idx(i-1, j, k)]) / (2 * dx_phys) +
+									(v_phys[idx(i, j+1, k)] - v_phys[idx(i, j-1, k)]) / (2 * dy_phys) +
+									(w_phys[idx(i, j, k+1)] - w_phys[idx(i, j, k-1)]) / (2 * dz_phys);
+					}
+				}
+			}
+		} else {
+			// For non-Cartesian coordinates, use the general formula:
+			// div(V) = (1/J) * sum_i d/dxi(J * V^i)
+			// where J is the Jacobian determinant and V^i are contravariant components
+			
+			// First, transform velocity to computational space
+			VectorObj<TNum> u_comp(n), v_comp(n), w_comp(n);
+			
+			// Use a const_cast here since transformVelocity is non-const but doesn't modify the inputs
+			const_cast<MeshAdapter*>(this)->transformVelocity(u_phys, v_phys, w_phys, u_comp, v_comp, w_comp);
+			
+			// Compute divergence using the transformed velocity
+			for (int k = 1; k < nz - 1; ++k) {
+				for (int j = 1; j < ny - 1; ++j) {
+					for (int i = 1; i < nx - 1; ++i) {
+						int index = idx(i, j, k);
 						
-						// Get Christoffel symbols at this point
-						std::array<TNum, 27> symbols;
+						// Get Jacobian determinant at this point
+						TNum J = jacobian_determinant[index];
 						
-						if (mesh_type == MeshType::CURVILINEAR) {
-							symbols = christoffel_symbols[index];
-						} else {
-							// Compute on-the-fly for simple coordinate systems
-							symbols = computeChristoffelSymbols(i, j, k);
-						}
+						// Compute d/dxi(J * u_comp), d/deta(J * v_comp), d/dzeta(J * w_comp)
+						TNum d_Ju_dxi = (jacobian_determinant[idx(i+1, j, k)] * u_comp[idx(i+1, j, k)] -
+									   jacobian_determinant[idx(i-1, j, k)] * u_comp[idx(i-1, j, k)]) / (2 * dx_comp);
 						
-						// Apply corrections based on the formula:
-						// du^i/dt += -Γ^i_jk * u^j * u^k
+						TNum d_Jv_deta = (jacobian_determinant[idx(i, j+1, k)] * v_comp[idx(i, j+1, k)] -
+										jacobian_determinant[idx(i, j-1, k)] * v_comp[idx(i, j-1, k)]) / (2 * dy_comp);
 						
-						// Correction for u component (i=0)
-						TNum u_correction = 0.0;
-						for (int j = 0; j < 3; ++j) {
-							for (int k = 0; k < 3; ++k) {
-								TNum u_j = (j == 0) ? u : ((j == 1) ? v : w);
-								TNum u_k = (k == 0) ? u : ((k == 1) ? v : w);
-								u_correction -= symbols[0*9 + j*3 + k] * u_j * u_k;
-							}
-						}
+						TNum d_Jw_dzeta = (jacobian_determinant[idx(i, j, k+1)] * w_comp[idx(i, j, k+1)] -
+										 jacobian_determinant[idx(i, j, k-1)] * w_comp[idx(i, j, k-1)]) / (2 * dz_comp);
 						
-						// Correction for v component (i=1)
-						TNum v_correction = 0.0;
-						for (int j = 0; j < 3; ++j) {
-							for (int k = 0; k < 3; ++k) {
-								TNum u_j = (j == 0) ? u : ((j == 1) ? v : w);
-								TNum u_k = (k == 0) ? u : ((k == 1) ? v : w);
-								v_correction -= symbols[1*9 + j*3 + k] * u_j * u_k;
-							}
-						}
-						
-						// Correction for w component (i=2)
-						TNum w_correction = 0.0;
-						for (int j = 0; j < 3; ++j) {
-							for (int k = 0; k < 3; ++k) {
-								TNum u_j = (j == 0) ? u : ((j == 1) ? v : w);
-								TNum u_k = (k == 0) ? u : ((k == 1) ? v : w);
-								w_correction -= symbols[2*9 + j*3 + k] * u_j * u_k;
-							}
-						}
-						
-						// Apply corrections
-						u_comp[index] += dt * u_correction;
-						v_comp[index] += dt * v_correction;
-						w_comp[index] += dt * w_correction;
+						// Compute divergence
+						div[index] = (d_Ju_dxi + d_Jv_deta + d_Jw_dzeta) / J;
 					}
 				}
 			}
 		}
-	};
+		
+		return div;
+	}
+		
+	// Apply coordinate-specific corrections to the Navier-Stokes equations
+	void applyCoordinateCorrections(VectorObj<TNum>& u_comp, VectorObj<TNum>& v_comp, 
+								   VectorObj<TNum>& w_comp, TNum dt) {
+		// For Cartesian coordinates, no corrections are needed
+		if (mesh_type == MeshType::CARTESIAN) {
+			return;
+		}
+		
+		int n = nx * ny * nz;
+		
+		// For non-Cartesian coordinates, apply corrections based on Christoffel symbols
+		for (int k = 1; k < nz - 1; ++k) {
+			for (int j = 1; j < ny - 1; ++j) {
+				for (int i = 1; i < nx - 1; ++i) {
+					int index = idx(i, j, k);
+					
+					// Get velocity components at this point
+					TNum u = u_comp[index];
+					TNum v = v_comp[index];
+					TNum w = w_comp[index];
+					
+					// Get Christoffel symbols at this point
+					std::array<TNum, 27> symbols;
+					
+					if (mesh_type == MeshType::CURVILINEAR) {
+						symbols = christoffel_symbols[index];
+					} else {
+						// Compute on-the-fly for simple coordinate systems
+						symbols = computeChristoffelSymbols(i, j, k);
+					}
+					
+					// Apply corrections based on the formula:
+					// du^i/dt += -Γ^i_jk * u^j * u^k
+					
+					// Correction for u component (i=0)
+					TNum u_correction = 0.0;
+					for (int j = 0; j < 3; ++j) {
+						for (int k = 0; k < 3; ++k) {
+							TNum u_j = (j == 0) ? u : ((j == 1) ? v : w);
+							TNum u_k = (k == 0) ? u : ((k == 1) ? v : w);
+							u_correction -= symbols[0*9 + j*3 + k] * u_j * u_k;
+						}
+					}
+						
+					// Correction for v component (i=1)
+					TNum v_correction = 0.0;
+					for (int j = 0; j < 3; ++j) {
+						for (int k = 0; k < 3; ++k) {
+							TNum u_j = (j == 0) ? u : ((j == 1) ? v : w);
+							TNum u_k = (k == 0) ? u : ((k == 1) ? v : w);
+							v_correction -= symbols[1*9 + j*3 + k] * u_j * u_k;
+						}
+					}
+					
+					// Correction for w component (i=2)
+					TNum w_correction = 0.0;
+					for (int j = 0; j < 3; ++j) {
+						for (int k = 0; k < 3; ++k) {
+							TNum u_j = (j == 0) ? u : ((j == 1) ? v : w);
+							TNum u_k = (k == 0) ? u : ((k == 1) ? v : w);
+							w_correction -= symbols[2*9 + j*3 + k] * u_j * u_k;
+						}
+					}
+					
+					// Apply corrections
+					u_comp[index] += dt * u_correction;
+					v_comp[index] += dt * v_correction;
+					w_comp[index] += dt * w_correction;
+				}
+			}
+		}
+	}
+};
 	
-	#endif // MESH_ADAPTER_HPP
+#endif // MESH_ADAPTER_HPP
