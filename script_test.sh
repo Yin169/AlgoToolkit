@@ -6,4 +6,5 @@ cmake .. -DCMAKE_TOOLCHAIN_FILE=Release/generators/conan_toolchain.cmake -DCMAKE
 cmake --build .
 
 ./FastPoissonCase
+./JetFlow
 # python ../application/PostProcess/ShowVTK.py cylinder_flow_0.vtk -f v

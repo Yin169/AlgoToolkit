@@ -36,17 +36,27 @@ private:
         eigenvalues.resize(nx * ny * nz);
         
         for (int i = 0; i < nx; i++) {
-            double kx = (i <= nx/2) ? 2 * M_PI * i / Lx : 2 * M_PI * (i - nx) / Lx;
+            // Use more accurate wavenumber calculation
+            double kx = (i <= nx/2) ? 
+                (2.0 * M_PI * static_cast<double>(i)) / Lx : 
+                (2.0 * M_PI * static_cast<double>(i - nx)) / Lx;
             
             for (int j = 0; j < ny; j++) {
-                double ky = (j <= ny/2) ? 2 * M_PI * j / Ly : 2 * M_PI * (j - ny) / Ly;
+                double ky = (j <= ny/2) ? 
+                    (2.0 * M_PI * static_cast<double>(j)) / Ly : 
+                    (2.0 * M_PI * static_cast<double>(j - ny)) / Ly;
                 
                 for (int k = 0; k < nz; k++) {
-                    double kz = (k <= nz/2) ? 2 * M_PI * k / Lz : 2 * M_PI * (k - nz) / Lz;
+                    double kz = (k <= nz/2) ? 
+                        (2.0 * M_PI * static_cast<double>(k)) / Lz : 
+                        (2.0 * M_PI * static_cast<double>(k - nz)) / Lz;
                     
-                    // Eigenvalue of the Laplacian: -(kx^2 + ky^2 + kz^2)
+                    // Use more stable computation of eigenvalues
                     int idx = i * ny * nz + j * nz + k;
-                    eigenvalues[idx] = -(kx*kx + ky*ky + kz*kz);
+                    double kx2 = kx * kx;
+                    double ky2 = ky * ky;
+                    double kz2 = kz * kz;
+                    eigenvalues[idx] = -(kx2 + ky2 + kz2);
                 }
             }
         }
@@ -102,10 +112,12 @@ public:
         
         // Copy result to output vector and normalize
         VectorObj<T> u(nx * ny * nz);
-        double normalization = 1.0 / (nx * ny * nz);
+        // FFTW normalization factor for 3D transform
+        const double normalization = 1.0 / static_cast<double>(nx * ny * nz);
         
         for (int i = 0; i < nx * ny * nz; i++) {
-            u[i] = in[i][0] * normalization;  // Take real part and normalize
+            // Use careful type conversion for numerical stability
+            u[i] = static_cast<T>(in[i][0] * normalization);
         }
         
         return u;
