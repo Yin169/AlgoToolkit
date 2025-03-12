@@ -15,6 +15,7 @@
 #include "../src/LinearAlgebra/Factorized/basic.hpp"
 #include "../src/PDEs/FDM/Poisson.hpp"
 #include "../src/PDEs/FDM/NavierStoke.hpp"
+#include "../src/PDEs/FFT/FastPoisson.hpp"
 #include "../src/utils.hpp"
 #include <pybind11/numpy.h>
 
@@ -250,6 +251,30 @@ PYBIND11_MODULE(fastsolver, m) {
         .def("getNy", &Poisson3DSolver<double>::getNy, "Get number of grid points in y direction")
         .def("getNz", &Poisson3DSolver<double>::getNz, "Get number of grid points in z direction");
 
+
+    // Add FastPoisson3D binding
+    py::class_<FastPoisson3D<double>>(m, "FastPoisson3D")
+        .def(py::init<int, int, int, double, double, double>(),
+             py::arg("nx"), py::arg("ny"), py::arg("nz"), 
+             py::arg("Lx"), py::arg("Ly"), py::arg("Lz"))
+        .def("solve", &FastPoisson3D<double>::solve,
+             "Solve the Poisson equation using FFT",
+             py::arg("f"))
+        .def("getNx", &FastPoisson3D<double>::getNx, "Get number of grid points in x direction")
+        .def("getNy", &FastPoisson3D<double>::getNy, "Get number of grid points in y direction")
+        .def("getNz", &FastPoisson3D<double>::getNz, "Get number of grid points in z direction")
+        .def("getDx", &FastPoisson3D<double>::getDx, "Get grid spacing in x direction")
+        .def("getDy", &FastPoisson3D<double>::getDy, "Get grid spacing in y direction")
+        .def("getDz", &FastPoisson3D<double>::getDz, "Get grid spacing in z direction")
+        .def("getLx", &FastPoisson3D<double>::getLx, "Get domain length in x direction")
+        .def("getLy", &FastPoisson3D<double>::getLy, "Get domain length in y direction")
+        .def("getLz", &FastPoisson3D<double>::getLz, "Get domain length in z direction")
+        .def("index", &FastPoisson3D<double>::index, 
+             "Convert 3D indices to 1D index",
+             py::arg("i"), py::arg("j"), py::arg("k"))
+        .def("getValue", &FastPoisson3D<double>::getValue,
+             "Get solution value at specific grid point",
+             py::arg("solution"), py::arg("i"), py::arg("j"), py::arg("k"));
  
     py::enum_<TimeIntegration>(m, "TimeIntegration")
         .value("EULER", TimeIntegration::EULER)

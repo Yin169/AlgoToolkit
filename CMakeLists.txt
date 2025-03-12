@@ -19,6 +19,7 @@ include_directories(
     ${PROJECT_SOURCE_DIR}/src/PDEs
     ${PROJECT_SOURCE_DIR}/src/PDEs/FDM
     ${PROJECT_SOURCE_DIR}/src/PDEs/Mesh
+    ${PROJECT_SOURCE_DIR}/src/PDEs/FFT
     ${PROJECT_SOURCE_DIR}/src/Intergal
     ${PROJECT_SOURCE_DIR}/src/Obj
     ${PROJECT_SOURCE_DIR}/src/Mesh
@@ -32,6 +33,7 @@ include_directories(
 
 # Find required packages
 find_package(OpenBLAS REQUIRED)
+find_package(FFTW3 REQUIRED)
 find_package(benchmark REQUIRED)  # Google Benchmark
 find_package(GTest REQUIRED)
 
@@ -40,6 +42,7 @@ set(TEST_DEPENDENCIES
     GTest::gtest 
     GTest::gmock 
     OpenBLAS::OpenBLAS
+    FFTW3::fftw3
 )
 
 # Test executables
@@ -94,7 +97,8 @@ set(TEST_SOURCES
     # JetFlow
     # DrivenCavity
     # PoissonCase
-    CylinderFlow
+    # CylinderFlow
+    FastPoissonCase
 )
 
 foreach(test_source ${TEST_SOURCES})

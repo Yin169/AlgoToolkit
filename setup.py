@@ -22,10 +22,18 @@ source_file = ["#include ../"+ i for i in source_file]
 fastsolver_module = Extension(
     'fastsolver',
     sources=['python/pybind.cpp'],
-	include_dirs=[pybind11.get_include(), os.getenv('OPENBLAS_INCLUDE', '/opt/homebrew/opt/openblas/include')],  # OpenBLAS 头文件路径
-    library_dirs=[os.getenv('OPENBLAS_LIB', '/opt/homebrew/opt/openblas/lib')],  # OpenBLAS 库路径
+    include_dirs=[
+        pybind11.get_include(), 
+        os.getenv('OPENBLAS_INCLUDE', '/opt/homebrew/opt/openblas/include'),
+        os.getenv('FFTW_INCLUDE', '/opt/homebrew/opt/fftw/include')  # Add FFTW include path
+    ],
+    library_dirs=[
+        os.getenv('OPENBLAS_LIB', '/opt/homebrew/opt/openblas/lib'), 
+        os.getenv('FFTW_LIB', '/opt/homebrew/opt/fftw/lib')
+    ],
+    libraries=['openblas', 'fftw3'],  # Add FFTW library to link against
     language='c++',
-	extra_compile_args=['-std=c++17']
+    extra_compile_args=['-std=c++17']
 )
 
 # Setup configuration
