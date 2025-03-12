@@ -136,8 +136,7 @@ int main() {
     
     // Create solver
     NavierStokesSolver3D<double> solver(nx, ny, nz, dx, dy, dz, dt, Re);
-    // solver.setFFTPoissonSolver();
-
+    
     // Helper function to get index in the flattened array
     auto idx = [nx, ny](int i, int j, int k) -> int {
         return i + j * nx + k * nx * ny;
