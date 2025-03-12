@@ -6,6 +6,7 @@
 #include "../../Obj/DenseObj.hpp"
 #include "../../LinearAlgebra/Preconditioner/MultiGrid.hpp"
 #include "../../ODE/RungeKutta.hpp"
+#include "../FFT/FastPoisson.hpp"
 #include <vector>
 #include <cmath>
 #include <iostream>
@@ -47,6 +48,10 @@ private:
     // System matrices for pressure Poisson equation
     SparseMatrixCSC<TNum> laplacian;
     AlgebraicMultiGrid<TNum, VectorObj<TNum>> amg;
+    
+    // Fast Poisson solver using FFT
+    std::unique_ptr<FastPoisson3D<TNum>> fast_poisson;
+    bool use_fft_solver = false;
     
     TimeIntegration time_method = TimeIntegration::RK4;
     std::unique_ptr<RungeKutta<TNum, VectorObj<TNum>>> rk_solver;
@@ -423,6 +428,7 @@ private:
         }
     }
     
+    // Modified solvePressurePoisson method to use either AMG or FFT
     void solvePressurePoisson() {
         int n = nx * ny * nz;
         VectorObj<TNum> rhs(n, 0.0);
@@ -471,8 +477,13 @@ private:
         // Initialize pressure to zero before solving
         p.zero();
         
-        // Solve pressure Poisson equation using algebraic multigrid
-        amg.amgVCycle(laplacian, rhs, p, 3, 5, 0.25);
+        if (use_fft_solver && fast_poisson) {
+            // Solve using FFT-based Poisson solver
+            p = fast_poisson->solve(rhs);
+        } else {
+            // Solve using algebraic multigrid
+            amg.amgVCycle(laplacian, rhs, p, 3, 5, 0.25);
+        }
     }
     
     void projectVelocity() {
@@ -552,9 +563,10 @@ public:
         // Build Laplacian matrix for pressure Poisson equation
         buildLaplacianMatrix();
         
-        
         // Initialize RK4 solver
         rk_solver = std::make_unique<RungeKutta<TNum, VectorObj<TNum>>>();
+        fast_poisson = std::make_unique<FastPoisson3D<TNum>>(nx, ny, nz, nx*dx, ny*dy, nz*dz);
+        
         
         // Default boundary conditions (zero velocity)
         u_bc = [](TNum x, TNum y, TNum z, TNum t) { return 0.0; };
@@ -586,7 +598,11 @@ public:
         v = v0;
         w = w0;
     }
-    
+   
+    void setFFTPoissonSolver(){
+        use_fft_solver = true;
+    }
+
     // Set time integration method
     void setTimeIntegrationMethod(TimeIntegration method) {
         time_method = method;
