@@ -99,8 +99,8 @@ set(TEST_SOURCES
     # DrivenCavity
     # PoissonCase
     # CylinderFlow
-    FastPoissonCase
-    # TaylorGreenVortex
+    # FastPoissonCase
+    TalyorGreenVortex
 )
 
 foreach(test_source ${TEST_SOURCES})

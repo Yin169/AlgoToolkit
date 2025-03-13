@@ -252,9 +252,9 @@ private:
 // Main function to run the test case
 int main(int argc, char** argv) {
     // Default parameters
-    int nx = 32;  // Grid resolution in x
-    int ny = 32;  // Grid resolution in y
-    int nz = 32;  // Grid resolution in z
+    int nx = 64;  // Grid resolution in x
+    int ny = 64;  // Grid resolution in y
+    int nz = 64;  // Grid resolution in z
     double Re = 1600.0;  // Reynolds number
     double dt = 0.001;   // Initial time step
     int num_steps = 5000;  // Number of time steps
