@@ -6,8 +6,12 @@
 #include <fftw3.h>
 #include <memory>
 #include <cmath>
+#include <functional>
 #include "../../Obj/VectorObj.hpp"
 #include "../../Obj/DenseObj.hpp"
+
+
+enum class BoundaryType { Dirichlet, Neumann, Periodic };
 
 template <typename T>
 class FastPoisson3D {
@@ -15,6 +19,8 @@ private:
     int nx, ny, nz;
     double dx, dy, dz;
     double Lx, Ly, Lz;
+
+    VectorObj<T> b;
     
     // FFTW plans and arrays
     fftw_complex *in, *out;
@@ -22,6 +28,9 @@ private:
     
     // Eigenvalues of the Laplacian operator in Fourier space
     std::vector<double> eigenvalues;
+
+    // Boundary conditions
+    BoundaryType bcTypeX, bcTypeY, bcTypeZ;
     
     void initializeFFTW() {
         // Allocate memory for FFTW
@@ -63,12 +72,19 @@ private:
     }
     
 public:
-    FastPoisson3D(int nx_, int ny_, int nz_, double Lx_, double Ly_, double Lz_) 
-        : nx(nx_), ny(ny_), nz(nz_), Lx(Lx_), Ly(Ly_), Lz(Lz_) {
+    FastPoisson3D(int nx_, int ny_, int nz_, double Lx_, double Ly_, double Lz_,
+        BoundaryType bcTypeX = BoundaryType::Dirichlet,
+        BoundaryType bcTypeY = BoundaryType::Dirichlet,
+        BoundaryType bcTypeZ = BoundaryType::Dirichlet) 
+        : nx(nx_), ny(ny_), nz(nz_), Lx(Lx_), Ly(Ly_), Lz(Lz_),
+        bcTypeX(bcTypeX), 
+        bcTypeY(bcTypeY), 
+        bcTypeZ(bcTypeZ) {
         dx = Lx / nx;
         dy = Ly / ny;
         dz = Lz / nz;
         
+        b = VectorObj<T>(nx * ny * nz);
         initializeFFTW();
     }
     
@@ -80,14 +96,14 @@ public:
     }
     
     // Solve the Poisson equation: ∇²u = f
-    VectorObj<T> solve(const VectorObj<T>& f) {
-        if (f.size() != nx * ny * nz) {
+    VectorObj<T> solve() {
+        if (b.size() != nx * ny * nz) {
             throw std::invalid_argument("Input vector size does not match grid dimensions");
         }
         
         // Copy f to the FFTW input array
         for (int i = 0; i < nx * ny * nz; i++) {
-            in[i][0] = f[i];
+            in[i][0] = b[i];
             in[i][1] = 0.0;  // Imaginary part is zero
         }
         
@@ -122,6 +138,59 @@ public:
         
         return u;
     }
+
+    
+    // Set the right-hand side function f
+    void setRHS(const std::function<T(double, double, double)>& f) {
+        for (int k = 0; k < nz; k++) {
+            for (int j = 0; j < ny; j++) {
+                for (int i = 0; i < nx; i++) {
+                    double x = i * dx;
+                    double y = j * dy;
+                    double z = k * dz;
+                    int idx = index(i, j, k);
+                    
+                    // For interior points, set the RHS to f(x,y,z)
+                    bool isBoundary = (i == 0 || i == nx-1 || 
+                                      j == 0 || j == ny-1 || 
+                                      k == 0 || k == nz-1);
+                    
+                    if (isBoundary && (bcTypeX == BoundaryType::Dirichlet || 
+                                      bcTypeY == BoundaryType::Dirichlet || 
+                                      bcTypeZ == BoundaryType::Dirichlet)) {
+                        // For Dirichlet boundaries, set b to the boundary value
+                        b[idx] = f(x, y, z);
+                    } else {
+                        // For interior points, set b to f(x,y,z)
+                        b[idx] = f(x, y, z);
+                    }
+                }
+            }
+        }
+    }
+    
+    // Set Dirichlet boundary conditions
+    void setDirichletBC(const std::function<T(double, double, double)>& g) {
+        for (int k = 0; k < nz; k++) {
+            for (int j = 0; j < ny; j++) {
+                for (int i = 0; i < nx; i++) {
+                    bool isBoundary = (i == 0 || i == nx-1 || 
+                                      j == 0 || j == ny-1 || 
+                                      k == 0 || k == nz-1);
+                    
+                    if (isBoundary) {
+                        double x = i * dx;
+                        double y = j * dy;
+                        double z = k * dz;
+                        int idx = index(i, j, k);
+                        
+                        b[idx] = g(x, y, z);
+                    }
+                }
+            }
+        }
+    }
+    
     
     // Get grid dimensions
     int getNx() const { return nx; }

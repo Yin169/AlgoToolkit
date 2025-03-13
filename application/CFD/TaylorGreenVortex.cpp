@@ -143,9 +143,7 @@ public:
         // Save final state
         saveVelocityField(time_history.back(), true);
         saveVorticityField(time_history.back(), true);
-        
-        // Generate visualization script
-        generateVisualizationScript();
+
     }
     
 private:
@@ -249,56 +247,14 @@ private:
         
         file.close();
     }
-    
-    // Generate Python script for plotting statistics
-    void generateVisualizationScript() {
-        std::string script_filename = output_dir + "/plot_statistics.py";
-        std::ofstream script_file(script_filename);
-        
-        script_file << "import numpy as np\n";
-        script_file << "import matplotlib.pyplot as plt\n";
-        script_file << "import pandas as pd\n\n";
-        
-        script_file << "# Load statistics\n";
-        script_file << "data = pd.read_csv('statistics.csv')\n\n";
-        
-        script_file << "# Create figure with multiple subplots\n";
-        script_file << "fig, axs = plt.subplots(3, 1, figsize=(10, 12), sharex=True)\n\n";
-        
-        script_file << "# Plot kinetic energy\n";
-        script_file << "axs[0].plot(data['time'], data['energy'], 'b-')\n";
-        script_file << "axs[0].set_ylabel('Kinetic Energy')\n";
-        script_file << "axs[0].set_title('Taylor-Green Vortex at Re = " << Re << "')\n";
-        script_file << "axs[0].grid(True)\n\n";
-        
-        script_file << "# Plot enstrophy\n";
-        script_file << "axs[1].plot(data['time'], data['enstrophy'], 'r-')\n";
-        script_file << "axs[1].set_ylabel('Enstrophy')\n";
-        script_file << "axs[1].grid(True)\n\n";
-        
-        script_file << "# Plot maximum divergence (log scale)\n";
-        script_file << "axs[2].semilogy(data['time'], data['max_divergence'], 'g-')\n";
-        script_file << "axs[2].set_ylabel('Max Divergence')\n";
-        script_file << "axs[2].set_xlabel('Time')\n";
-        script_file << "axs[2].grid(True)\n\n";
-        
-        script_file << "plt.tight_layout()\n";
-        script_file << "plt.savefig('statistics.png', dpi=300)\n";
-        script_file << "plt.show()\n";
-        
-        script_file.close();
-        
-        std::cout << "Generated visualization script: " << script_filename << std::endl;
-        std::cout << "Run with: python " << script_filename << std::endl;
-    }
 };
 
 // Main function to run the test case
 int main(int argc, char** argv) {
     // Default parameters
-    int nx = 16;  // Grid resolution in x
-    int ny = 16;  // Grid resolution in y
-    int nz = 16;  // Grid resolution in z
+    int nx = 32;  // Grid resolution in x
+    int ny = 32;  // Grid resolution in y
+    int nz = 32;  // Grid resolution in z
     double Re = 1600.0;  // Reynolds number
     double dt = 0.001;   // Initial time step
     int num_steps = 5000;  // Number of time steps
