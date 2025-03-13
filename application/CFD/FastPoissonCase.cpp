@@ -17,38 +17,26 @@ double sourceFunction(double x, double y, double z) {
 
 int main() {
     // Domain parameters
-    const int nx = 128;
-    const int ny = 128;
-    const int nz = 128;
+    const int nx = 64;
+    const int ny = 64;
+    const int nz = 64;
     const double Lx = 1.0;
     const double Ly = 1.0;
     const double Lz = 1.0;
     
     // Create the Poisson solver
     FastPoisson3D<double> solver(nx, ny, nz, Lx, Ly, Lz);
+    solver.setRHS(sourceFunction);
+    solver.setDirichletBC(analyticalSolution);
     
     // Grid spacing
     const double dx = solver.getDx();
     const double dy = solver.getDy();
     const double dz = solver.getDz();
     
-    // Initialize the right-hand side vector with the source function
-    VectorObj<double> f(nx * ny * nz);
-    for (int i = 0; i < nx; i++) {
-        double x = i * dx;
-        for (int j = 0; j < ny; j++) {
-            double y = j * dy;
-            for (int k = 0; k < nz; k++) {
-                double z = k * dz;
-                int idx = solver.index(i, j, k);
-                f[idx] = sourceFunction(x, y, z);
-            }
-        }
-    }
-    
     // Solve the Poisson equation
     std::cout << "Solving the Poisson equation..." << std::endl;
-    VectorObj<double> solution = solver.solve(f);
+    VectorObj<double> solution = solver.solve();
     std::cout << "Solution completed." << std::endl;
     
     // Calculate error compared to analytical solution

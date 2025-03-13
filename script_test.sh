@@ -5,5 +5,5 @@ cmake --clean-first
 cmake .. -DCMAKE_TOOLCHAIN_FILE=Release/generators/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release
 cmake --build .
 
-./FastPoissonCase
+./TalyorGreenVortex 
 # python ../application/PostProcess/ShowVTK.py cylinder_flow_0.vtk -f v

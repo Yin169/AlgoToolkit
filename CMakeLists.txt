@@ -43,6 +43,7 @@ set(TEST_DEPENDENCIES
     GTest::gmock 
     OpenBLAS::OpenBLAS
     FFTW3::fftw3
+    FFTW3::fftw3f
 )
 
 # Test executables
@@ -98,7 +99,8 @@ set(TEST_SOURCES
     # DrivenCavity
     # PoissonCase
     # CylinderFlow
-    FastPoissonCase
+    # FastPoissonCase
+    TalyorGreenVortex
 )
 
 foreach(test_source ${TEST_SOURCES})

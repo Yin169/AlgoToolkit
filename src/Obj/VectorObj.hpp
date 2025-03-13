@@ -121,6 +121,8 @@ public:
         data.resize(n);
         fill(data.begin(), data.end(), value);
     }
+
+    TObj* get_data() const { return const_cast<TObj*>(data.data()); }
 };
 
 #endif // VECTOROBJ_HPP

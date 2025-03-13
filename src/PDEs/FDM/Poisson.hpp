@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <fstream>
+#include <functional>
 
 enum class BoundaryType { Dirichlet, Neumann, Periodic };
 

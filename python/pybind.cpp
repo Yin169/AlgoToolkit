@@ -254,12 +254,23 @@ PYBIND11_MODULE(fastsolver, m) {
 
     // Add FastPoisson3D binding
     py::class_<FastPoisson3D<double>>(m, "FastPoisson3D")
-        .def(py::init<int, int, int, double, double, double>(),
+        .def(py::init<int, int, int, double, double, double, BoundaryType, BoundaryType, BoundaryType>(),
              py::arg("nx"), py::arg("ny"), py::arg("nz"), 
-             py::arg("Lx"), py::arg("Ly"), py::arg("Lz"))
-        .def("solve", &FastPoisson3D<double>::solve,
-             "Solve the Poisson equation using FFT",
-             py::arg("f"))
+             py::arg("Lx"), py::arg("Ly"), py::arg("Lz"),
+             py::arg("bcTypeX") = BoundaryType::Dirichlet,
+             py::arg("bcTypeY") = BoundaryType::Dirichlet,
+             py::arg("bcTypeZ") = BoundaryType::Dirichlet)
+        .def("setRHS", [](FastPoisson3D<double>& self, py::function f) {
+            self.setRHS([f](double x, double y, double z) -> double {
+                return py::cast<double>(f(x, y, z));
+            });
+        }, "Set the right-hand side function f", py::arg("f"))
+        .def("setDirichletBC", [](FastPoisson3D<double>& self, py::function g) {
+            self.setDirichletBC([g](double x, double y, double z) -> double {
+                return py::cast<double>(g(x, y, z));
+            });
+        }, "Set Dirichlet boundary conditions", py::arg("g"))
+        .def("solve", &FastPoisson3D<double>::solve, "Solve the Poisson equation using FFT")
         .def("getNx", &FastPoisson3D<double>::getNx, "Get number of grid points in x direction")
         .def("getNy", &FastPoisson3D<double>::getNy, "Get number of grid points in y direction")
         .def("getNz", &FastPoisson3D<double>::getNz, "Get number of grid points in z direction")
