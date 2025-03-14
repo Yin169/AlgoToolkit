@@ -28,7 +28,7 @@ enum class MeshType {
  */
 template <typename TNum>
 class MeshAdapter {
-private:
+    public:
     // Mesh dimensions
     int nx, ny, nz;
     
@@ -55,7 +55,7 @@ private:
     
     // Physical domain bounds
     TNum x_min, x_max, y_min, y_max, z_min, z_max;
-    
+   
     // Compute index in flattened array
     int idx(int i, int j, int k) const {
         return i + j * nx + k * nx * ny;

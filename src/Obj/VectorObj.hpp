@@ -28,6 +28,15 @@ public:
     VectorObj(const VectorObj& other) = default;
     VectorObj(VectorObj&& other) noexcept = default;
 
+    VectorObj(const std::vector<TObj>& other) {
+        _size = other.size();
+        data = other;
+    };
+    VectorObj(std::vector<TObj>&& other) noexcept {
+        _size = other.size();
+        data = std::move(other);
+    };
+
     VectorObj& operator=(const VectorObj& other) = default;
     VectorObj& operator=(VectorObj&& other) noexcept = default;
 

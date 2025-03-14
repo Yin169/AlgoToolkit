@@ -100,7 +100,8 @@ set(TEST_SOURCES
     # PoissonCase
     # CylinderFlow
     # FastPoissonCase
-    TalyorGreenVortex
+    # TalyorGreenVortex
+    MeshCase
 )
 
 foreach(test_source ${TEST_SOURCES})
