@@ -6,4 +6,4 @@ cmake .. -DCMAKE_TOOLCHAIN_FILE=Release/generators/conan_toolchain.cmake -DCMAKE
 cmake --build .
 
 ./MeshCase 
-python ../application/PostProcess/ShowVTK.py redistributed_mesh.vtk
+# python ../application/PostProcess/ShowVTK.py redistributed_mesh.vtk
